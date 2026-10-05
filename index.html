@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Student Performance Explorer</title>
+  <meta name="description" content="Exploration visuelle liée du jeu Student Performance (UCI / Kaggle) : coordonnées parallèles, matrice de Spearman, boxplots, slope graph et fiche élève.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- D3 v7 depuis le CDN (version figée pour la reproductibilité). Voir README pour l'alternative npm. -->
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js" defer></script>
+  <script type="module" src="js/main.js"></script>
+</head>
+<body>
+<a class="skip" href="#table-summary">Aller à la table (navigation clavier)</a>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Student Performance Explorer</h1>
+      <p class="sub">Une matière à la fois · note finale <code>G3</code> sur 0–20, seuil à 10 · les vues montrent des <strong>associations</strong>, pas des causes.</p>
+    </div>
+    <button class="btn theme" id="theme-btn" type="button" aria-label="Changer de thème">◐ Thème : auto</button>
+  </header>
+
+  <!-- Barre de filtres unique : toute l'application partage la même sélection -->
+  <section class="filters" id="filters" aria-label="Filtres"></section>
+  <div class="status" id="status" role="status" aria-live="polite"></div>
+  <script>
+    /* Script classique (pas un module) : il s'exécute même en file://, là où
+       les modules ES et d3.csv() sont bloqués par le navigateur. */
+    if (location.protocol === "file:") {
+      var st = document.getElementById("status");
+      st.className = "status error";
+      st.textContent = "Cette page est ouverte directement depuis le disque (file://). Le navigateur y bloque les modules JavaScript " +
+        "et la lecture des CSV par d3.csv(). Ouvrez-la avec un serveur statique : clic droit sur index.html → « Open with Live Server » " +
+        "dans VS Code, ou « npx serve » dans le dossier du projet (voir README).";
+    }
+  </script>
+
+  <section class="tiles" id="tiles" aria-label="Indicateurs"></section>
+
+  <!-- Technique 1 — Quentin -->
+  <section class="card" id="pc-card" aria-labelledby="pc-title">
+    <div class="card-head">
+      <div>
+        <h2 id="pc-title">Vue d'ensemble · Coordonnées parallèles <span class="who">Quentin</span></h2>
+        <p class="note">Brossez un ou plusieurs axes pour isoler une population (n affiché) ; clic sur une ligne = fiche élève.</p>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Une ligne par élève, un axe par attribut. Glisser verticalement sur un axe : brush (les brushes se combinent en ET) ;
+            clic sur l'axe sans glisser : effacer son brush ; glisser un titre latéralement : réordonner (seules les paires d'axes voisins se comparent).
+            « n. r. » sous un axe : élève non évalué, sans valeur. Les élèves hors sélection restent en gris pour garder le contexte.</p>
+        </details>
+      </div>
+    </div>
+    <div class="view" id="pc-view"></div>
+  </section>
+
+  <div class="grid2">
+    <!-- Technique 2 — Jim -->
+    <section class="card" id="matrix-card" aria-labelledby="mx-title">
+      <h2 id="mx-title">Matrice de corrélation de Spearman <span class="who">Jim</span></h2>
+      <p class="note">Force et sens des associations monotones ; clic sur une cellule = les deux axes côte à côte dans les coordonnées parallèles.</p>
+      <details class="howto"><summary>Comment lire</summary>
+        <p class="note">ρ de Spearman entre 12 attributs ordonnables bruts (Dalc/Walc et Medu/Fedu restent séparés ici pour montrer leur redondance).
+          Calculée sur les filtres et le groupe, <em>sans</em> les brushes : un brush restreint l'étendue et atténue ρ. Trier « par |ρ| avec la note finale » classe les facteurs.</p>
+      </details>
+      <div class="view" id="matrix-view"></div>
+    </section>
+
+    <!-- Technique 3 — Alexandre -->
+    <section class="card" id="box-card" aria-labelledby="bx-title">
+      <h2 id="bx-title">Distribution de G3 par groupe · small multiples <span class="who">Alexandre</span></h2>
+      <p class="note">Clic sur une boîte = filtrer toutes les vues sur ce groupe ; clic sur un point = fiche élève.</p>
+      <details class="howto"><summary>Comment lire</summary>
+        <p class="note">Boîte = quartiles et médiane, moustaches à 1,5 × IQR, un point par élève, axe commun 0–20.
+          Hachures et « ⚠ » : moins de 10 élèves. « Écart des médianes » : différence entre la meilleure et la moins bonne médiane (groupes ≥ 10 élèves) ;
+          trier par cet écart hiérarchise les facteurs.</p>
+      </details>
+      <div class="view" id="box-view"></div>
+    </section>
+  </div>
+
+  <div class="grid2">
+    <!-- Technique 4 — Gabriel -->
+    <section class="card" id="slope-card" aria-labelledby="sl-title">
+      <h2 id="sl-title">Trajectoires G1 → G2 → G3 · slope graph <span class="who">Gabriel</span></h2>
+      <p class="note">Le filtre de tendance (G3 − G1) s'applique à toutes les vues ; l'épaisseur d'un trait = nombre d'élèves sur cette trajectoire.</p>
+      <div class="view" id="slope-view"></div>
+    </section>
+
+    <!-- Niveau détail -->
+    <section class="card" id="detail-card" aria-labelledby="dt-title">
+      <h2 id="dt-title">Détail · profil élève <span class="who">Gabriel</span></h2>
+      <p class="note">Clic sur un élève dans n'importe quelle vue · ← / → : élève précédent / suivant de la sélection.</p>
+      <div class="view" id="detail-view"></div>
+    </section>
+  </div>
+
+  <section class="card" id="table-card" aria-labelledby="tb-title">
+    <details class="tablewrap">
+      <summary id="table-summary"><h2 id="tb-title">Table de la sélection · liste nominative et export CSV</h2></summary>
+      <div class="view" id="table-view"></div>
+    </details>
+  </section>
+
+  <footer class="foot">
+    Données : P. Cortez &amp; A. Silva (2008), <em>Using data mining to predict secondary school student performance</em> —
+    UCI Machine Learning Repository n° 320, CC BY 4.0 · Groupe : Q. Elleon, J. Lainel, A. Larguech, G. Loirat.
+  </footer>
+</div>
+</body>
+</html>
