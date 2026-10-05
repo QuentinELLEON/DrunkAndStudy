@@ -5,13 +5,13 @@
      fichier CSV brut → d3.csv() (ou d3.dsv(";") si le fichier est au format UCI) → lignes (chaînes)
      → typage via meta.js (nominal = chaîne, ordinal/quantitatif = nombre)
      → drapeaux internes (__i, __nograde, __delta, __trend)
-     → attributs dérivés (pedu, alc, absC, absCat, prog, g3band) : DERIVATIONS
-     → filtres : portée (école, sexe, non évalués) → groupe → tendance → brushes
+     → attributs dérivés (pedu, alc, absCat, prog, risque, reussite) : DERIVATIONS
+     → filtres : portée (école, sexe, non évalués) → critères de risque → groupe
+                 → tendance / flux de notes  (derive)
    ===================================================================== */
 /* global d3 */
 
-import { META, EXPECTED_COLUMNS, MAX_NOMINAL_AXIS, MAX_GROUPS, DEFAULT_AXES,
-  AXIS_KEYS, MATRIX_KEYS, PANEL_KEYS } from "./meta.js";
+import { META, EXPECTED_COLUMNS, MAX_GROUPS, RISK_FACTORS, FACTOR_KEYS, HIST_GROUPS, bandOf } from "./meta.js";
 
 /**
  * Attributs dérivés (étape 2 de docs/taches.md). needs = colonnes sources ;
@@ -21,11 +21,13 @@ import { META, EXPECTED_COLUMNS, MAX_NOMINAL_AXIS, MAX_GROUPS, DEFAULT_AXES,
 export const DERIVATIONS = {
   pedu:   { needs: ["Medu", "Fedu"], fn: d => Math.max(1, d.Medu, d.Fedu) },
   alc:    { needs: ["Dalc", "Walc"], fn: d => Math.min(3, Math.round((5 * d.Dalc + 2 * d.Walc) / 7)) },
-  absC:   { needs: ["absences", "G3"], fn: d => d.__nograde ? NaN : d.absences },
   absCat: { needs: ["absences", "G3"], fn: d => d.__nograde ? 9 : !isFinite(d.absences) ? NaN
               : d.absences === 0 ? 0 : d.absences <= 4 ? 1 : d.absences <= 10 ? 2 : 3 },
   prog:   { needs: ["G1", "G3"], fn: d => d.__nograde ? NaN : d.G3 - d.G1 },
-  g3band: { needs: ["G3"], fn: d => d.__nograde || !isFinite(d.G3) ? NaN : d.G3 < 10 ? 1 : d.G3 < 14 ? 2 : 3 }
+  // nombre de facteurs de risque cumulés (meta.RISK_FACTORS) ; un non-évalué n'a pas d'absences fiables
+  risque: { needs: ["failures", "absences", "traveltime", "higher", "G3"],
+            fn: d => d.__nograde ? NaN : RISK_FACTORS.filter(f => f.test(d)).length },
+  reussite: { needs: ["G3"], fn: d => d.__nograde || !isFinite(d.G3) ? "" : d.G3 >= 10 ? "oui" : "non" }
 };
 
 /** Dérivés calculables pour un ensemble de colonnes brutes. */
@@ -186,53 +188,42 @@ export function importFile(file) {
    Fichier au schéma UCI complet : listes retenues dans docs/taches.md (meta.js).
    Autre fichier : règles génériques fondées sur le type inféré.            */
 
-/** Attributs éligibles comme axe parallèle. Générique : quantitatifs, ordinaux, nominaux à ≤ 3 modalités. */
-export function axisKeys(ds) {
-  if (ds.standard) return AXIS_KEYS.filter(k => ds.keys.includes(k));
-  return ds.keys.filter(k => {
-    const t = ds.meta[k].t;
-    if (t !== "nom") return true;
-    return new Set(ds.rows.map(d => d[k])).size <= MAX_NOMINAL_AXIS;
-  });
+const GRADES = ["G1", "G2", "G3", "prog", "reussite"];
+const fewValues = (ds, k) => { const c = new Set(ds.rows.map(d => d[k])).size; return c >= 2 && c <= MAX_GROUPS; };
+
+/** Facteurs classés par Jim. Générique : ordinaux / quantitatifs à ≤ 8 valeurs, notes exclues. */
+export function factorKeys(ds) {
+  if (ds.standard) return FACTOR_KEYS.filter(k => ds.keys.includes(k));
+  return ds.keys.filter(k => ds.meta[k].t !== "nom" && !GRADES.includes(k) && fewValues(ds, k));
 }
-/** Attributs pour la matrice de Spearman : quantitatifs et ordinaux bruts uniquement. */
-export function numericKeys(ds) {
-  if (ds.standard) return MATRIX_KEYS.filter(k => ds.keys.includes(k));
-  return ds.rawKeys.filter(k => ds.meta[k].t !== "nom");
-}
-/** Attributs de regroupement pour les boxplots. Générique : ≤ 8 modalités, notes exclues. */
-export function groupKeys(ds) {
-  if (ds.standard) return PANEL_KEYS.filter(k => ds.keys.includes(k));
-  return ds.keys.filter(k => {
-    if (["G1", "G2", "G3", "g3band", "prog", "absC"].includes(k)) return false;   // notes et dérivés des notes : pas des groupes
-    const card = new Set(ds.rows.map(d => d[k])).size;
-    return card >= 2 && card <= MAX_GROUPS;
-  });
-}
-/** Axes par défaut pour un jeu importé. */
-export function defaultAxesFor(ds) {
-  const eligible = axisKeys(ds);
-  const std = DEFAULT_AXES.filter(k => eligible.includes(k));
-  if (std.length >= 2) return std;
-  return eligible.filter(k => ds.meta[k].t !== "nom").slice(0, 7).concat(eligible).slice(0, 7);
+/** Groupes des histogrammes d'Alexandre. Générique : ≤ 8 modalités, notes exclues. */
+export function histGroupKeys(ds) {
+  if (ds.standard) return HIST_GROUPS.filter(k => ds.keys.includes(k));
+  return ds.keys.filter(k => !GRADES.includes(k) && fewValues(ds, k));
 }
 
 /* ---------------- filtres ---------------- */
 
-/** Un brush en unités de données laisse-t-il passer cet élève ? */
-export function passesBrush(d, key, b) {
-  const v = d[key];
-  if (b.kind === "range") return v >= b.lo && v <= b.hi;
-  return b.values.includes(v);
+/** Un élève satisfait-il les critères de la grille (facteurs cochés ET niveau de risque minimal) ? */
+export function passesCriteria(d, state) {
+  if (state.riskMin > 0 && !(d.risque >= state.riskMin)) return false;
+  return state.criteria.every(id => { const f = RISK_FACTORS.find(r => r.id === id); return !f || f.test(d); });
+}
+
+/** Un élève appartient-il au flux de notes cliqué dans le diagramme alluvial ? */
+export function passesFlow(d, flow) {
+  if (!flow) return true;
+  const st = ["G1", "G2", "G3"];
+  const b = k => k === "G3" && d.__nograde ? "N" : bandOf(d[k]);
+  return b(st[flow.s]) === flow.a && b(st[flow.s + 1]) === flow.b;
 }
 
 /**
  * Calcule, une seule fois par rendu, les sous-ensembles dont chaque vue a besoin.
- *  scoped     : filtres de la barre (école, sexe, non évalués)
- *  noBrush    : scoped + groupe + tendance            → matrice (pas de restriction d'étendue)
- *  exceptGroup: scoped + tendance + brushes           → panneau boxplot du groupe filtré
- *  exceptTrend: scoped + groupe + brushes             → slope graph (montre les tendances masquées en fond)
- *  selection  : tout appliqué                          → tuiles, table, boxplots, slope, fiche
+ *  scoped    : filtres de la barre (matière, école, sexe, non évalués)   → classement des facteurs, grille (fond)
+ *  selection : scoped + critères de risque + groupe + tendance + flux   → tuiles, histogrammes, alluvial, table, fiche
+ *  exceptFlow: selection sans le flux ni la tendance                     → alluvial (les autres flux restent en fond)
+ *  exceptGroup: selection sans le filtre de groupe                        → histogrammes (les autres groupes restent estompés)
  */
 export function derive(state, ds) {
   const base = ds ? ds.rows : [];
@@ -241,22 +232,23 @@ export function derive(state, ds) {
     (!state.excludeNoGrade || !d.__nograde) &&
     (!state.school || !has("school") || d.school === state.school) &&
     (!state.sex || !has("sex") || d.sex === state.sex));
-
+  const std = ds && ds.standard;
   const gf = state.groupFilter && has(state.groupFilter.key) ? state.groupFilter : null;
-  const byGroup = d => !gf || d[gf.key] === gf.value;
+  const byCrit = d => !std || passesCriteria(d, state);
+  const bins = gf && ds.meta[gf.key] && ds.meta[gf.key].bins;          // groupes réunis (ex. risque ≥ 2)
+  const byGroup = d => !gf || (bins ? bins.of(d[gf.key]) : d[gf.key]) === gf.value;
   const byTrend = d => state.trend === "all" || d.__trend === state.trend;
-  const activeBrushes = Object.entries(state.brushes).filter(([k]) => state.axes.includes(k) && has(k));
-  const byBrush = d => activeBrushes.every(([k, b]) => passesBrush(d, k, b));
-
-  const noBrush = scoped.filter(d => byGroup(d) && byTrend(d));
-  const selection = noBrush.filter(byBrush);
+  const byFlow = d => passesFlow(d, state.flow);
+  const exceptFlow = scoped.filter(d => byCrit(d) && byGroup(d));
+  const selection = exceptFlow.filter(d => byTrend(d) && byFlow(d));
+  const exceptGroup = gf ? scoped.filter(d => byCrit(d) && byTrend(d) && byFlow(d)) : selection;
+  const nCrit = std ? state.criteria.length + (state.riskMin > 0 ? 1 : 0) : 0;
   return {
-    ds, base, scoped, noBrush, selection,
-    exceptGroup: gf ? scoped.filter(d => byTrend(d) && byBrush(d)) : selection,
-    exceptTrend: state.trend !== "all" ? scoped.filter(d => byGroup(d) && byBrush(d)) : selection,
+    ds, base, scoped, exceptFlow, exceptGroup, selection,
     selectionIds: new Set(selection.map(d => d.__i)),
     selected: state.selectedId == null ? null : base.find(d => d.__i === state.selectedId) || null,
-    brushCount: activeBrushes.length
+    filtered: selection.length !== scoped.length,
+    nCrit
   };
 }
 

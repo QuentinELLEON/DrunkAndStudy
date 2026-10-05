@@ -142,61 +142,89 @@ svg .axisline { stroke: var(--axis); stroke-width: 1; }
 svg .passline { stroke: var(--text-2); stroke-width: 1; stroke-dasharray: 4 3; stroke-opacity: .7; }
 svg .halo { paint-order: stroke fill; stroke: var(--surface-1); stroke-width: 3px; stroke-linejoin: round; }
 
-/* ---------------- coordonnées parallèles ---------------- */
-.pcscroll { overflow-x: auto; overflow-y: hidden; }
-.pcbox { position: relative; }
-.pcbox canvas { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 0; }
-.pcbox svg { position: relative; display: block; z-index: 1; }
-.pcbox .axlabel { fill: var(--text-1); font-size: 11.5px; font-weight: 600; cursor: ew-resize; }
-.pcbox .axlabel.hl { fill: var(--s1); }
-.pcbox .tlab { fill: var(--muted); font-size: 10px; }
-.pccount { font-size: 11.5px; color: var(--text-2); margin: 4px 0 0; }
-details.axes { margin-top: 8px; }
-details.axes summary { font-size: 12px; color: var(--text-2); cursor: pointer; list-style: none; display: inline-flex; gap: 5px; align-items: center; }
-details.axes summary::-webkit-details-marker { display: none; }
-details.axes summary::before { content: "▸"; font-size: 9px; color: var(--muted); }
-details.axes[open] summary::before { content: "▾"; }
-.chipgroups { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px 16px; margin-top: 10px; }
-.chipgroup h3 { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 0 0 5px; }
-.chips { display: flex; flex-wrap: wrap; gap: 4px; }
-.chip { font: inherit; font-size: 11.5px; padding: 3px 8px; border-radius: 20px; cursor: pointer; background: var(--chip);
+/* ---------------- mise en page : 4 questions + fiche ---------------- */
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 380px); gap: 14px; align-items: start; }
+.questions { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.questions > .card + .card { margin-top: 0; }
+.detail { position: sticky; top: 92px; max-height: calc(100vh - 104px); overflow: auto; }
+@media (max-width: 1100px) { .layout { grid-template-columns: minmax(0, 1fr); } .detail { position: static; max-height: none; } }
+.qhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 2px; }
+.qhead h2 { font-size: 18px; margin: 0; }
+.qnum { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--surface-1); background: var(--text-1);
+        border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; flex: none; align-self: center; }
+.qhead .who { margin-left: 0; }
+.headline { font-size: 15px; line-height: 1.5; margin: 6px 0 10px; color: var(--text-1); max-width: 90ch; }
+.headline b { font-weight: 650; }
+.muted { color: var(--muted); }
+.warn { color: var(--text-1); font-weight: 600; }
+.btn.on { background: var(--chip-on); border-color: var(--chip-on-border); font-weight: 600; }
+.legend .sw.sq { width: 10px; height: 10px; border-radius: 2px; }
+.legend .sw.faded { opacity: .2; }
+.legend .dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+.legend .dot.hollow { border: 2px solid var(--text-2); background: transparent; width: 9px; height: 9px; }
+.legend .vline { width: 1px; height: 12px; background: var(--muted); }
+.chip { font: inherit; font-size: 12px; padding: 4px 10px; border-radius: 20px; cursor: pointer; background: var(--chip);
         color: var(--text-2); border: 1px solid transparent; user-select: none; }
 .chip[aria-pressed="true"] { background: var(--chip-on); color: var(--text-1); border-color: var(--chip-on-border); font-weight: 600; }
-.chip .ty { font-family: var(--mono); font-size: 9px; color: var(--muted); margin-left: 4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
 
-/* ---------------- matrice ---------------- */
-.matrix svg { display: block; max-width: 100%; height: auto; }
-.matrix .cell { cursor: pointer; }
-.matrix .cell:focus { outline: none; }
-.matrix .cell:focus rect.bg, .matrix .cell:hover rect.bg { stroke: var(--text-1); stroke-width: 1.5; }
-.matrix .cell.adj rect.bg { stroke: var(--s3); stroke-width: 2; }
-.matrix .cell.pair rect.bg { stroke: var(--text-1); stroke-width: 2.5; }
-.matrix .cell text { font-size: 9.5px; font-variant-numeric: tabular-nums; pointer-events: none; }
-.matrix .rowlab, .matrix .collab { font-size: 10.5px; fill: var(--text-2); }
-.matrix .rowlab.hl, .matrix .collab.hl { fill: var(--text-1); font-weight: 700; }
-.matrix-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 11px; color: var(--text-2); margin-top: 6px; }
-.matrix-legend .ramp { width: 160px; height: 10px; border-radius: 3px; }
+/* ---------------- Q1 : histogrammes + simulateur ---------------- */
+.hpanels { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--pw, 300px)), 1fr)); gap: 12px 14px; }
+.hpanel { border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px 4px; min-width: 0; }
+.hpanel[data-v] { cursor: pointer; }
+.hpanel[data-v]:hover { border-color: var(--chip-on-border); }
+.hpanel.active { border-color: var(--s1); box-shadow: 0 0 0 1px var(--s1) inset; }
+.hpanel.dim { opacity: .38; }
+.hpanel.small { border-style: dashed; }
+.hpanel svg { display: block; width: 100%; }
+.htitle { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; align-items: baseline; }
+.hname { font-size: 13px; font-weight: 600; }
+.hrate { font-size: 22px; font-weight: 650; text-align: right; font-variant-numeric: tabular-nums; }
+.hrate small { font-size: 11px; font-weight: 500; color: var(--muted); margin-left: 3px; }
+.hsub { grid-column: 1 / -1; font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.sim { margin-top: 16px; border-top: 1px solid var(--grid); padding-top: 12px; }
+.sim h3 { font-size: 14px; margin: 0 0 8px; font-weight: 600; }
+.sim h3 .muted { font-weight: 400; font-size: 12px; margin-left: 6px; }
+.simctl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-end; }
+.simctl input[type=number] { font: inherit; font-size: 12.5px; width: 80px; padding: 4px 8px; border: 1px solid var(--border); border-radius: 7px;
+                             background: var(--surface-1); color: var(--text-1); }
+.simtxt { font-size: 13.5px; margin: 10px 0 4px; max-width: 95ch; }
+.simtxt .muted { display: block; font-size: 11.5px; margin-top: 2px; }
+#sim-out svg { display: block; max-width: 100%; height: auto; }
 
-/* ---------------- boxplots ---------------- */
-.panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px 14px; }
-.panel { border: 1px solid var(--border); border-radius: 8px; padding: 8px 8px 4px; min-width: 0; }
-.panel h3 { font-size: 12px; font-weight: 600; margin: 0 0 2px; display: flex; justify-content: space-between; gap: 6px; }
-.panel h3 .gap { display: block; font-family: var(--mono); font-size: 10px; font-weight: 400; color: var(--muted); }
-.panel h3 .info, .dgroups .info { color: var(--muted); cursor: help; font-weight: 400; }
-.panel h3 .rm { appearance: none; border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 13px; padding: 0 4px; border-radius: 4px; }
-.panel h3 .rm:hover { background: var(--chip); color: var(--text-1); }
-.panel svg { display: block; width: 100%; }
-.panel .box { cursor: pointer; }
-.panel .box:focus { outline: none; }
-.panel .box:focus rect.iqr, .panel .box:hover rect.iqr { stroke-width: 2.2; }
-.panel .box.dim { opacity: .3; }
-.panel .dot { cursor: pointer; }
+/* ---------------- Q2 : classement des facteurs ---------------- */
+.rank { margin-top: 6px; }
+.raxis { position: relative; height: 16px; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.raxis span { position: absolute; transform: translateX(-50%); }
+.rrow { display: flex; align-items: center; border-top: 1px solid var(--grid); cursor: pointer; border-radius: 6px; }
+.rrow:hover, .rrow.on { background: var(--chip); }
+.rrow.on { box-shadow: inset 3px 0 0 var(--s1); }
+.rrow svg { flex: none; display: block; }
+.rlab { flex: none; padding: 4px 8px 4px 6px; font-size: 12.5px; line-height: 1.3; }
+.rlab b { display: block; font-weight: 600; color: var(--text-1); }
+.rlab span { color: var(--text-2); font-size: 11.5px; }
+.rgap { flex: none; text-align: right; font-family: var(--mono); font-size: 13px; font-weight: 600; padding-right: 6px; }
+@media (max-width: 640px) { .rrow { flex-wrap: wrap; } .rlab { width: 100% !important; } }
+
+/* ---------------- Q3 : grille d'élèves ---------------- */
+.unitctl { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: flex-end; margin-bottom: 8px; }
+#unit-svg { display: block; max-width: 100%; height: auto; margin-top: 8px; }
+#unit-svg rect.u { cursor: pointer; }
+#unit-svg .ut { fill: var(--text-1); font-size: 12px; font-weight: 600; }
+#unit-svg .us { fill: var(--muted); font-size: 11px; font-family: var(--mono); }
+
+/* ---------------- Q4 : flux de notes + trajectoires ---------------- */
+.allu svg { display: block; max-width: 100%; height: auto; }
+.allu .link { cursor: pointer; }
+.allu .link:focus { outline: none; stroke: var(--text-1); stroke-width: 1.5; }
+.tlist { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2px 14px; max-height: 300px; overflow: auto; }
+.trow { display: flex; align-items: center; gap: 8px; padding: 2px 6px; border-radius: 6px; cursor: pointer; font-family: var(--mono); font-size: 11.5px; }
+.trow:hover, .trow.on { background: var(--chip-on); }
+.trow .tid { width: 46px; color: var(--muted); }
+.trow .tval { flex: 1; }
+.trow .tdel { width: 44px; text-align: right; font-weight: 600; }
 .nbadge { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 .nbadge.small { color: var(--text-1); }
-
-/* ---------------- slope ---------------- */
-.slope svg { display: block; width: 100%; }
-.slope .bundle { cursor: pointer; }
 
 /* ---------------- fiche élève ---------------- */
 .dhead { display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; margin-bottom: 8px; }
@@ -208,7 +236,7 @@ details.axes[open] summary::before { content: "▾"; }
 .dsum { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 6px; margin: 6px 0 10px; }
 .dsum div { background: var(--chip); border-radius: 6px; padding: 5px 8px; font-size: 11px; color: var(--text-2); }
 .dsum b { display: block; font-size: 15px; color: var(--text-1); font-variant-numeric: tabular-nums; }
-.dgroups { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px 16px; max-height: 460px; overflow: auto; }
+.dgroups { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px 16px; }
 .dgroups h4 { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 4px 0 3px; }
 .dgroups dl { display: grid; grid-template-columns: auto 1fr; gap: 1px 10px; font-size: 12px; margin: 0; }
 .dgroups dt { color: var(--muted); }
@@ -219,7 +247,17 @@ details.axes[open] summary::before { content: "▾"; }
 details.dmore { margin-top: 8px; }
 details.dmore summary, details.howto summary, details.tablewrap > summary { font-size: 12px; color: var(--text-2); cursor: pointer; }
 details.dmore .dgroups { margin-top: 6px; }
+table.dcmp { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 4px; }
+table.dcmp th, table.dcmp td { text-align: left; padding: 3px 6px; white-space: normal; font-family: var(--sans); font-size: 12px; }
+table.dcmp thead th { position: static; font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em;
+                      font-weight: 500; border-bottom: 1px solid var(--border); cursor: default; }
+table.dcmp tbody th { color: var(--text-2); font-weight: 400; }
+table.dcmp tbody tr { border-bottom: 1px solid var(--grid); cursor: default; }
+table.dcmp tbody tr:hover { background: transparent; }
+table.dcmp td.ref { color: var(--text-2); font-variant-numeric: tabular-nums; }
+.up { color: var(--s1); } .down { color: var(--s2); }
 .res { font-weight: 600; font-size: 12px; }
+.info { color: var(--muted); cursor: help; font-weight: 400; }
 .res.pass { color: var(--s1); } .res.fail { color: var(--s2); } .res.none { color: var(--muted); }
 
 /* ---------------- table ---------------- */
@@ -255,3 +293,4 @@ td.pass { color: var(--s1); font-weight: 600; } td.fail { color: var(--s2); font
 }
 @media (forced-colors: active) { .res::before { forced-color-adjust: none; } }
 .toolbar select { max-width: 100%; min-width: 0; }
+.simctl .seg, .unitctl .seg { flex-wrap: wrap; }

@@ -35,7 +35,7 @@ L'unité d'observation est **un élève inscrit dans une matière**. Les deux fi
 | **Ordinal** | 10 | Medu, Fedu (0–4) ; traveltime, studytime (1–4) ; famrel, freetime, goout, Dalc, Walc, health (1–5) | nombre ; **domaine ordonné explicite** `meta.d` et libellés de modalité `meta.s` / `meta.v` |
 | **Quantitatif** | 6 | age, failures (0–3, censuré), absences (créneaux de 2 h), G1, G2, G3 (0–20) | nombre ; domaine fixe `meta.fixed` = [0, 20] pour les notes |
 
-Les ordinaux sont stockés en entiers, mais **aucune vue n'utilise leur écart numérique** : ils passent par des échelles de points (`scalePoint`) ou par des rangs (Spearman).
+Les ordinaux sont stockés en entiers, mais **aucune vue n'utilise leur écart numérique** : ils servent de groupes, ordonnés selon `meta.d` et nommés en clair (« 2–5 h », « lycée »), ou de rangs pour le sens du lien (Spearman).
 
 ### 0.4 Attributs dérivés (`typeRows`, `DERIVATIONS`)
 Drapeaux internes :
@@ -43,20 +43,20 @@ Drapeaux internes :
 | Attribut | Définition | Rôle |
 |---|---|---|
 | `__i` | index de ligne | identifiant stable de l'élève (sélection, liens entre vues) |
-| `__nograde` | `G3 = 0 ET absences = 0` | **dossier non renseigné** : 38 en mathématiques, 15 en portugais. Dans 100 % des cas, une note nulle s'accompagne de 0 absence, ce qui en fait une donnée manquante codée 0 |
+| `__nograde` | `G3 = 0 ET absences = 0` | **dossier non renseigné** : 38 en mathématiques, 15 en portugais. Dans 100 % des cas, une note nulle s'accompagne de 0 absence : c'est une donnée manquante codée 0 |
 | `__delta` | `G3 − G1`, vide pour un non-évalué | évolution sur l'année |
-| `__trend` | `down` si Δ ≤ −2, `up` si Δ ≥ +2, sinon `flat` ; aucune pour un non-évalué | filtre de tendance (slope graph) |
+| `__trend` | `down` si Δ ≤ −2, `up` si Δ ≥ +2, sinon `flat` ; aucune pour un non-évalué | filtre « en baisse » (question 4) |
 
-Attributs dérivés **affichés** (justification et tâches servies : `docs/taches.md`, §2). Ils s'ajoutent aux 33 colonnes, qui ne sont jamais modifiées ; l'export CSV ne contient que les colonnes d'origine.
+Attributs dérivés **affichés** (justification et tâches : `docs/taches.md`, §2). Ils s'ajoutent aux 33 colonnes, qui ne sont jamais modifiées ; l'export CSV ne contient que les colonnes d'origine.
 
 | Attribut | Définition | Type | Utilisé par |
 |---|---|---|---|
-| `pedu` | max(Medu, Fedu), 0 fusionné avec 1 : ≤ primaire / collège / lycée / sup. | ordinal (4) | axe, facette, profil, table |
-| `alc` | arrondi de (5·Dalc + 2·Walc) / 7, niveaux 3 à 5 fusionnés : faible / modéré / élevé | ordinal (3) | axe, facette, profil, table |
-| `absC` | absences ; vide pour un non-évalué | quantitatif | axe (repère « n. r. ») |
-| `absCat` | 0 / 1–4 / 5–10 / > 10 créneaux ; 9 = « n. r. » pour un non-évalué | ordinal (4 + n. r.) | facette |
-| `prog` | G3 − G1 ; vide pour un non-évalué ; domaine fixe −12…+12 | quantitatif | axe, fiche, table |
-| `g3band` | < 10 / 10–13 / ≥ 14 ; vide pour un non-évalué | ordinal (3) | couleur des lignes, fiche |
+| `reussite` | G3 ≥ 10 (oui / non) ; vide pour un non-évalué | nominal | couleur de toutes les vues, tuiles |
+| `risque` | nombre de facteurs parmi `meta.RISK_FACTORS` : au moins 1 échec passé, plus de 10 absences, trajet ≥ 30 min, ne vise pas le supérieur ; vide pour un non-évalué. Pour comparer des groupes, `meta.risque.bins` réunit 2, 3 et 4 en « 2 facteurs ou plus » | ordinal (0–4) | grille, histogrammes, fiche, table |
+| `pedu` | max(Medu, Fedu), 0 réuni avec 1 | ordinal (4) | classement, histogrammes, fiche |
+| `alc` | arrondi de (5·Dalc + 2·Walc) / 7, niveaux 3 à 5 réunis | ordinal (3) | classement, histogrammes, simulateur, fiche |
+| `absCat` | 0 / 1–4 / 5–10 / > 10 créneaux ; 9 = « n. r. » pour un non-évalué | ordinal (4 + n. r.) | classement, histogrammes |
+| `prog` | G3 − G1 ; vide pour un non-évalué | quantitatif | question 4, fiche, table |
 
 Un fichier importé qui contient les colonnes sources reçoit les mêmes dérivés (`derivedKeysFor`).
 
@@ -64,90 +64,93 @@ Un fichier importé qui contient les colonnes sources reçoit les mêmes dériv�
 Une seule chaîne de filtres est calculée **une fois par rendu** :
 
 ```
-base ─(non évalués exclus par défaut, établissement, sexe)→ scoped
-     ─(groupe cliqué dans un boxplot, tendance du slope graph)→ noBrush   ← matrice
-     ─(brushes des coordonnées parallèles, en unités de données)→ selection ← tuiles, boxplots, slope, fiche, table
+base ─(non évalués exclus par défaut, établissement, sexe)→ scoped           ← classement des facteurs, fond de la grille, simulateur
+     ─(critères de risque de la grille, groupe cliqué)→ exceptFlow             ← diagramme alluvial (les autres flux en fond)
+     ─(tendance « en baisse », ruban cliqué)→ selection                         ← tuiles, histogrammes, grille (premier plan), table, fiche
 ```
 
-Deux variantes servent au *cross-filtering* :
-- `exceptGroup` alimente le panneau de boxplot qui porte le filtre de groupe. Les autres groupes restent visibles, estompés.
-- `exceptTrend` alimente le slope graph. Les tendances masquées restent en fond gris.
+`exceptGroup` (la sélection sans le filtre de groupe) alimente les histogrammes : quand on clique un groupe, les autres restent visibles, estompés.
 
-Exclure les non-évalués change les conclusions. Sur 395 élèves de mathématiques, r(absences, G3) = **+0,034** avec eux et **−0,213** sans eux (vérifié par `tools/test-stats.mjs`). L'exclusion est donc activée par défaut et **affichée** ; la case permet de les réinclure.
+Le **classement des facteurs** n'utilise que `scoped` : filtrer sur un facteur (par exemple « au moins 1 échec ») viderait sa propre comparaison. Le **simulateur** n'utilise que `scoped` lui aussi : un parent ou un élève compare un profil à tous les élèves, pas à la sélection de l'équipe.
+
+Exclure les non-évalués change les conclusions : sur 395 élèves de mathématiques, r(absences, G3) = **+0,034** avec eux et **−0,213** sans eux (vérifié par `tools/test-stats.mjs`). L'exclusion est donc activée par défaut et **affichée** ; la case permet de les réinclure. Réinclus, ils apparaissent en gris ✕ dans les histogrammes et la grille, et en bande « non évalué » à droite du diagramme alluvial.
 
 ---
 
-## 1. Coordonnées parallèles avec brushing (Quentin) · `views/parallelCoords.js`
+## 1. Histogrammes de la note finale et simulateur de profil (Alexandre) · `views/histograms.js`
+
+Question 1 : « Comment se répartissent les notes ? » — tâches U2-1, U1-2, U2-4, U2-2, U2-5.
 
 | Étape | Contenu |
 |---|---|
-| **Données utilisées** | `scoped` (contexte) et `selection` (premier plan) |
-| **Attributs éligibles** | liste `meta.AXIS_KEYS` (16 attributs) : binaires (établissement, sexe, domicile, soutien, vise le supérieur), ordinaux (pedu, trajet, temps d'étude, temps libre, sorties, alc, santé), quantitatifs (échecs, absC, prog, G3). Par défaut : pedu · temps d'étude · échecs · sorties · alc · absC · G3. G1 et G2 sont dans le slope graph. Les nominaux à plus de 3 modalités sont exclus, car leur ordre sur un axe serait arbitraire. Fichier importé non standard : quantitatifs, ordinaux et nominaux à ≤ 3 modalités |
-| **Transformation** | une échelle par axe. Quantitatif : `scaleLinear`, sur le domaine fixe 0–20 pour G1, G2 et G3, sinon l'étendue arrondie. Ordinal ou nominal : `scalePoint` sur le domaine ordonné de `meta.d`, graduations = libellés de modalité (« lycée », « 2–5 h ») et non les codes |
-| **Marques** | une polyligne par élève, dessinée sur **canvas** : 649 lignes sans saturer le DOM. Axes, graduations et brushes en SVG, par-dessus |
-| **Canaux** | *position verticale* sur chaque axe = valeur de l'attribut<br>*teinte* = au choix : résultat (bleu ▲ réussite / orange ▼ échec / gris ✕ non évalué), bande de G3 (▲ solide / ● juste / ▼ échec), sexe ou établissement<br>*repère « n. r. »* sous l'axe = valeur manquante (non-évalué sur absC ou prog), jamais confondue avec 0<br>*opacité* = appartenance à la sélection. Le contexte est estompé, pas supprimé. L'opacité diminue quand l'effectif augmente (0,6 → 0,12)<br>*épaisseur + liseré + points* = élève sélectionné<br>*ligne pointillée « seuil 10 »* sur les axes de notes |
-| **Vue** | axes équidistants, largeur minimale de 118 px par axe (défilement horizontal plutôt qu'écrasement), titres tronqués, titre complet au survol |
-| **Interactions** | *brush* vertical sur chaque axe, converti en intervalle de valeurs (`pixelsToBrush`) et combiné en ET logique, **filtre global**<br>*glisser un titre* : réordonner les axes, car seules les paires adjacentes sont lisibles<br>*puces* : choisir les axes (les dérivés sont marqués « dér. », définition au survol)<br>*survol* : ligne la plus proche, interpolée entre les deux axes encadrants, avec info-bulle<br>*clic* : fiche élève<br>*sélecteur* : attribut de couleur<br>les axes ajoutés depuis la matrice sont surlignés |
+| **Données utilisées** | `selection` ; `exceptGroup` quand un groupe est cliqué ; `scoped` pour le simulateur |
+| **Groupes** | « Comparer selon » : aucun (un seul histogramme), sexe, établissement, domicile, niveau de risque (0 / 1 / 2 et plus), échecs passés, absences, temps d'étude, trajet, sorties, alcool, éducation parentale, vise le supérieur (`meta.HIST_GROUPS`) |
+| **Transformation** | pour chaque groupe : effectif par note entière de 0 à 20, rapporté à l'effectif du groupe ; médiane ; taux de réussite (élèves évalués) |
+| **Marques** | une barre par note, à extrémité arrondie ; un triangle sous l'axe pour la médiane ; un repère « élève n° … » au-dessus de la note de l'élève ouvert dans la fiche |
+| **Canaux** | *position horizontale* = note, toujours 0–20 ; *ligne pointillée* = seuil 10<br>*hauteur* = part du groupe, sur une échelle commune à tous les panneaux (les groupes de tailles différentes se comparent)<br>*teinte* = résultat : orange ▼ échec, bleu ▲ réussite, gris ✕ non évalué<br>le **% de réussite est écrit en gros** dans chaque panneau : on ne demande pas d'estimer une aire<br>*contour pointillé + « ⚠ moins de 10 »* = petit groupe |
+| **Interactions** | choix du groupe ; *clic* ou *Entrée* sur un panneau : filtre toutes les vues sur ce groupe ; *survol* d'une barre : effectif exact et part du groupe |
+| **Simulateur** | critères « peu importe » ou une valeur pour temps d'étude, sorties, alcool, échecs passés (`meta.SIM_KEYS`) et note facultative. Affiche n, moyenne, médiane, % ≥ 10 des élèves qui ont ce profil, leur histogramme sur la silhouette de tous les élèves, le marqueur « ma note » et la part des élèves du profil sous cette note. Aucun élève n'est nommé. Rappel permanent : « association observée, pas une cause » |
 
-## 2. Matrice de corrélation de Spearman (Jim) · `views/correlationMatrix.js`
+## 2. Classement des facteurs (Jim) · `views/factorRanking.js`
 
-| Étape | Contenu |
-|---|---|
-| **Données utilisées** | `noBrush`, c'est-à-dire les filtres de la barre, du groupe et de la tendance, **mais pas les brushes**. Brosser un intervalle restreint l'étendue d'une variable et atténue mécaniquement ρ (biais de restriction d'étendue) |
-| **Attributs** | 12 attributs ordonnables **bruts** (`meta.MATRIX_KEYS`) : Medu, Fedu, trajet, temps d'étude, échecs, temps libre, sorties, Dalc, Walc, santé, absences, G3. Les paires redondantes restent séparées pour que leur redondance se lise (U4.1) ; G1 et G2 (ρ ≈ 0,9 avec G3), age et famrel sont retirés. Les nominaux sont exclus : une corrélation de rang n'a pas de sens sans ordre. `absences` est brute : réinclure les non-évalués change donc la cellule absences × G3 (U3.5) |
-| **Transformation** | `stats.ranks` (rangs moyens pour les ex æquo, très nombreux sur des échelles 1–5), puis Pearson sur les rangs, soit ρ de Spearman, pour les 66 paires (`spearmanMatrix`). Les rangs de chaque variable sont calculés une seule fois. Une variance nulle donne « non calculable ». Le résultat est mis en cache tant que le sous-ensemble ne change pas |
-| **Ordre** | thématique (famille → école → mode de vie → résultats), ou trié par \|ρ\| avec G3 (tâche U1.3 : hiérarchiser les facteurs associés) |
-| **Marques** | une cellule carrée par paire, dans le **triangle inférieur**. La diagonale (ρ = 1) et le triangle supérieur (symétrique) sont omis |
-| **Canaux** | *teinte divergente* : rouge (ρ < 0) ← gris neutre (0) → bleu (ρ > 0), interpolée en Lab. Le milieu est un gris, jamais une teinte<br>*texte signé* dans la cellule, en gras si \|ρ\| ≥ 0,3 : la couleur n'est jamais le seul canal<br>*contour aqua* = paire d'axes adjacents dans les coordonnées parallèles<br>*contour épais* = paire choisie |
-| **Vue** | libellés de lignes à gauche, de colonnes en bas (inclinés), légende en rampe −1…+1, effectif n affiché en tête (⚠ si n < 10) |
-| **Interactions** | *survol* ou *focus* : ρ, force qualitative (négligeable / faible / modérée / forte), n, rappel « association, pas causalité »<br>*clic* ou *Entrée* : ajoute les deux attributs comme **axes adjacents** des coordonnées parallèles, via leur dérivé (Medu → pedu, Dalc → alc, absences → absC) ; une paire fusionnée (Dalc × Walc) surligne l'axe dérivé<br>*flèches* : navigation clavier dans la grille (tabindex itinérant)<br>*sélecteur d'ordre* |
-
-## 3. Small multiples de boxplots et strip plots de G3 (Alexandre) · `views/boxplots.js`
+Question 2 : « Qu'est-ce qui est associé à l'échec ? » — tâches U1-1, U2-3.
 
 | Étape | Contenu |
 |---|---|
-| **Données utilisées** | `selection`. Le panneau qui porte le filtre de groupe utilise `exceptGroup` |
-| **Attributs de facette** | liste `meta.PANEL_KEYS` (17 attributs, dont pedu, alc et absCat ; `paid` exclu car non comparable entre matières). Par défaut : échecs, vise le supérieur, éducation parentale, temps d'étude. Fichier importé non standard : ≤ 8 valeurs distinctes, notes exclues |
-| **Transformation** | pour chaque facette et chaque modalité, `stats.boxStats` : Q1, médiane, Q3 (quantile de type 7), moustaches à 1,5 × IQR, moyenne, IC 95 % (1,96·s/√n), taux de réussite, part de la sélection. Par panneau : **écart des médianes** = plus haute − plus basse médiane des groupes d'au moins 10 élèves |
-| **Marques** | rectangle Q1–Q3, trait de médiane, moustaches avec butées, un point par élève |
-| **Canaux** | *position verticale* = G3 sur une **échelle commune 0–20** dans tous les panneaux, avec la ligne pointillée du seuil 10<br>*position horizontale* = modalité, dans l'ordre de `meta.d`<br>*teinte des points* = résultat (bleu / orange / gris)<br>*décalage horizontal* déterministe (`hash01`) : la note reste exacte et un élève ne « saute » pas d'un rendu à l'autre<br>*hachures + contour pointillé + « n=… ⚠ »* = groupe de moins de 10 élèves<br>*opacité réduite* = groupes hors du filtre de groupe<br>*point cerclé* = élève sélectionné |
-| **Vue** | grille responsive de panneaux (small multiples), n total en tête de panneau, n par modalité sous l'axe |
-| **Interactions** | *survol* d'une colonne : statistiques du groupe ; *survol* d'un point : l'élève<br>*clic* ou *Entrée* sur une colonne : **filtre global sur ce groupe**, rappelé dans la barre de filtres<br>*clic sur un point* : fiche élève<br>ajout et retrait de panneaux, affichage ou masquage des points<br>*ordre* : ordre d'ajout ou écart des médianes décroissant (hiérarchiser les facteurs, U1.3)<br>ⓘ dans le titre : définition d'un dérivé ou mise en garde (soutien scolaire : association inversée) |
+| **Données utilisées** | `scoped`, élèves évalués seulement |
+| **Facteurs** | échecs passés, absences (classes), temps d'étude, trajet, sorties, alcool, éducation parentale (`meta.FACTOR_KEYS`) |
+| **Transformation** | pour chaque modalité : taux de réussite (G3 ≥ 10), moyenne, n. **Écart** = meilleur − moins bon taux parmi les modalités d'au moins 10 élèves. **Sens** = signe du ρ de Spearman entre le facteur et G3 (rangs moyens, `stats.spearman`) ; force en mots : « un peu » (|ρ| < 0,25), « nettement » (< 0,4), « fortement ». Tri par écart décroissant |
+| **Marques** | une ligne par facteur ; un point par modalité ; un trait entre le moins bon et le meilleur taux ; un trait vertical pour la moyenne |
+| **Canaux** | *position horizontale* = taux de réussite ; *teinte* = groupe qui réussit le moins (orange ▼) / le plus (bleu ▲) / autres (gris) ; *point creux* = moins de 10 élèves (exclu de l'écart)<br>texte : rang, phrase de sens (« plus de sorties : réussite un peu plus basse ▼ »), écart en points ; étiquettes des deux extrêmes seulement |
+| **Interactions** | *survol* d'un point : taux, moyenne, n ; *clic* ou *Entrée* sur un facteur : la question 1 se regroupe selon ce facteur ; ↑ ↓ entre les facteurs |
 
-## 4. Slope graph G1 → G2 → G3 et fiche élève (Gabriel) · `views/slopeGraph.js`, `views/detailPanel.js`
+## 3. Grille d'élèves (Quentin) · `views/unitChart.js`
 
-### 4a. Slope graph (vue d'ensemble)
+Question 3 : « Quels élèves cumulent les risques ? » — tâche U1-3, point d'entrée vers la fiche (U1-4).
+
 | Étape | Contenu |
 |---|---|
-| **Données utilisées** | `exceptTrend` : les tendances non retenues sont dessinées en fond gris |
-| **Transformation** | **agrégation** des trajectoires identiques : un faisceau par triplet (G1, G2, G3), avec son effectif. Par exemple 357 élèves de maths donnent 173 trajectoires distinctes. S'y ajoutent la trajectoire médiane de la sélection et la répartition baisse / stable / hausse |
-| **Marques** | une polyligne à 3 points par faisceau, plus la ligne médiane en tirets |
-| **Canaux** | *position verticale* = note, même échelle 0–20 sur les trois axes, seuil 10<br>*pente* = évolution<br>*épaisseur* = effectif du faisceau, en échelle racine carrée de 1 à 9 px<br>*teinte* = résultat final (même code que partout)<br>*opacité* = appartenance au filtre de tendance<br>*tirets* = non évalué<br>*trait épais cerné + valeurs écrites* = élève sélectionné |
-| **Interactions** | boutons **Toutes / ▼ En baisse / ● Stables / ▲ En hausse**, avec les effectifs, **filtre global** (tâche U2.1)<br>*survol* d'un faisceau : trajectoire, n, numéros d'élèves<br>*clic* : fiche élève ; les clics successifs parcourent les élèves du faisceau |
+| **Données utilisées** | `scoped` (tous les carrés) et `selection` (carrés pleins) |
+| **Transformation** | niveau de risque de chaque élève (`risque`) ; regroupement par niveau de risque, établissement, sexe ou aucun ; dans chaque groupe, élèves sélectionnés d'abord, puis en échec, puis en réussite, pour que les proportions se lisent comme des blocs |
+| **Marques** | un carré de 11 px par élève ; un titre par groupe (effectif, % en échec, nombre dans la sélection) |
+| **Canaux** | *teinte* = résultat (orange ▼ / bleu ▲ / gris ✕) ; *opacité* = appartenance à la sélection (les autres restent visibles, estompés) ; *contour* = élève ouvert dans la fiche |
+| **Interactions** | facteurs à cocher (ET logique) ; « Nombre de facteurs » : peu importe, ≥ 1, ≥ 2, ≥ 3 ; regroupement ; *survol* : élève, note, facteurs ; *clic* : fiche. Les critères filtrent toutes les vues sauf le classement des facteurs, et sont rappelés en puce dans la barre de filtres |
+
+## 4. Diagramme alluvial et fiche élève (Gabriel) · `views/alluvial.js`, `views/detailPanel.js`
+
+Question 4 : « Comment évoluent les notes pendant l'année ? » — tâches U1-5, U1-4.
+
+### 4a. Diagramme alluvial (vue d'ensemble)
+| Étape | Contenu |
+|---|---|
+| **Données utilisées** | `exceptFlow` ; la part de la `selection` est surlignée quand la tendance ou un ruban est actif |
+| **Transformation** | chaque note est rangée dans une bande (`meta.BANDS`) : solide ≥ 14, juste 10–13, échec < 10, non évalué ; effectif de chaque passage de bande entre P1 et P2, puis entre P2 et la note finale |
+| **Marques** | un rectangle par bande et par période, un ruban par passage |
+| **Canaux** | *hauteur* du rectangle et *épaisseur* du ruban = nombre d'élèves ; *teinte* = bande de départ (bleu ▲ / bleu clair ● / orange ▼ / gris ✕) ; rubans de la sélection foncés, les autres en fond |
+| **Interactions** | bouton « ▼ En baisse d'au moins 2 points » (avec son effectif) ; *clic* ou *Entrée* sur un ruban : filtre toutes les vues sur ce passage ; *survol* : effectif. Quand la sélection compte au plus 60 élèves, leurs trajectoires sont listées (mini-courbe P1 → P2 → finale, notes, écart), du plus fort recul au plus faible ; un clic ouvre la fiche |
 
 ### 4b. Fiche élève (niveau détail)
 | Étape | Contenu |
 |---|---|
-| **Données utilisées** | l'élève sélectionné (`selectedId`), comparé à la `selection` |
-| **Transformation** | quartiles de G1, G2 et G3 de la sélection (évalués seulement), rang centile de G3, nombre d'élèves de même trajectoire, Δ = G3 − G1 ; **profil** = mêmes valeurs d'échecs, temps d'étude, pedu, alc, vise le supérieur et même bande de G3 (`meta.PROFILE_KEYS`), compté dans le périmètre des filtres de la barre |
-| **Marques** | bande Q1–Q3, ligne médiane en tirets, ligne et points de l'élève, liste des 33 attributs groupés par thème et libellés en clair |
-| **Canaux** | *position verticale* = note 0–20, seuil 10 ; *teinte* = résultat de l'élève ; icônes ▲ ▼ ✕ ; bandeau d'avertissement si l'élève est non évalué ou hors sélection |
-| **Interactions** | clic sur un élève dans **n'importe quelle vue** : ouvre la fiche ; ← / → : élève précédent ou suivant de la sélection ; ✕ : fermer<br>**Isoler ces élèves dans toutes les vues** : pose un brush par attribut du profil dans les coordonnées parallèles (U2.5)<br>*Autres attributs du fichier* : les 15 attributs non analysés, repliés (les 33 restent accessibles, U2.2) |
+| **Données utilisées** | l'élève sélectionné ; groupe de référence = élèves évalués du **même établissement dans la même matière** |
+| **Transformation** | moyenne du groupe (ou part de « oui ») pour 13 attributs (`meta.KEY_ATTRS`) ; quartiles et médiane de G1, G2, G3 du groupe |
+| **Marques** | tableau élève / son école ; mini-trajectoire sur la bande Q1–Q3 de l'école ; autres attributs repliés |
+| **Canaux** | ▲ / ▼ = valeur plus ou moins favorable que la moyenne de l'école ; *position verticale* = note 0–20, seuil 10 |
+| **Interactions** | ouverte par un clic dans la grille, la liste des trajectoires ou la table ; ← / → : élève précédent ou suivant de la sélection ; ✕ : fermer |
 
 ---
 
 ## 5. Vues de support
-- **Tuiles** (`statTiles.js`) : n affiché, **médiane** de G3 (moyenne en sous-texte), taux de réussite (k / n), calculés sur la sélection et limités aux élèves évalués.
-- **Table** (`table.js`), repliée par défaut : 11 colonnes (`meta.TABLE_COLS`), valeurs exactes, tri par colonne, navigation au clavier (Tab, ↑ ↓, Entrée), export CSV de la sélection (33 colonnes d'origine). Liste nominative de U2.4.
-- **Lien permanent** (`permalink.js`) : l'état (matière, filtres, brushes, axes, couleur, panneaux, ordre, élève) est écrit dans le fragment de l'URL et relu au chargement ; bouton « Copier le lien de cette vue ». Couvre U4.5 avec l'export CSV.
+- **Tuiles** (`statTiles.js`) : part des élèves qui ont au moins 10/20 (en premier, U2-1), élèves affichés, note habituelle (médiane) avec la moyenne en sous-texte.
+- **Table** (`table.js`), repliée par défaut : 11 colonnes (`meta.TABLE_COLS`), tri, clavier (Tab, ↑ ↓, Entrée), export CSV de la sélection (33 colonnes d'origine). Liste nominative pour U1.
+- **Lien permanent** (`permalink.js`) : matière, filtres, critères, groupe, profil simulé, tendance, ruban et élève sont écrits dans le fragment de l'URL et relus au chargement ; bouton « Copier le lien de cette vue ».
 
 ## 6. Couleurs
 | Rôle | Clair | Sombre | Règle |
 |---|---|---|---|
-| Réussite ▲ | `#2a78d6` | `#3987e5` | teinte catégorielle 1, toujours avec une icône |
-| Échec ▼ | `#eb6834` | `#d95926` | teinte catégorielle 2 (bleu/orange lisible par les daltoniens, contrairement à rouge/vert) |
-| Bande « juste » ● (10–13) | `#93b8e3` | `#4f6f96` | bleu atténué, entre ▲ et ▼ (option « Bande de G3 », toujours avec icône) |
+| Réussite ▲ / bande solide | `#2a78d6` | `#3987e5` | teinte catégorielle 1, toujours avec une icône |
+| Bande juste ● | `#93b8e3` | `#4f6f96` | bleu atténué, entre ▲ et ▼ |
+| Échec ▼ | `#eb6834` | `#d95926` | teinte catégorielle 2 ; bleu / orange lisible par les daltoniens (validé : ΔE 24,7 en protanopie) |
 | Non évalué ✕ | `#7a7872` | `#95938c` | gris neutre |
-| ρ < 0 / 0 / ρ > 0 | `#c43d3d` / `#f0efec` / `#1c5cab` | `#e66767` / `#383835` / `#5598e7` | divergente à milieu gris, interpolation Lab |
 
-Toutes les couleurs sont des variables CSS relues à chaque rendu, si bien que canvas et SVG suivent le thème (auto / clair / sombre).
+Toutes les couleurs sont des variables CSS relues à chaque rendu : les vues suivent le thème (auto / clair / sombre). Le texte n'est jamais coloré par la donnée : les valeurs sont en encre de texte, la couleur est portée par la marque voisine.

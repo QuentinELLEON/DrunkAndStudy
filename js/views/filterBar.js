@@ -3,7 +3,7 @@
    ---------------------------------------------------------------------
    Changer de jeu de données passe par le bus ("dataset", "import") car
    c'est main.js qui orchestre le chargement asynchrone.
-   Les filtres posés par les vues (groupe, tendance, brushes) sont
+   Les filtres posés par les vues (critères de risque, groupe, tendance, flux) sont
    rappelés ici sous forme de puces supprimables : l'utilisateur voit
    toujours l'état complet de la sélection.
    « Copier le lien » copie l'URL qui encode tout l'état (tâche U4.5).
@@ -11,10 +11,13 @@
 
 import { state, setState, emit, resetFilters } from "../state.js";
 import { DATASETS } from "../data.js";
+import { RISK_FACTORS, BANDS } from "../meta.js";
 import { writeHash } from "../permalink.js";
 import { titleOf, shortOf, labelOf, esc } from "../utils.js";
 
-const TREND_LABEL = { down: "▼ en baisse (G3 − G1 ≤ −2)", flat: "● stable (|G3 − G1| ≤ 1)", up: "▲ en hausse (G3 − G1 ≥ +2)" };
+const TREND_LABEL = { down: "▼ en baisse d'au moins 2 points (G3 − G1 ≤ −2)" };
+const STEP = ["P1", "P2", "finale"];
+const BAND = Object.fromEntries(BANDS.map(b => [b.k, b]));
 
 let root, els = {};
 
@@ -45,7 +48,7 @@ export function init(container) {
     </label>
     <div class="active-filters" id="f-active" aria-live="polite"></div>
     <div class="factions">
-      <button class="btn" type="button" id="f-link" title="L'adresse de la page contient matière, filtres, brushes, axes, panneaux et élève : la copier permet de retrouver exactement cette vue.">🔗 Copier le lien de cette vue</button>
+      <button class="btn" type="button" id="f-link" title="L'adresse de la page contient matière, filtres, critères, groupes, profil simulé et élève : la copier permet de retrouver exactement cette vue.">🔗 Copier le lien de cette vue</button>
       <button class="btn" type="button" id="f-reset">Tout réinitialiser</button>
     </div>`;
 
@@ -88,7 +91,8 @@ export function init(container) {
     const what = b.dataset.clear;
     if (what === "group") setState({ groupFilter: null }, "filters");
     else if (what === "trend") setState({ trend: "all" }, "filters");
-    else if (what === "brushes") setState({ brushes: {} }, "filters");
+    else if (what === "flow") setState({ flow: null }, "filters");
+    else if (what === "criteria") setState({ criteria: [], riskMin: 0 }, "filters");
   });
 }
 
@@ -116,16 +120,24 @@ export function update(state, derived) {
   const chips = [];
   if (state.groupFilter && ds && has(state.groupFilter.key)) {
     const { key, value } = state.groupFilter;
-    chips.push(`<span class="fchip">Groupe : ${esc(titleOf(ds.meta, key))} = ${esc(shortOf(ds.meta, key, value))}
+    const B = ds.meta[key].bins, shown = B ? B.s[B.d.indexOf(value)] : shortOf(ds.meta, key, value);
+    chips.push(`<span class="fchip">Groupe : ${esc(titleOf(ds.meta, key))} = ${esc(shown)}
       <button type="button" data-clear="group" aria-label="Retirer le filtre de groupe ${esc(labelOf(ds.meta, key, value))}">✕</button></span>`);
+  }
+  if (derived.nCrit) {
+    const parts = state.criteria.map(id => (RISK_FACTORS.find(f => f.id === id) || {}).label).filter(Boolean);
+    if (state.riskMin) parts.unshift(`au moins ${state.riskMin} facteur${state.riskMin > 1 ? "s" : ""} de risque`);
+    chips.push(`<span class="fchip">Critères : ${esc(parts.join(" + "))}
+      <button type="button" data-clear="criteria" aria-label="Retirer les critères de risque">✕</button></span>`);
   }
   if (state.trend !== "all") {
     chips.push(`<span class="fchip">Tendance : ${TREND_LABEL[state.trend]}
       <button type="button" data-clear="trend" aria-label="Retirer le filtre de tendance">✕</button></span>`);
   }
-  if (derived.brushCount) {
-    chips.push(`<span class="fchip">${derived.brushCount} brush${derived.brushCount > 1 ? "es" : ""} actif${derived.brushCount > 1 ? "s" : ""}
-      <button type="button" data-clear="brushes" aria-label="Effacer tous les brushes">✕</button></span>`);
+  if (state.flow && BAND[state.flow.a] && BAND[state.flow.b]) {
+    const f = state.flow;
+    chips.push(`<span class="fchip">Passage ${STEP[f.s]} → ${STEP[f.s + 1]} : ${BAND[f.a].icon} ${BAND[f.a].label} → ${BAND[f.b].icon} ${BAND[f.b].label}
+      <button type="button" data-clear="flow" aria-label="Retirer le filtre de passage">✕</button></span>`);
   }
   els.active.innerHTML = chips.join("");
 }

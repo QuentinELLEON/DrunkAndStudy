@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Student Performance Explorer</title>
-  <meta name="description" content="Exploration visuelle liée du jeu Student Performance (UCI / Kaggle) : coordonnées parallèles, matrice de Spearman, boxplots, slope graph et fiche élève.">
+  <meta name="description" content="Exploration visuelle du jeu Student Performance (UCI / Kaggle) en quatre questions : répartition des notes, facteurs associés à l'échec, élèves qui cumulent les risques, évolution des notes.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
@@ -19,7 +19,8 @@
   <header class="top">
     <div>
       <h1>Student Performance Explorer</h1>
-      <p class="sub">Une matière à la fois · note finale <code>G3</code> sur 0–20, seuil à 10 · les vues montrent des <strong>associations</strong>, pas des causes.</p>
+      <p class="sub">Deux lycées portugais, 2005–2006 · une matière à la fois · note sur 20, réussite à partir de 10 ·
+        les vues montrent des <strong>associations</strong>, pas des causes.</p>
     </div>
     <button class="btn theme" id="theme-btn" type="button" aria-label="Changer de thème">◐ Thème : auto</button>
   </header>
@@ -41,69 +42,76 @@
 
   <section class="tiles" id="tiles" aria-label="Indicateurs"></section>
 
-  <!-- Technique 1 — Quentin -->
-  <section class="card" id="pc-card" aria-labelledby="pc-title">
-    <div class="card-head">
-      <div>
-        <h2 id="pc-title">Vue d'ensemble · Coordonnées parallèles <span class="who">Quentin</span></h2>
-        <p class="note">Brossez un ou plusieurs axes pour isoler une population (n affiché) ; clic sur une ligne = fiche élève.</p>
+  <div class="layout">
+    <main class="questions">
+      <!-- Q1 — Alexandre -->
+      <section class="card q" id="q1" aria-labelledby="q1-title">
+        <div class="qhead"><span class="qnum">1</span>
+          <h2 id="q1-title">Comment se répartissent les notes ?</h2>
+          <span class="who">Alexandre · histogrammes</span></div>
         <details class="howto"><summary>Comment lire</summary>
-          <p class="note">Une ligne par élève, un axe par attribut. Glisser verticalement sur un axe : brush (les brushes se combinent en ET) ;
-            clic sur l'axe sans glisser : effacer son brush ; glisser un titre latéralement : réordonner (seules les paires d'axes voisins se comparent).
-            « n. r. » sous un axe : élève non évalué, sans valeur. Les élèves hors sélection restent en gris pour garder le contexte.</p>
+          <p class="note">Chaque barre compte les élèves qui ont cette note finale (de 0 à 20) ; sa hauteur est la part du groupe.
+            À gauche de la ligne pointillée (10/20), les élèves en échec ▼ ; à droite, ceux qui réussissent ▲. Le triangle sous l'axe marque la médiane,
+            la note « habituelle ». « Comparer selon » affiche un histogramme par groupe ; cliquer un histogramme filtre toutes les vues sur ce groupe.
+            Le simulateur montre les notes des élèves qui ont un profil choisi, sans nommer personne.</p>
         </details>
-      </div>
-    </div>
-    <div class="view" id="pc-view"></div>
-  </section>
+        <div class="view" id="hist-view"></div>
+      </section>
 
-  <div class="grid2">
-    <!-- Technique 2 — Jim -->
-    <section class="card" id="matrix-card" aria-labelledby="mx-title">
-      <h2 id="mx-title">Matrice de corrélation de Spearman <span class="who">Jim</span></h2>
-      <p class="note">Force et sens des associations monotones ; clic sur une cellule = les deux axes côte à côte dans les coordonnées parallèles.</p>
-      <details class="howto"><summary>Comment lire</summary>
-        <p class="note">ρ de Spearman entre 12 attributs ordonnables bruts (Dalc/Walc et Medu/Fedu restent séparés ici pour montrer leur redondance).
-          Calculée sur les filtres et le groupe, <em>sans</em> les brushes : un brush restreint l'étendue et atténue ρ. Trier « par |ρ| avec la note finale » classe les facteurs.</p>
-      </details>
-      <div class="view" id="matrix-view"></div>
-    </section>
+      <!-- Q2 — Jim -->
+      <section class="card q" id="q2" aria-labelledby="q2-title">
+        <div class="qhead"><span class="qnum">2</span>
+          <h2 id="q2-title">Qu'est-ce qui est associé à l'échec ?</h2>
+          <span class="who">Jim · classement des facteurs</span></div>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Une ligne par facteur, un point par niveau du facteur, placé selon la part d'élèves qui ont au moins 10/20.
+            Le point orange est le groupe qui réussit le moins, le bleu celui qui réussit le plus ; l'écart entre les deux, en points, classe les facteurs.
+            Un point creux regroupe moins de 10 élèves et ne compte pas dans l'écart. Cliquer un facteur affiche ses histogrammes dans la question 1.</p>
+        </details>
+        <div class="view" id="rank-view"></div>
+      </section>
 
-    <!-- Technique 3 — Alexandre -->
-    <section class="card" id="box-card" aria-labelledby="bx-title">
-      <h2 id="bx-title">Distribution de G3 par groupe · small multiples <span class="who">Alexandre</span></h2>
-      <p class="note">Clic sur une boîte = filtrer toutes les vues sur ce groupe ; clic sur un point = fiche élève.</p>
-      <details class="howto"><summary>Comment lire</summary>
-        <p class="note">Boîte = quartiles et médiane, moustaches à 1,5 × IQR, un point par élève, axe commun 0–20.
-          Hachures et « ⚠ » : moins de 10 élèves. « Écart des médianes » : différence entre la meilleure et la moins bonne médiane (groupes ≥ 10 élèves) ;
-          trier par cet écart hiérarchise les facteurs.</p>
-      </details>
-      <div class="view" id="box-view"></div>
-    </section>
-  </div>
+      <!-- Q3 — Quentin -->
+      <section class="card q" id="q3" aria-labelledby="q3-title">
+        <div class="qhead"><span class="qnum">3</span>
+          <h2 id="q3-title">Quels élèves cumulent les risques ?</h2>
+          <span class="who">Quentin · grille d'élèves</span></div>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Un carré par élève : orange s'il est en échec, bleu s'il réussit. Cochez des facteurs pour isoler les élèves qui les ont tous,
+            ou choisissez un nombre minimal de facteurs (« ≥ 2 »). Les élèves qui ne correspondent pas restent visibles, estompés.
+            Ces critères filtrent aussi les questions 1 et 4, la fiche et la table. Clic sur un carré : fiche de l'élève.</p>
+        </details>
+        <div class="view" id="unit-view"></div>
+      </section>
 
-  <div class="grid2">
-    <!-- Technique 4 — Gabriel -->
-    <section class="card" id="slope-card" aria-labelledby="sl-title">
-      <h2 id="sl-title">Trajectoires G1 → G2 → G3 · slope graph <span class="who">Gabriel</span></h2>
-      <p class="note">Le filtre de tendance (G3 − G1) s'applique à toutes les vues ; l'épaisseur d'un trait = nombre d'élèves sur cette trajectoire.</p>
-      <div class="view" id="slope-view"></div>
-    </section>
+      <!-- Q4 — Gabriel -->
+      <section class="card q" id="q4" aria-labelledby="q4-title">
+        <div class="qhead"><span class="qnum">4</span>
+          <h2 id="q4-title">Comment évoluent les notes pendant l'année ?</h2>
+          <span class="who">Gabriel · flux de notes</span></div>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Les élèves sont rangés en bandes à chaque période : solide (14 et plus), juste (10 à 13), échec (moins de 10).
+            Un ruban relie deux périodes ; son épaisseur est le nombre d'élèves qui passent d'une bande à l'autre. Cliquer un ruban, ou le bouton
+            « en baisse », isole ces élèves dans toutes les vues et liste leurs trajectoires.</p>
+        </details>
+        <div class="view" id="allu-view"></div>
+      </section>
 
-    <!-- Niveau détail -->
-    <section class="card" id="detail-card" aria-labelledby="dt-title">
-      <h2 id="dt-title">Détail · profil élève <span class="who">Gabriel</span></h2>
-      <p class="note">Clic sur un élève dans n'importe quelle vue · ← / → : élève précédent / suivant de la sélection.</p>
+      <section class="card" id="table-card" aria-labelledby="tb-title">
+        <details class="tablewrap">
+          <summary id="table-summary"><h2 id="tb-title">Table de la sélection · liste nominative et export CSV</h2></summary>
+          <div class="view" id="table-view"></div>
+        </details>
+      </section>
+    </main>
+
+    <!-- Niveau détail : visible à côté des quatre questions -->
+    <aside class="card detail" id="detail-card" aria-labelledby="dt-title">
+      <h2 id="dt-title">Fiche élève <span class="who">Gabriel</span></h2>
+      <p class="note">Clic sur un élève dans la grille, la liste des trajectoires ou la table · ← / → : élève précédent / suivant.</p>
       <div class="view" id="detail-view"></div>
-    </section>
+    </aside>
   </div>
-
-  <section class="card" id="table-card" aria-labelledby="tb-title">
-    <details class="tablewrap">
-      <summary id="table-summary"><h2 id="tb-title">Table de la sélection · liste nominative et export CSV</h2></summary>
-      <div class="view" id="table-view"></div>
-    </details>
-  </section>
 
   <footer class="foot">
     Données : P. Cortez &amp; A. Silva (2008), <em>Using data mining to predict secondary school student performance</em> —

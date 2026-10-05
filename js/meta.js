@@ -51,12 +51,13 @@ export const META = {
                d: ["course", "home", "reputation", "other"], s: ["cursus", "proximité", "réputation", "autre"],
                v: { course: "offre de cours", home: "proximité du domicile", reputation: "réputation", other: "autre" } },
   traveltime:{ l: "Temps de trajet", t: "ord", g: "Contexte scolaire", d: [1, 2, 3, 4],
-               s: ["< 15 min", "15–30", "30–60", "> 1 h"],
+               s: ["< 15 min", "15–30 min", "30–60 min", "> 1 h"],
                v: { 1: "< 15 min", 2: "15–30 min", 3: "30–60 min", 4: "> 1 heure" } },
   studytime: { l: "Temps d'étude hebdo.", t: "ord", g: "Contexte scolaire", d: [1, 2, 3, 4],
                s: ["< 2 h", "2–5 h", "5–10 h", "> 10 h"],
                v: { 1: "< 2 heures", 2: "2–5 heures", 3: "5–10 heures", 4: "> 10 heures" } },
-  failures:  { l: "Échecs passés", t: "quant", g: "Contexte scolaire", u: "classes", fixed: [0, 3] },
+  failures:  { l: "Échecs passés", t: "quant", g: "Contexte scolaire", u: "classes", fixed: [0, 3],
+               d: [0, 1, 2, 3], s: ["aucun", "1 échec", "2 échecs", "3 échecs"] },
   schoolsup: { l: "Soutien scolaire", t: "nom", g: "Contexte scolaire", ...YESNO },
   famsup:    { l: "Soutien familial", t: "nom", g: "Contexte scolaire", ...YESNO },
   paid:      { l: "Cours payants", t: "nom", g: "Contexte scolaire", ...YESNO },
@@ -66,7 +67,8 @@ export const META = {
   internet:  { l: "Internet à la maison", t: "nom", g: "Mode de vie", ...YESNO },
   romantic:  { l: "En couple", t: "nom", g: "Mode de vie", ...YESNO },
   freetime:  { l: "Temps libre", t: "ord", g: "Mode de vie", d: [1, 2, 3, 4, 5], s: ["1", "2", "3", "4", "5"], v: L15 },
-  goout:     { l: "Sorties entre amis", t: "ord", g: "Mode de vie", d: [1, 2, 3, 4, 5], s: ["1", "2", "3", "4", "5"], v: L15 },
+  goout:     { l: "Sorties entre amis", t: "ord", g: "Mode de vie", d: [1, 2, 3, 4, 5],
+               s: ["très rares", "rares", "moyennes", "fréquentes", "très fréq."], v: L15 },
   Dalc:      { l: "Alcool — semaine", t: "ord", g: "Mode de vie", d: [1, 2, 3, 4, 5], s: ["1", "2", "3", "4", "5"], v: L15 },
   Walc:      { l: "Alcool — week-end", t: "ord", g: "Mode de vie", d: [1, 2, 3, 4, 5], s: ["1", "2", "3", "4", "5"], v: L15 },
   health:    { l: "Santé", t: "ord", g: "Mode de vie", d: [1, 2, 3, 4, 5], s: ["1", "2", "3", "4", "5"],
@@ -84,84 +86,89 @@ export const EXPECTED_COLUMNS = Object.keys(META);
    Attributs DÉRIVÉS (étape 2 de docs/taches.md, calculés dans data.js).
    Ils ne remplacent jamais les colonnes d'origine : la fiche et l'export
    CSV gardent les 33 valeurs brutes.
-   def : définition affichée au survol (titres d'axes, puces, panneaux).
+   def : définition affichée au survol.
    --------------------------------------------------------------------- */
 Object.assign(META, {
-  pedu:   { l: "Éducation parentale (max.)", t: "ord", g: "Famille", derived: true,
-            d: [1, 2, 3, 4], s: ["≤ primaire", "collège", "lycée", "sup."],
-            v: { 1: "≤ primaire", 2: "5e–9e année", 3: "secondaire", 4: "enseignement supérieur" },
-            def: "max(Medu, Fedu) ; « aucune » (3 à 6 élèves) fusionnée avec « primaire »" },
-  alc:    { l: "Alcool (indice)", t: "ord", g: "Mode de vie", derived: true,
-            d: [1, 2, 3], s: ["faible", "modéré", "élevé"],
-            v: { 1: "faible", 2: "modéré", 3: "élevé (≥ 3 sur 5)" },
-            def: "arrondi de (5·Dalc + 2·Walc) / 7, niveaux 3 à 5 fusionnés (aucun groupe < 10 élèves)" },
-  absC:   { l: "Absences (corrigées)", t: "quant", g: "Résultats", derived: true, u: "créneaux de 2 h",
-            def: "absences ; vide (n. r.) pour les non-évalués, dont le 0 n'est pas une assiduité parfaite" },
-  absCat: { l: "Absences (classes)", t: "ord", g: "Résultats", derived: true,
-            d: [0, 1, 2, 3, 9], s: ["0", "1–4", "5–10", "> 10", "n. r."],
-            v: { 0: "aucune", 1: "1 à 4 créneaux", 2: "5 à 10 créneaux", 3: "plus de 10 créneaux", 9: "non renseigné (non évalué)" },
-            def: "absences en 4 classes de créneaux de 2 h ; « n. r. » pour les non-évalués réinclus" },
-  prog:   { l: "Progression G3 − G1", t: "quant", g: "Résultats", derived: true, u: "points", fixed: [-12, 12],
-            def: "G3 − G1 ; vide (n. r.) pour les non-évalués, dont le 0 final n'est pas une chute réelle" },
-  g3band: { l: "Bande de G3", t: "ord", g: "Résultats", derived: true,
-            d: [1, 2, 3], s: ["< 10", "10–13", "≥ 14"],
-            v: { 1: "▼ échec (< 10)", 2: "● juste (10–13)", 3: "▲ solide (≥ 14)" },
-            def: "G3 en 3 bandes : < 10, 10–13, ≥ 14 (option de couleur ; G3 reste sur l'axe 0–20)" }
+  pedu:     { l: "Éducation parentale (max.)", t: "ord", g: "Famille", derived: true,
+              d: [1, 2, 3, 4], s: ["≤ primaire", "collège", "lycée", "supérieur"],
+              v: { 1: "≤ primaire", 2: "5e–9e année", 3: "secondaire", 4: "enseignement supérieur" },
+              def: "max(Medu, Fedu) ; « aucune » (3 à 6 élèves) fusionnée avec « primaire »" },
+  alc:      { l: "Alcool (indice)", t: "ord", g: "Mode de vie", derived: true,
+              d: [1, 2, 3], s: ["faible", "modéré", "élevé"],
+              v: { 1: "faible", 2: "modéré", 3: "élevé (≥ 3 sur 5)" },
+              def: "arrondi de (5·Dalc + 2·Walc) / 7, niveaux 3 à 5 fusionnés (aucun groupe < 10 élèves)" },
+  absCat:   { l: "Absences (classes)", t: "ord", g: "Résultats", derived: true,
+              d: [0, 1, 2, 3, 9], s: ["aucune", "1–4", "5–10", "> 10", "n. r."],
+              v: { 0: "aucune", 1: "1 à 4 créneaux", 2: "5 à 10 créneaux", 3: "plus de 10 créneaux", 9: "non renseigné (non évalué)" },
+              def: "absences en 4 classes de créneaux de 2 h ; « n. r. » pour les non-évalués réinclus" },
+  prog:     { l: "Progression G3 − G1", t: "quant", g: "Résultats", derived: true, u: "points",
+              def: "G3 − G1 ; vide pour les non-évalués, dont le 0 final n'est pas une chute réelle" },
+  risque:   { l: "Niveau de risque", t: "ord", g: "Contexte scolaire", derived: true,
+              d: [0, 1, 2, 3, 4], s: ["0", "1", "2", "3", "4"],
+              v: { 0: "0 facteur", 1: "1 facteur", 2: "2 facteurs", 3: "3 facteurs", 4: "4 facteurs" },
+              def: "nombre de facteurs parmi : au moins 1 échec passé, plus de 10 absences, trajet de 30 min ou plus, ne vise pas le supérieur ; vide pour les non-évalués",
+              // pour comparer des groupes (U2-4) : 2, 3 et 4 facteurs sont réunis (3 et 4 comptent moins de 10 élèves)
+              bins: { d: [0, 1, 2], s: ["aucun facteur", "1 facteur", "2 facteurs ou plus"], of: v => isFinite(v) ? Math.min(2, v) : NaN } },
+  reussite: { l: "Réussite", t: "nom", g: "Résultats", derived: true,
+              d: ["oui", "non"], s: ["réussite", "échec"], v: { oui: "▲ réussite (G3 ≥ 10)", non: "▼ échec (G3 < 10)" },
+              def: "G3 ≥ 10 ; vide pour les non-évalués" }
 });
 
 /** Mises en garde affichées avec certains attributs. */
-META.paid.note = "Non comparable entre matières : 46 % de « oui » en maths, 6 % en portugais. Exclu des vues d'analyse.";
+META.paid.note = "Non comparable entre matières : 46 % de « oui » en maths, 6 % en portugais. Exclu des vues.";
 META.schoolsup.note = "Association inversée attendue : le soutien est attribué aux élèves déjà en difficulté.";
 
-/** Ordre des groupes pour les puces d'axes et la fiche élève. */
+/** Ordre des groupes pour la fiche élève. */
 export const GROUPS = ["Démographie", "Famille", "Contexte scolaire", "Mode de vie", "Résultats"];
 
 /** Seuil de réussite (échelle portugaise 0–20). */
 export const PASS = 10;
 
-/* ---------------------------------------------------------------------
-   Attributs retenus par technique (étape 1 de docs/taches.md).
-   Retirés des vues d'analyse (gardés dans la fiche et l'export) :
-   age, famsize, Pstatus, guardian, famrel, nursery, famsup, paid,
-   activities, internet, romantic ; Dalc/Walc → alc ; Medu/Fedu → pedu ;
-   G1/G2 → slope graph uniquement.
-   --------------------------------------------------------------------- */
-
-/** Axes proposés dans les coordonnées parallèles (quantitatifs, ordinaux, binaires). */
-export const AXIS_KEYS = ["school", "sex", "address", "pedu", "traveltime", "studytime", "failures", "schoolsup", "higher",
-  "freetime", "goout", "alc", "health", "absC", "prog", "G3"];
-
-/** Attributs de la matrice de Spearman : bruts, pour que la redondance Dalc/Walc, Medu/Fedu reste visible (U4.1). */
-export const MATRIX_KEYS = ["Medu", "Fedu", "traveltime", "studytime", "failures", "freetime", "goout", "Dalc", "Walc", "health", "absences", "G3"];
-
-/** Attributs proposés comme facettes des boxplots. */
-export const PANEL_KEYS = ["school", "sex", "address", "Mjob", "Fjob", "reason", "pedu", "traveltime", "studytime", "failures",
-  "schoolsup", "higher", "freetime", "goout", "alc", "health", "absCat"];
-
-/** Correspondance attribut brut de la matrice → axe des coordonnées parallèles. */
-export const AXIS_ALIAS = { Medu: "pedu", Fedu: "pedu", Dalc: "alc", Walc: "alc", absences: "absC" };
-
-/** Attributs qui définissent le « profil » d'un élève (tâche U2.5). G3 est comparé par bande. */
-export const PROFILE_KEYS = ["failures", "studytime", "pedu", "alc", "higher", "G3"];
-
-/** Colonnes de la table. */
-export const TABLE_COLS = ["school", "sex", "failures", "studytime", "pedu", "alc", "absences", "G1", "G2", "G3", "prog"];
-
-/** Attributs mis en avant dans la fiche ; les autres sont repliés. */
-export const KEY_ATTRS = ["school", "sex", "address", "pedu", "Mjob", "Fjob", "reason", "traveltime", "studytime", "failures",
-  "schoolsup", "higher", "freetime", "goout", "alc", "health", "absences", "G1", "G2", "G3", "prog"];
-
-/** Axes par défaut des coordonnées parallèles. */
-export const DEFAULT_AXES = ["pedu", "studytime", "failures", "goout", "alc", "absC", "G3"];
-
-/** Panneaux par défaut des small multiples (attributs de regroupement). */
-export const DEFAULT_PANELS = ["failures", "higher", "pedu", "studytime"];
-
 /** Seuil d'effectif sous lequel un groupe est signalé comme anecdotique. */
 export const SMALL_N = 10;
 
-/** Nombre maximal de modalités pour qu'un nominal devienne un axe parallèle. */
-export const MAX_NOMINAL_AXIS = 3;
-
-/** Nombre maximal de modalités pour qu'un attribut serve de facette de boxplot. */
+/** Nombre maximal de modalités pour qu'un attribut serve de groupe (fichier importé). */
 export const MAX_GROUPS = 8;
+
+/* ---------------------------------------------------------------------
+   Attributs retenus par technique (docs/taches.md).
+   Retirés des vues (gardés dans la fiche et l'export) : age, famsize,
+   Pstatus, guardian, famrel, nursery, famsup, paid, activities, internet,
+   romantic, health, freetime, reason, Mjob, Fjob ; Dalc/Walc → alc ;
+   Medu/Fedu → pedu.
+   --------------------------------------------------------------------- */
+
+/**
+ * Facteurs de risque (tâches U1-3 et U2-4). Le niveau de risque d'un élève
+ * est le nombre de facteurs qu'il cumule (attribut dérivé « risque »).
+ */
+export const RISK_FACTORS = [
+  { id: "fail",   label: "Au moins 1 échec passé",   test: d => d.failures >= 1 },
+  { id: "abs",    label: "Plus de 10 absences",       test: d => d.absences > 10 },
+  { id: "travel", label: "Trajet de 30 min ou plus",  test: d => d.traveltime >= 3 },
+  { id: "nohigh", label: "Ne vise pas le supérieur",  test: d => d.higher === "no" }
+];
+
+/** Facteurs classés par Jim (U1-1, U2-3). */
+export const FACTOR_KEYS = ["failures", "absCat", "studytime", "traveltime", "goout", "alc", "pedu"];
+
+/** Groupes proposés pour les histogrammes d'Alexandre (U1-2, U2-4). */
+export const HIST_GROUPS = ["sex", "school", "address", "risque", "failures", "absCat", "studytime", "traveltime", "goout", "alc", "pedu", "higher"];
+
+/** Critères du simulateur de profil (U2-2, U2-5). */
+export const SIM_KEYS = ["studytime", "goout", "alc", "failures"];
+
+/** Bandes de notes du diagramme alluvial (Gabriel, U1-5). */
+export const BANDS = [
+  { k: "S", label: "solide (≥ 14)", icon: "▲" },
+  { k: "J", label: "juste (10–13)", icon: "●" },
+  { k: "E", label: "échec (< 10)", icon: "▼" },
+  { k: "N", label: "non évalué", icon: "✕" }
+];
+export const bandOf = v => !isFinite(v) ? "N" : v < PASS ? "E" : v < 14 ? "J" : "S";
+
+/** Colonnes de la table. */
+export const TABLE_COLS = ["school", "sex", "risque", "failures", "absences", "traveltime", "higher", "G1", "G2", "G3", "prog"];
+
+/** Attributs comparés à la moyenne de l'école dans la fiche (U1-4) ; les autres sont repliés. */
+export const KEY_ATTRS = ["failures", "absences", "traveltime", "higher", "studytime", "goout", "alc", "pedu", "risque", "G1", "G2", "G3", "prog"];

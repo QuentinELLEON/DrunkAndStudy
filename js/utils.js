@@ -31,35 +31,13 @@ export function resultBadge(d) {
   return r === "pass" ? `<span class="res pass">▲ réussite</span>` : `<span class="res fail">▼ échec</span>`;
 }
 
-/** Échelle divergente bleu ↔ gris ↔ rouge pour ρ ∈ [−1, 1] (milieu neutre = « pas d'association »). */
-export function divergingScale() {
-  const neg = css("--div-neg"), mid = css("--div-mid"), pos = css("--div-pos");
-  return d3.scaleLinear().domain([-1, 0, 1]).range([neg, mid, pos]).interpolate(d3.interpolateLab).clamp(true);
-}
-
 /* ---------------- formatage ---------------- */
-const FR = d3.formatLocale({ decimal: ",", thousands: " ", grouping: [3], currency: ["", " €"], minus: "−" });
+// typographie française : espace fine insécable avant « % » et entre les milliers
+const FR = d3.formatLocale({ decimal: ",", thousands: "\u202f", grouping: [3], currency: ["", "\u202f€"], minus: "−", percent: "\u202f%" });
 export const fmt0 = FR.format(",.0f");
 export const fmt1 = FR.format(",.1f");
 export const fmt2 = FR.format(",.2f");
 export const pct = FR.format(".0%");
-export const signed2 = FR.format("+.2f");
-/** ρ compact : « −,36 » — assez court pour tenir dans une cellule. */
-export function rhoShort(r) {
-  if (!isFinite(r)) return "–";
-  const s = FR.format(".2f")(Math.abs(r)).replace(/^0/, "");
-  return (r < 0 ? "−" : r > 0 ? "+" : "") + s;
-}
-/** Qualificatif prudent de la force d'une association (jamais causal). */
-export function strength(r) {
-  const a = Math.abs(r);
-  if (!isFinite(a)) return "non calculable";
-  if (a < 0.1) return "association négligeable";
-  if (a < 0.3) return "association faible";
-  if (a < 0.5) return "association modérée";
-  return "association forte";
-}
-
 /* ---------------- libellés ---------------- */
 /** Libellé long d'une modalité (fiche, info-bulle). */
 export function labelOf(meta, key, v) {

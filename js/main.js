@@ -6,20 +6,20 @@
    3. charge le jeu de données de façon asynchrone (état de chargement / erreur) ;
    4. à chaque "change" de l'état : recalcule UNE fois les sous-ensembles
       dérivés (data.derive) puis appelle update(state, derived) sur chaque vue.
-      Les rendus sont regroupés par requestAnimationFrame (brushing fluide) ;
-   5. écrit l'état dans l'URL (permalink.js, tâche U4.5) et le relit au démarrage.
+      Les rendus sont regroupés par requestAnimationFrame (interactions fluides) ;
+   5. écrit l'état dans l'URL (permalink.js, lien permanent) et le relit au démarrage.
    ===================================================================== */
 
 import { state, on, setState } from "./state.js";
-import { loadDataset, importFile, derive, defaultAxesFor, axisKeys, groupKeys, DATASETS } from "./data.js";
-import { DEFAULT_AXES } from "./meta.js";
+import { loadDataset, importFile, derive, histGroupKeys, DATASETS } from "./data.js";
+import { RISK_FACTORS, SIM_KEYS } from "./meta.js";
 import { readHash, writeHash, hashChangedExternally } from "./permalink.js";
 import * as filterBar from "./views/filterBar.js";
 import * as statTiles from "./views/statTiles.js";
-import * as parallelCoords from "./views/parallelCoords.js";
-import * as correlationMatrix from "./views/correlationMatrix.js";
-import * as boxplots from "./views/boxplots.js";
-import * as slopeGraph from "./views/slopeGraph.js";
+import * as histograms from "./views/histograms.js";
+import * as factorRanking from "./views/factorRanking.js";
+import * as unitChart from "./views/unitChart.js";
+import * as alluvial from "./views/alluvial.js";
 import * as detailPanel from "./views/detailPanel.js";
 import * as table from "./views/table.js";
 
@@ -38,18 +38,16 @@ if (typeof window.d3 === "undefined") {
 }
 
 /* ---------------- vues ---------------- */
-/* [module, id du conteneur, vue coûteuse ?]
-   Les vues coûteuses (≈ 4 000 points SVG, 400 lignes de table) ne suivent pas
-   chaque pixel du brush : elles se mettent à jour quand l'utilisateur relâche. */
+/* [module, id du conteneur] — une technique par membre, dans l'ordre des questions de la page */
 const VIEWS = [
   [filterBar, "filters"],
   [statTiles, "tiles"],
-  [parallelCoords, "pc-view"],
-  [correlationMatrix, "matrix-view"],
-  [boxplots, "box-view", true],        // true = vue coûteuse, rafraîchie à la fin d'un brush
-  [slopeGraph, "slope-view", true],
-  [detailPanel, "detail-view"],
-  [table, "table-view", true]
+  [histograms, "hist-view"],          // Q1 — Alexandre
+  [factorRanking, "rank-view"],       // Q2 — Jim
+  [unitChart, "unit-view"],           // Q3 — Quentin
+  [alluvial, "allu-view"],            // Q4 — Gabriel
+  [detailPanel, "detail-view"],       // niveau détail (Gabriel)
+  [table, "table-view"]
 ];
 VIEWS.forEach(([view, id]) => view.init(document.getElementById(id)));
 
@@ -69,14 +67,15 @@ function seedSelection(ds) {
 function sanitize(patch, ds) {
   const out = { ...patch };
   delete out.ds;
-  const axOk = axisKeys(ds);
-  if (out.axes) { out.axes = out.axes.filter(k => axOk.includes(k)); if (out.axes.length < 2) delete out.axes; }
-  const axes = out.axes || (ds.standard ? DEFAULT_AXES : defaultAxesFor(ds));
-  if (out.brushes) out.brushes = Object.fromEntries(Object.entries(out.brushes).filter(([k, b]) => axes.includes(k) && b && b.kind));
-  if (out.panels) { const ok = groupKeys(ds); out.panels = out.panels.filter(k => ok.includes(k)); }
+  if (out.criteria) out.criteria = out.criteria.filter(id => RISK_FACTORS.some(f => f.id === id));
+  if (out.riskMin != null && !(out.riskMin >= 0 && out.riskMin <= 4)) delete out.riskMin;
+  if (out.unitGroup && !["risque", "none", "school", "sex"].includes(out.unitGroup)) delete out.unitGroup;
+  if (out.groupBy && !histGroupKeys(ds).includes(out.groupBy)) delete out.groupBy;
   if (out.groupFilter && !ds.keys.includes(out.groupFilter.key)) delete out.groupFilter;
+  if (out.sim) out.sim = Object.fromEntries(Object.entries(out.sim).filter(([k, v]) => (SIM_KEYS.includes(k) || k === "note") && isFinite(v)));
+  if (out.flow && !(out.flow.s === 0 || out.flow.s === 1)) delete out.flow;
   if (out.selectedId != null && !ds.rows.some(d => d.__i === out.selectedId)) delete out.selectedId;
-  if (out.trend && !["all", "down", "flat", "up"].includes(out.trend)) delete out.trend;
+  if (out.trend && !["all", "down"].includes(out.trend)) delete out.trend;
   return out;
 }
 
@@ -86,9 +85,8 @@ function activate(ds, key) {
   pending = null;
   setState({
     ds: key, status: "ready", error: null,
-    brushes: {}, groupFilter: null, trend: "all", highlightPair: null,
-    axes: ds.standard ? DEFAULT_AXES.slice() : defaultAxesFor(ds),
-    colorBy: ds.keys.includes("G3") ? "result" : "none",
+    criteria: [], riskMin: 0, groupFilter: null, trend: "all", flow: null,
+    groupBy: "", sim: {},
     selectedId: seedSelection(ds),
     ...restore
   }, "main");
@@ -141,8 +139,7 @@ let frame = null;
 function render() {
   frame = null;
   const derived = derive(state, active);
-  for (const [view, , heavy] of VIEWS) {
-    if (heavy && state.interacting) continue;          // mis à jour au relâchement du brush
+  for (const [view] of VIEWS) {
     try { view.update(state, derived); }
     catch (err) { console.error("Erreur de rendu", err); }
   }
@@ -150,10 +147,9 @@ function render() {
 function scheduleRender() { if (frame == null) frame = requestAnimationFrame(render); }
 on("change", scheduleRender);
 
-/* ---------------- lien permanent (U4.5) ---------------- */
+/* ---------------- lien permanent ---------------- */
 let hashTimer;
 on("change", () => {
-  if (state.interacting) return;                         // pas d'écriture à chaque pixel de brush
   clearTimeout(hashTimer);
   hashTimer = setTimeout(() => writeHash(state), 200);
 });

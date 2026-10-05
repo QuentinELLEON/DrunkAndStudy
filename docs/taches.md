@@ -1,179 +1,132 @@
 # Tâches, techniques et choix de données
 
-Ce document fixe la **spécification des tâches** de l'application et la manière dont les quatre techniques les couvrent. Il justifie aussi ce qui a été retiré de l'écran et les attributs dérivés. Les chiffres sont des **ρ de Spearman calculés sans les non-évalués** (maths / portugais), sauf mention contraire ; ils sont recalculés par `tools/test-stats.mjs`.
+Ce document fixe la **spécification des tâches** de l'application, la manière dont les quatre techniques les couvrent, ce qui a été retiré de l'écran et les attributs dérivés. Les chiffres sont calculés sur les élèves évalués (357 en maths, 634 en portugais) et vérifiés par `tools/test-stats.mjs` et dans le navigateur.
 
-**Décisions prises (5 octobre 2026) :**
-- les profils utilisateurs sont les quatre de `specification-projet.md` : U1 direction, U2 professeur principal, U3 vie scolaire / orientation, U4 chercheur ;
-- U4.3 est reformulée : on compare une même association **dans chaque matière**, par la bascule, sans appariement des deux fichiers (clé de jointure non fiable, et règle « matières jamais cumulées ») ;
-- les attributs écartés sont retirés des **vues d'analyse** mais restent dans la fiche élève (repliés) et dans l'export CSV ;
-- les techniques du §4 de la spécification (ensembles parallèles, sunburst, graphe) ont été remplacées par celles de `rendu1.md` ; les tâches qu'elles couvraient seules (U3.3, U2.5) sont reprises ci-dessous.
+**Décisions (5 octobre 2026) :**
+- deux profils d'utilisateurs : **U1**, l'équipe pédagogique (enseignants, CPE, direction), et **U2**, les parents et élèves ;
+- les quatre techniques ont été **remplacées par des représentations lisibles sans formation** : U2 a une littératie visuelle faible, U1 moyenne. Les coordonnées parallèles, la matrice de Spearman, les boxplots et le faisceau de trajectoires demandaient de savoir lire des lignes superposées, un coefficient ρ, des quartiles. Les nouvelles vues montrent des élèves comptés, des pourcentages de réussite et le seuil de 10/20 ;
+- la page est organisée en **quatre questions**, une par technique, chacune ouverte par une phrase calculée sur les données ;
+- les attributs écartés sont retirés des **vues**, mais restent dans la fiche élève (repliés) et dans l'export CSV.
 
-Où c'est codé : listes d'attributs dans `js/meta.js` (`AXIS_KEYS`, `MATRIX_KEYS`, `PANEL_KEYS`, `TABLE_COLS`, `KEY_ATTRS`, `PROFILE_KEYS`), dérivés dans `js/data.js` (`DERIVATIONS`), lien permanent dans `js/permalink.js`.
+| Membre | Technique | Question de la page | Fichier |
+|---|---|---|---|
+| Alexandre LARGUECH | Small multiples d'histogrammes de G3 + simulateur de profil | 1. Comment se répartissent les notes ? | `js/views/histograms.js` |
+| Jim LAINEL | Classement des facteurs (dot plot du taux de réussite par modalité) | 2. Qu'est-ce qui est associé à l'échec ? | `js/views/factorRanking.js` |
+| Quentin ELLEON | Grille d'élèves (unit chart, 1 carré = 1 élève) avec critères de risque | 3. Quels élèves cumulent les risques ? | `js/views/unitChart.js` |
+| Gabriel LOIRAT | Diagramme alluvial des bandes de notes P1 → P2 → finale + fiche élève | 4. Comment évoluent les notes pendant l'année ? | `js/views/alluvial.js`, `js/views/detailPanel.js` |
 
 ---
 
 ## 1. Inventaire des suppressions
 
-**Principe : on retire des vues d'analyse, pas des données.** Les 33 attributs bruts restent dans la fiche élève et dans l'export CSV, parce que U2.2 exige « les 33 valeurs en un clic » et que l'export doit rester compatible avec le fichier source.
-
-### 1a. Attributs
+### 1a. Attributs retirés des vues
 
 | Élément | Raison | Tâche(s) impactée(s) |
 |---|---|---|
-| `paid` | **Pas comparable entre les deux matières** : 45,8 % de « oui » en maths contre 6,0 % en portugais. L'attribut ne mesure pas la même chose d'une matière à l'autre. Il est retiré de toutes les vues ; la fiche l'affiche avec la mention « non comparable ». | aucune |
-| `Dalc`, `Walc` | **Redondants** (ρ = 0,64 / 0,62). Ils sont remplacés par `alc` (étape 2) dans les coordonnées parallèles, les boxplots et la table. Ils **restent dans la matrice**, car c'est là que la redondance se voit (U4.1). | U3.1 et U4.1 sont conservées |
-| `Medu`, `Fedu` | **Redondants** (ρ = 0,62 / 0,65). Ils sont remplacés par `pedu`, avec le même traitement que ci-dessus. Cela supprime aussi le groupe `Medu = 0` (n = 3) qui faussait les comparaisons. | U1.2, U3.3 et U4.1 sont conservées |
-| `G1`, `G2` dans les coordonnées parallèles et la matrice | Ils écrasent les autres signaux et font doublon avec le slope graph. Ils restent dans le slope graph, la fiche et la table. | U2.1, servie par le slope graph |
-| `age` | Il reflète surtout le redoublement, déjà porté par `failures` (ρ +0,24 / +0,27), et son lien avec G3 est faible (−0,15 / −0,03). Aucune tâche ne l'utilise. | aucune |
-| `famsize`, `Pstatus`, `nursery`, `famsup`, `activities`, `romantic` | L'écart de G3 entre modalités est ≤ 0,45 point dans les deux matières, sur de gros effectifs. Aucune tâche ne les utilise. | aucune ; documentés comme « testés, association négligeable » (U1.3) |
-| `guardian`, `internet` | Écart de 0,8 à 1,3 point, sur un petit groupe pour `guardian` (« autre » : 27 / 40 élèves). Aucune tâche ne les utilise, et `internet` recoupe `pedu`. | aucune |
-| `famrel` | Lien quasi nul avec G3 (+0,05 / +0,06). Il ne fait partie d'aucune paire attendue en U4.1. | aucune |
+| `paid` | **Non comparable entre matières** : 45,8 % de « oui » en maths, 6,0 % en portugais. | aucune |
+| `Dalc`, `Walc` | **Redondants** (ρ = 0,64 / 0,62) : remplacés par l'indice `alc`. | U2-3, servie par `alc` |
+| `Medu`, `Fedu` | **Redondants** (ρ = 0,62 / 0,65) : remplacés par `pedu`, ce qui supprime le groupe `Medu = 0` (n = 3). | U1-1, servie par `pedu` |
+| `age` | Reflète surtout le redoublement, déjà porté par `failures` (ρ +0,24 / +0,27). Aucune tâche. | aucune |
+| `famsize`, `Pstatus`, `nursery`, `famsup`, `activities`, `romantic` | Écart de G3 entre modalités ≤ 0,45 point dans les deux matières. Aucune tâche. | aucune |
+| `guardian`, `internet`, `famrel`, `health`, `freetime` | Association faible ou nulle avec G3. Aucune tâche. | aucune |
+| `Mjob`, `Fjob`, `reason`, `schoolsup` | Aucune tâche de la spécification ; `schoolsup` présente en plus une association inversée (le soutien va aux élèves déjà en difficulté). | aucune |
+| `G1`, `G2` en dehors de la question 4 | Ils écrasent les autres signaux (ρ ≈ 0,9 avec G3). Ils restent dans la vue de trajectoire, la fiche et la table. | U1-5, servie par la question 4 |
 
-**Attributs conservés sans être affichés par défaut** : `freetime`, `health` (U3.1), `Mjob`, `Fjob`, `reason` (U3.3), `schoolsup` (U1.3). Pour `schoolsup`, une info-bulle rappellera que l'association est inversée : le soutien va aux élèves en difficulté.
+### 1b. Vues et contrôles retirés
 
-### 1b. Vues, contrôles et informations affichées
-
-| Élément | Raison | Tâche(s) impactée(s) |
+| Élément | Raison | Remplacé par |
 |---|---|---|
-| Coordonnées parallèles : 9 axes par défaut, réduits à 7 | Sans G1 et G2, les axes deviennent pedu · studytime · failures · goout · alc · absences · G3. Les paires adjacentes restent lisibles sans défilement. | aucune perdue |
-| Coordonnées parallèles : sous-titre de type sous chaque axe (« quantitatif · /20 ») | Surcharge l'écran ; le type figure déjà sur les puces d'axes. | aucune |
-| Coordonnées parallèles : couleur au choix parmi ~13 nominaux | On passe à 4 options : résultat, bande de G3, sexe, établissement. | U1.2 et U3.2 conservées |
-| Coordonnées parallèles : règle automatique « nominal ≤ 3 modalités » | Remplacée par une liste explicite d'axes autorisés, qui retire automatiquement les attributs supprimés. | aucune |
-| Matrice : 16 attributs, réduits à 12 | On retire age, famrel, G1 et G2, ce qui fait passer de 120 à 66 cellules. Les paires attendues en U4.1 restent toutes. | U4.1 conservée |
-| Boxplots : 6 panneaux par défaut, réduits à 4 | Les 4 panneaux sont failures, higher, pedu et studytime. La liste « ajouter un panneau » passe d'environ 25 à 17 attributs. | aucune |
-| Boxplots : ligne « valeurs atypiques » dans l'info-bulle | Aucune tâche ne l'utilise. | aucune |
-| Tuile « Absences moyennes » | C'est la moyenne d'une variable très asymétrique (maximum 75). U3.5 est mieux servie par le boxplot par classes d'absences. | U3.5, servie par les boxplots |
-| Tuile « Moyenne de G3 » | La **médiane** devient la valeur principale, la moyenne passe en sous-texte. Le critère de U1.1 porte sur la médiane. | U1.1, mieux servie |
-| Table : 14 colonnes, réduites à 11, et repliée par défaut | Elle reste nécessaire pour la liste nominative (U2.4), le parcours au clavier et l'export. | aucune perdue |
-| Fiche : 33 attributs à plat | Les attributs utilisés par les vues s'affichent d'abord, les autres dans un bloc repliable « Autres attributs ». | U2.2 conservée |
-| Notes d'en-tête des cartes, sous-titre de page, note du slope graph | Une ligne par carte, et le mode d'emploi dans un bloc repliable « Comment lire ». | aucune |
-| Fichiers `pipeline.md`, `conception.md` et `evaluation.md` à la racine | Ce sont d'anciennes copies de `docs/` et de la consigne. | aucune |
+| Coordonnées parallèles, brushes, choix et réordonnancement des axes | 357 à 634 lignes superposées, geste de brush à apprendre : illisible pour U2, difficile pour U1. | Grille d'élèves + facteurs à cocher (Quentin) |
+| Matrice de corrélation de Spearman (66 cellules, ρ, échelle rouge/bleu) | Demande de comprendre un coefficient de corrélation. | Classement des facteurs en % de réussite (Jim) |
+| Boxplots (quartiles, moustaches, points superposés) | Quartiles et moustaches ne se lisent pas sans formation. | Histogrammes avec seuil à 10 et % de réussite écrit en gros (Alexandre) |
+| Slope graph de toutes les trajectoires (173 faisceaux) | Lignes superposées, épaisseurs à comparer. | Diagramme alluvial par bandes + liste de trajectoires quand la sélection est petite (Gabriel) |
+| Tuile « Absences moyennes » | Moyenne d'une variable très asymétrique (max. 75). | — |
+| Mode d'emploi affiché en permanence | Surcharge. | Bloc repliable « Comment lire » par question |
 
-**Éléments gardés, bien qu'ils puissent sembler superflus :**
-- la mention du membre sur chaque carte, parce que la consigne demande une technique par étudiant ;
-- l'import CSV et la bascule de matière, exigés par la consigne ;
-- la table, nécessaire pour U2.4 et la navigation au clavier.
+Restent : la barre de filtres (matière, établissement, sexe, non-évalués), l'import CSV, les tuiles, la table (repliée), l'export CSV, le lien permanent et le thème clair / sombre.
 
 ---
 
 ## 2. Transformations de données
 
-| Attribut dérivé | Définition | Type | Justification (données) | Tâches | Verdict |
+| Attribut dérivé | Définition | Type | Justification | Tâches |
+|---|---|---|---|---|
+| `reussite` | G3 ≥ 10 ; vide pour un non-évalué | nominal (oui / non) | Le seuil de 10/20 est ce que les deux profils comprennent : il colore toutes les vues (▲ bleu / ▼ orange). | U2-1, toutes |
+| `risque` | Nombre de facteurs parmi : au moins 1 échec passé, plus de 10 absences, trajet de 30 min ou plus, ne vise pas le supérieur (0 à 4) ; vide pour un non-évalué | ordinal (0–4) ; pour comparer des groupes, 2 à 4 sont réunis en « 2 facteurs ou plus » | Un simple comptage, sans pondération : chacun peut vérifier pourquoi un élève a tel niveau. Risque ≥ 2 : 42 élèves en maths, 67 en portugais. | U1-3, U2-4 |
+| `pedu` | max(Medu, Fedu), 0 réuni avec 1 : ≤ primaire / collège / lycée / supérieur | ordinal (4) | Medu et Fedu sont redondants ; supprime un groupe de 3 élèves. | U1-1 |
+| `alc` | arrondi de (5·Dalc + 2·Walc) / 7, niveaux 3 à 5 réunis : faible / modéré / élevé | ordinal (3) | Dalc et Walc sont redondants ; aucun groupe sous 10 élèves ; association au moins aussi forte (ρ −0,21 / −0,21). | U1-1, U2-3 |
+| `absCat` | 0 / 1–4 / 5–10 / plus de 10 créneaux ; « n. r. » pour un non-évalué réinclus | ordinal (4) | Les absences deviennent des groupes comparables ; un 0 artificiel n'est jamais pris pour une assiduité parfaite. | U1-1 |
+| `prog` | G3 − G1 ; vide pour un non-évalué | quantitatif | Décrochage (U1-5) : baisse d'au moins 2 points. Un non-évalué n'a pas de tendance, sinon son 0 final compterait comme un décrochage. | U1-5 |
+
+Abandonnés : `absC` et `g3band`, qui servaient aux coordonnées parallèles ; le sous-ensemble apparié maths × portugais (clé de jointure non fiable, matières jamais cumulées).
+
+---
+
+## 3. Spécification des tâches
+
+Le gras indique l'utilisateur principal de chaque tâche. U1 est l'équipe pédagogique (enseignants, CPE, direction), U2 les parents et élèves.
+
+| ID | Tâche | Action → cible | Attributs | Utilisateurs | Critère de réussite |
 |---|---|---|---|---|---|
-| `alc`, indice d'alcool | `round((5·Dalc + 2·Walc) / 7)`, pondéré par 5 jours de semaine et 2 de week-end. Les valeurs 3 à 5 sont ensuite fusionnées, ce qui donne **faible / modérée / élevée**. | Ordinal (3 niveaux) | ρ avec G3 = −0,21 / −0,21, au moins aussi fort que Dalc ou Walc seuls. Plus aucun groupe sous 10 élèves (maths 190 / 101 / 66 ; portugais 350 / 171 / 113). Un seul axe remplace deux axes redondants. | U3.1, U1.3, U2.5 | ✔ retenu |
-| `pedu`, éducation parentale maximale | `max(Medu, Fedu)`, avec 0 fusionné dans 1, ce qui donne **≤ primaire / 5e–9e / secondaire / supérieur**. | Ordinal (4 niveaux) | ρ +0,22 / +0,27, à peu près comme Medu seul. Supprime le groupe `Medu = 0` (n = 3). | U1.2, U1.3, U3.3, U4.2 | ✔ retenu |
-| `prog`, progression | `G3 − G1`, laissée vide (NaN) pour les non-évalués, dont le 0 final n'est pas une vraie chute. | Quantitatif (−3…+4 en maths, −9…+11 en portugais) | Elle existe déjà dans le code (`__delta`) mais n'est pas proposée comme axe. Elle devient un axe des coordonnées parallèles et apparaît dans la fiche. Elle est **exclue de la matrice**, car elle est calculée à partir de G3 et G1 et leur serait mécaniquement corrélée. | U2.1, U2.4, U4.4 | ✔ retenu |
-| `g3band`, bandes de G3 | **< 10 ▼ échec / 10–13 ● juste / ≥ 14 ▲ solide** | Ordinal (3 niveaux) | Effectifs : maths 92 / 165 / 100, portugais 85 / 355 / 194. Elle sert uniquement d'option de couleur dans les coordonnées parallèles et de mention dans la fiche ; G3 reste sur les axes 0–20. Elle fait ressortir les élèves « juste au-dessus du seuil ». | U2.4, U2.5 | ✔ comme option de couleur |
-| `absC` / `absCat`, absences corrigées | `absC` = absences, laissée vide (NaN) pour les non-évalués, dont le 0 n'est pas une assiduité parfaite. `absCat` regroupe en classes **0 / 1–4 / 5–10 / > 10 créneaux**, avec une classe « n. r. » (code 9) si on réinclut les non-évalués. | Quantitatif + ordinal (4 classes) | La médiane de G3 baisse d'une classe à l'autre (maths 12 → 11 → 11 → 10 ; portugais 13 → 12 → 11 → 11) et chaque classe compte au moins 49 élèves. Le regroupement permet de faire des absences une facette de boxplot, ce qui est impossible aujourd'hui avec plus de 8 valeurs distinctes. | U3.5, U1.4, U1.5 | ✔ retenu |
-| Indice de risque composite (spec U4.4) | Combinaison pondérée de failures, absences, studytime, higher | — | Les poids seraient arbitraires et l'indice cacherait ses composantes. La combinaison de brushes fait le même travail de façon transparente. | — | ✘ rejeté |
-| Sous-ensemble apparié maths × portugais (≤ 366 élèves) | Jointure sur 13 attributs | — | Ces 13 attributs ne forment pas une clé fiable, et la jointure contredit la règle « matières jamais cumulées ». | — | ✘ rejeté |
+| U1-1 | Quels facteurs sont le plus associés à une note finale basse (G3 inférieure à 10) ? | Discover → correlation | G3, failures, absences, studytime, traveltime, goout, alc, pedu | **U1** | Cite les 3 premiers facteurs de la matière choisie, hors G1 et G2, avec le sens du lien |
+| U1-2 | Comparer la distribution de G3 entre sous-groupes (sexe, école, milieu, matière) | Compare → distribution | G3, sex, school, address | **U1** | Lit la médiane et l'effectif de chaque groupe, sans jamais mélanger les deux matières |
+| U1-3 | Isoler les élèves qui cumulent plusieurs facteurs de risque | Locate → outliers | failures, absences, traveltime, higher, risque | **U1** | Obtient en quelques manipulations les élèves à risque 2 et plus (42 en maths, 67 en portugais), avec l'effectif exact |
+| U1-4 | Consulter le profil d'un élève et le situer par rapport à la moyenne de son école et de sa matière | Lookup → features | Tous les attributs retenus et dérivés | **U1** | Voit en un clic les valeurs de l'élève à côté de celles de son groupe |
+| U1-5 | Suivre la trajectoire G1, G2, G3 pour détecter un décrochage | Identify → trend | G1, G2, G3, prog | **U1** | Isole les élèves en baisse d'au moins 2 points (34 en maths, 20 en portugais) et affiche leur trajectoire |
+| U2-1 | Voir comment les notes sont réparties et ce qu'est une note habituelle | Summarize → distribution | G3, reussite | **U2**, U1 | Dit en moins de 10 secondes quelle part des élèves dépasse 10/20 (74 % en maths, 87 % en portugais) |
+| U2-2 | Situer un profil saisi (fictif) dans la distribution, sans comparaison nominative | Locate → position | G3 et les attributs du profil saisi | **U2** | Voit son marqueur dans la distribution, avec l'effectif de référence |
+| U2-3 | Comprendre le lien entre sorties, alcool et notes sans jargon | Discover → dependency | goout, alc, G3 | **U2**, U1 | Dit que la note baisse un peu quand les sorties ou l'alcool augmentent, et que cela ne prouve pas une cause |
+| U2-4 | Comparer un profil à risque et un profil protégé | Compare → features | risque, G3, failures, absCat, higher, traveltime | **U2**, U1 | Voit l'écart de médiane de G3 entre risque 2 et plus et risque 0 (9 contre 12 en maths, 10 contre 13 en portugais), avec *n* |
+| U2-5 | Faire varier un facteur (temps d'étude, sorties) et voir la note moyenne des élèves qui ont ce profil | Explore → trend | studytime, goout, G3 | **U2** | Voit la note moyenne et l'effectif se mettre à jour, avec un rappel que c'est une association |
+
+Chaque tâche a au moins un utilisateur. Trois tâches de U2 servent aussi à U1 (U2-1, U2-3, U2-4), alors qu'aucune tâche de U1 ne sert U2, parce qu'elles manipulent des élèves identifiables ou des vues trop denses pour des non-experts.
 
 ---
 
-## 3. Tableau des tâches (spécification)
+## 4. Tâches × techniques
 
-Dans la colonne « Utilisateurs », le profil en **gras** est le profil principal. Rappel des profils : U1 direction, U2 professeur principal, U3 vie scolaire / orientation, U4 chercheur.
+✔ = technique principale, ○ = technique secondaire.
+**A** = grille d'élèves (Quentin), **B** = classement des facteurs (Jim), **C** = histogrammes + simulateur (Alexandre), **D** = alluvial + fiche (Gabriel).
 
-| ID | Tâche | Action (Munzner) | Cible | Portée | Attributs mobilisés | Utilisateurs | Critère de réussite |
-|---|---|---|---|---|---|---|---|
-| U1.1 | Connaître la répartition de G3 et le taux de réussite, par matière et par établissement | Consommer › Découvrir · Résumer | Distribution | Tous | G3, school, matière | **U1**, U3, U4 | Lit la médiane, le taux de réussite et n en moins de 10 s |
-| U1.2 | Comparer GP et MS à éducation parentale égale | Découvrir · Comparer | Dépendance | Tous | school × pedu (ou address) × G3 | **U1**, U4 | Dit si l'écart GP–MS persiste à chaque niveau de pedu, avec n par groupe |
-| U1.3 | Hiérarchiser les facteurs associés à G3 | Découvrir · Comparer | Corrélation | Tous | attributs retenus × G3 | **U1**, U4 | Cite les 3 premiers facteurs et leur force qualitative |
-| U1.4 | Chiffrer la population d'un dispositif (≥ 1 échec et > 10 absences) | Localiser · Filtrer › Résumer | Items | Quelques | failures, absC | **U1**, U3 | Obtient un effectif exact et exportable |
-| U1.5 | Contrôler la qualité des données (non-évalués) | Parcourir · Identifier | Valeurs extrêmes | Quelques | G3, absences, G1, G2 | **U1**, U4 | Repère les 38 / 15 dossiers et peut les exclure ou les réinclure |
-| U2.1 | Repérer les élèves qui décrochent entre P1, P2 et la note finale | Explorer · Identifier | Tendance | Quelques | G1, G2, G3, prog | **U2**, U1 | Isole les trajectoires ▼ (34 en maths, 20 en portugais) |
-| U2.2 | Consulter la fiche complète d'un élève | Rechercher (lookup) · Identifier | Attributs | Un | 33 attributs bruts + dérivés | **U2**, U3 | Accède aux 33 valeurs en un clic |
-| U2.3 | Situer un élève par rapport à sa sélection | Rechercher · Comparer | Distribution | Un contre tous | G1, G2, G3 + attributs choisis | **U2**, U3 | Voit l'élève dans la distribution (rang centile, bande Q1–Q3) |
-| U2.4 | Lister les élèves partageant un profil de risque | Localiser · Filtrer | Items | Quelques | failures, absC, studytime, higher, prog, g3band | **U2**, U1, U3 | Obtient une liste nominative lisible et exportable |
-| U2.5 | Dire si un élève est atypique ou représentatif | Rechercher · Identifier | Similarité / extrêmes | Un | failures, studytime, pedu, alc, higher, g3band | **U2**, U3 | Sait dire « cas isolé » ou « ils sont 12 comme lui » |
-| U3.1 | Examiner le lien entre mode de vie et résultats | Explorer · Comparer | Corrélation | Tous | goout, alc (Dalc, Walc), freetime, health × G3 | **U3**, U4 | Distingue une relation monotone d'un bruit sur petit effectif |
-| U3.2 | Comparer filles et garçons, matière par matière | Explorer · Comparer | Dépendance | Tous | sex × matière × G3 | **U3**, U4 | Voit l'inversion (maths : G > F ; portugais : F > G) sans cumuler les matières |
-| U3.3 | Caractériser les élèves qui ne visent pas le supérieur | Localiser · Comparer › Résumer | Attributs | Quelques | higher, pedu, Mjob, Fjob, reason | **U3**, U1 | Décrit leur profil familial dominant, avec n par modalité |
-| U3.4 | Mesurer le lien avec le trajet et le lieu de résidence | Explorer · Comparer | Tendance | Tous | traveltime, address × G3 | **U3**, U1 | Constate la décroissance, avec le groupe > 1 h signalé n < 10 |
-| U3.5 | Relier l'assiduité à la réussite | Explorer · Identifier | Distribution + corrélation | Tous | absC, absCat × G3 | **U3**, U1 | Obtient la relation corrigée (−0,24 / −0,21) et voit qu'elle disparaît si on réinclut les non-évalués |
-| U4.1 | Explorer la structure de corrélation | Explorer · Comparer | Corrélation | Tous | 12 attributs ordonnables bruts | **U4** | Retrouve les paires redondantes Dalc↔Walc, Medu↔Fedu, Walc↔goout |
-| U4.2 | Tester la robustesse d'une association en contrôlant une variable tierce | Explorer · Comparer | Dépendance | Tous | 3 attributs (ex. studytime × G3 selon school) | **U4**, U1 | Voit si l'association tient dans chaque groupe (effet de Simpson) |
-| U4.3 *(reformulée)* | Comparer une même association dans les deux matières | Rechercher · Comparer | Corrélation | Tous, une matière à la fois | une paire d'attributs, en maths puis en portugais | **U4**, U3 | Lit ρ et n dans chaque matière, sur des échelles identiques |
-| U4.4 | Exploiter des attributs dérivés | Produire › Dériver | Attributs | Tous | alc, pedu, prog, absCat, g3band | **U4** | Chaque dérivé sert d'axe, de facette ou de filtre, avec sa définition au survol |
-| U4.5 | Exporter une sélection et la retrouver plus tard | Produire › Enregistrer | État | Quelques | filtres, brushes, axes, panneaux, élève | **U4**, U1 | Un lien restaure la même sélection, et le CSV contient ses lignes |
+| ID | Tâche (abrégée) | Action → cible | Attributs | A | B | C | D | Comment la combinaison la réalise |
+|---|---|---|---|:-:|:-:|:-:|:-:|---|
+| U1-1 | Facteurs associés à une note basse | Discover → correlation | failures, absCat, studytime, traveltime, goout, alc, pedu | | ✔ | ○ | | Facteurs triés par écart de réussite, sens du lien en une phrase ; un clic affiche leurs histogrammes |
+| U1-2 | Distribution de G3 par sous-groupe | Compare → distribution | G3, sex, school, address | ○ | | ✔ | | « Comparer selon » sexe, établissement, domicile : médiane et n par panneau ; la grille regroupe aussi par établissement ou sexe |
+| U1-3 | Élèves qui cumulent les risques | Locate → outliers | failures, absences, traveltime, higher, risque | ✔ | | | ○ | « Nombre de facteurs ≥ 2 » ou facteurs cochés : effectif exact, filtre propagé à toutes les vues ; trajectoires listées si la sélection est petite |
+| U1-4 | Profil d'un élève face à son école | Lookup → features | attributs retenus et dérivés | ○ | | | ✔ | Clic sur un carré ou une trajectoire → fiche : élève à côté de la moyenne de son école dans la matière |
+| U1-5 | Détecter un décrochage | Identify → trend | G1, G2, G3, prog | | | | ✔ | Bouton « ▼ en baisse d'au moins 2 points » ou clic sur un ruban → trajectoires des élèves |
+| U2-1 | Répartition, note habituelle | Summarize → distribution | G3, reussite | | | ✔ | | Histogramme avec seuil à 10, % de réussite écrit en gros, médiane ; tuile « Ont au moins 10/20 » |
+| U2-2 | Situer un profil fictif | Locate → position | G3 + profil saisi | | | ✔ | | Simulateur : critères + « ma note » → marqueur dans la distribution du profil, n, part des élèves sous cette note |
+| U2-3 | Sorties, alcool et notes | Discover → dependency | goout, alc, G3 | | ✔ | ○ | | « plus de sorties : réussite un peu plus basse ▼ » ; rappel « association, pas cause » ; le simulateur fait varier sorties et alcool |
+| U2-4 | Profil à risque contre profil protégé | Compare → features | risque, G3 | ○ | | ✔ | | Histogrammes « selon le niveau de risque » : aucun facteur / 1 / 2 ou plus, médiane et n ; la grille montre le % en échec par niveau |
+| U2-5 | Faire varier un facteur | Explore → trend | studytime, goout, G3 | | | ✔ | | Simulateur : moyenne, médiane, % de réussite et n mis à jour à chaque clic |
 
-Couverture : U1 a 5 tâches principales (+8 secondaires), U2 en a 5 (+2), U3 en a 5 (+7), U4 en a 5 (+6). Aucune tâche n'est sans utilisateur.
+**Synthèse**
 
----
-
-## 4. Tableau tâches × techniques
-
-Légende des techniques :
-- **A** = coordonnées parallèles + brushing (Quentin)
-- **B** = matrice de Spearman (Jim)
-- **C** = small multiples de boxplots / strip plots (Alexandre)
-- **D** = slope graph + fiche élève (Gabriel)
-
-✔ = technique principale, ○ = technique secondaire, **\*** = interaction de liaison ajoutée dans cette version (détaillée sous le tableau). L'action, la cible, la portée, les attributs et le critère sont ceux du tableau 3.
-
-| ID | Tâche (abrégée) | A | B | C | D | Comment la combinaison réalise la tâche |
-|---|---|:-:|:-:|:-:|:-:|---|
-| U1.1 | Distribution de G3, réussite | ○ | | ✔ | ○ | Panneau `school` sur l'axe 0–20 (médiane, n, taux de réussite) ; les tuiles donnent la médiane et le taux |
-| U1.2 | GP / MS à pedu égal | ○ | | ✔ | | Clic sur pedu = k, ce qui filtre le panneau `school` ; ou brush sur l'axe pedu avec couleur = établissement |
-| U1.3 | Hiérarchiser les facteurs | ○ | ✔ | ✔ | | Matrice triée par \|ρ\| avec G3 (ordinaux) ; panneaux triés par écart de médiane pour les nominaux **\*** |
-| U1.4 | Chiffrer un dispositif | ✔ | | ○ | | Brushes failures ≥ 1 et absences > 10, n affiché, puis export |
-| U1.5 | Non-évalués | ✔ | | ○ | ○ | Une fois réinclus, ils apparaissent en ✕ gris à G3 = 0 et absences = 0 ; faisceaux en tirets dans le slope graph |
-| U2.1 | Décrochage P1 → finale | ○ | | | ✔ | Filtre ▼ du slope graph ; ou brush sur l'axe `prog` |
-| U2.2 | Fiche élève | | | | ✔ | Clic dans n'importe quelle vue, ce qui ouvre la fiche |
-| U2.3 | Situer un élève | ○ | | ✔ | ✔ | Point cerclé dans chaque panneau ; trajectoire dans la bande Q1–Q3 et rang centile dans la fiche |
-| U2.4 | Liste de profil de risque | ✔ | | ○ | ○ | Brushes combinés, puis table (liste nominative) et export |
-| U2.5 | Atypique ou représentatif | ○ | | | ✔ **\*** | Bouton de la fiche « Élèves au même profil » qui pose des brushes aux valeurs de l'élève, puis n |
-| U3.1 | Mode de vie × G3 | ○ | ✔ | ✔ | | ρ de goout, alc, freetime et health ; boxplots par niveau avec n < 10 hachuré |
-| U3.2 | Filles / garçons par matière | ○ | | ✔ | | Panneau `sex`, puis bascule Maths ⇄ Portugais : l'inversion apparaît |
-| U3.3 | Profil des élèves sans projet de supérieur | ○ | | ✔ | | Clic sur higher = non, puis lecture des n et % par modalité des panneaux pedu / Mjob / Fjob / reason (% à ajouter dans l'info-bulle) |
-| U3.4 | Trajet, résidence | ○ | ○ | ✔ | | Panneaux traveltime et address ; ρ de traveltime dans la matrice |
-| U3.5 | Assiduité | ○ | ✔ | ✔ | | Panneau `absCat` ; la cellule ρ absences × G3 change quand on coche ou décoche la case des non-évalués |
-| U4.1 | Structure de corrélation | | ✔ | | | Matrice en ordre thématique |
-| U4.2 | Variable tierce | ✔ | ○ | ✔ | | Filtre de groupe ou brush sur la 3e variable ; la matrice et les panneaux se recalculent dans ce groupe |
-| U4.3 | Une association, deux matières | | ✔ | ✔ | | Bascule de matière, même cellule ρ et même panneau, échelles identiques |
-| U4.4 | Attributs dérivés | ✔ | | ✔ | ○ | Axes alc, pedu, prog ; facettes alc, pedu, absCat ; tendance ▼●▲ |
-| U4.5 | Exporter, retrouver | | | | | **Aucune technique** : comblée par une liaison **\*** (lien permanent et export) |
-
-**Synthèse :**
-
-| | A | B | C | D |
+| | A (Quentin) | B (Jim) | C (Alexandre) | D (Gabriel) |
 |---|:-:|:-:|:-:|:-:|
-| Tâches ✔ | 5 | 5 | 12 | 4 |
-| Tâches ○ | 11 | 2 | 3 | 4 |
-| Total couvert | 16 | 7 | 15 | 8 |
-| Exclusivité stricte (seule technique présente) | — | U4.1 | — | U2.2 |
-| Seule technique principale | U1.4, U1.5, U2.4 | U4.1 | U1.1, U1.2, U3.2, U3.3, U3.4 | U2.1, U2.2, U2.5 |
+| Tâches ✔ | 1 | 2 | 5 | 2 |
+| Tâches ○ | 3 | 0 | 2 | 1 |
+| Seule technique principale | U1-3 | U1-1, U2-3 | U1-2, U2-1, U2-2, U2-4, U2-5 | U1-4, U1-5 |
 
-**Ce que montre la synthèse :** 19 tâches sur 20 ont au moins une technique principale, et chaque technique est la seule principale sur au moins une tâche, donc aucune n'est redondante. Les deux trous restants sont comblés par des **liaisons, sans 5e technique** :
-- **U2.5** (couverte au départ par le graphe de similarité, abandonné) : un bouton dans la fiche D pose dans A des brushes aux valeurs clés de l'élève (failures, studytime, pedu, alc, higher, g3band), puis affiche « n élèves partagent ce profil ».
-- **U4.5** : l'état (matière, filtres, brushes, axes, panneaux, élève) est encodé dans l'URL, avec un bouton « Copier le lien ». L'export CSV de la sélection est conservé.
-- Deux ajouts dans C : tri des panneaux par écart des médianes (U1.3) et part de la sélection dans l'info-bulle (U3.3).
+Les dix tâches ont une technique principale et chaque technique est la seule principale sur au moins une tâche : la combinaison couvre tout, sans redondance et sans cinquième vue. Les liaisons qui les relient : un clic sur un facteur (B) regroupe les histogrammes (C) ; les critères de la grille (A), un clic sur un histogramme (C) et un ruban ou la tendance (D) filtrent toutes les vues sauf le classement (B), qui garde ses propres comparaisons ; un clic sur un élève ouvre la fiche (D).
 
 ---
 
 ## 5. Checklist : comment réaliser chaque tâche dans l'interface
 
-Vérifiée dans Chromium (clair, sombre, 390 px) : aucune erreur ni avertissement dans la console.
+Vérifiée dans Chromium, en clair, en sombre et à 390 px : aucune erreur ni avertissement dans la console.
 
-| Tâche | Dans l'interface | Résultat observé (maths, sauf mention) |
+| Tâche | Dans l'interface | Résultat observé |
 |---|---|---|
-| **U1.1** répartition et réussite | Lire les tuiles « Médiane de G3 » et « Taux de réussite » ; ajouter le panneau **Établissement** dans les boxplots ; basculer Maths ⇄ Portugais | Médiane 11, 74 % de réussite, n = 357 |
-| **U1.2** GP / MS à éducation égale | Boxplots : cliquer une boîte du panneau **Éducation parentale (max.)**, puis lire le panneau **Établissement** (n par boîte) | L'écart GP–MS se lit dans chaque niveau, avec n |
-| **U1.3** hiérarchiser les facteurs | Matrice : **Ordre → Par \|ρ\| avec la note finale** ; boxplots : **Ordre → écart des médianes** | Matrice : échecs, absences, éducation de la mère… ; panneaux : échecs (3,5 pts) > éducation parentale (3 pts) > … |
-| **U1.4** chiffrer un dispositif | Coordonnées parallèles : brosser **Échecs passés** de 1 à 3, puis **Absences (corrigées)** au-dessus de 10 ; lire n ; ouvrir la table et **Exporter la sélection (CSV)** | 5 élèves, export de 33 colonnes d'origine |
-| **U1.5** non-évalués | Décocher **Exclure les non évalués** : ils apparaissent en gris ✕, à G3 = 0 et sur le repère **n. r.** de l'axe Absences (corrigées) ; tirets dans le slope graph | 38 en maths, 15 en portugais |
-| **U2.1** décrochage | Slope graph : bouton **▼ En baisse** (filtre global) ; ou brosser l'axe **Progression G3 − G1** | 34 en maths, 20 en portugais |
-| **U2.2** fiche élève | Clic sur une ligne, un point, une trajectoire ou une ligne de table ; **Autres attributs du fichier** pour les 15 restants | 33 attributs bruts + dérivés |
-| **U2.3** situer un élève | Fiche : rang centile, mini-trajectoire sur la bande Q1–Q3 ; point cerclé dans chaque panneau de boxplot | — |
-| **U2.4** liste de profil de risque | Combiner des brushes (échecs, absences, temps d'étude, vise le supérieur) ; couleur **Bande de G3** pour voir les « justes » ; ouvrir la **table** (liste nominative), exporter | — |
-| **U2.5** atypique ou représentatif | Fiche : encadré **profil** (cas isolé / rare / représentatif, n) ; **Isoler ces élèves dans toutes les vues** pose six brushes | Le nombre d'élèves isolés égale le n annoncé |
-| **U3.1** mode de vie | Matrice : cellules Sorties, Alcool, Temps libre, Santé × Note finale ; boxplots **Alcool (indice)**, **Sorties entre amis** (hachures si n < 10) | — |
-| **U3.2** filles / garçons | Ajouter le panneau **Sexe** ; basculer Maths ⇄ Portugais | Maths : G 11,87 > F 11,21 ; portugais : F 12,48 > G 11,76 |
-| **U3.3** sans projet de supérieur | Cliquer la boîte **non** du panneau **Vise le supérieur** ; ajouter **Métier de la mère**, **Motif**…, lire n et « part de la sélection » au survol | 14 élèves en maths |
-| **U3.4** trajet et domicile | Panneaux **Temps de trajet** et **Domicile** ; cellule Temps de trajet × Note finale | Groupe > 1 h signalé ⚠ en maths (n = 7) |
-| **U3.5** assiduité | Panneau **Absences (classes)** ; cellule Absences × Note finale, en cochant puis décochant les non-évalués | ρ = −0,24 sans eux, +0,02 avec eux |
-| **U4.1** structure de corrélation | Matrice en ordre thématique ; survol de Alcool semaine × week-end : « paire redondante, fusionnée » | Dalc↔Walc +0,64, Medu↔Fedu +0,62, Walc↔Sorties +0,42 |
-| **U4.2** variable tierce | Cliquer une boîte (ex. Établissement = GP) : la matrice et les autres panneaux se recalculent dans ce groupe ; ou brosser la 3e variable | — |
-| **U4.3** une association, deux matières | Noter une cellule ou un panneau, basculer de matière : mêmes échelles, n affiché | — |
-| **U4.4** attributs dérivés | Puces d'axes marquées « dér. », survol d'un titre d'axe, d'un ⓘ de panneau ou d'un en-tête de table : définition | 6 dérivés |
-| **U4.5** retrouver une sélection | **🔗 Copier le lien de cette vue** ; coller l'adresse dans un autre onglet | Matière, filtres, brushes, axes, panneaux et élève restaurés à l'identique |
+| **U1-1** | Question 2 : lire la phrase d'en-tête et les trois premières lignes ; chaque ligne dit le sens du lien | Maths : échecs passés (55 pts), absences (30 pts), sorties (27 pts). Portugais : échecs passés (53), absences (16), temps d'étude (15) |
+| **U1-2** | Question 1 : « Comparer selon » → Sexe, Établissement ou Domicile ; basculer de matière dans la barre | Maths : filles médiane 11 (n = 185), garçons 12 (n = 172) ; GP 11 (315), MS 10 (42). Portugais : filles 12, garçons 11 ; GP 13, MS 11 |
+| **U1-3** | Question 3 : « Nombre de facteurs » → « ≥ 2 » (ou cocher des facteurs) | 42 élèves en maths (24 en échec, 57 %), 67 en portugais (28, 42 %) ; tuiles, histogrammes, flux et table suivent |
+| **U1-4** | Clic sur un carré de la grille, une trajectoire ou une ligne de table | Fiche : 13 attributs de l'élève à côté de la moyenne de son école (ex. Gabriel Pereira, maths, n = 315), ▲ ▼ selon l'écart |
+| **U1-5** | Question 4 : « ▼ En baisse d'au moins 2 points » | 34 trajectoires en maths, 20 en portugais, listées du plus fort recul au plus faible |
+| **U2-1** | Tuile « Ont au moins 10/20 » ou phrase de la question 1 | 74 % en maths, 87 % en portugais ; note habituelle 11/20 et 12/20 |
+| **U2-2** | Simulateur : choisir des critères, saisir « Ma note » | Marqueur « ma note » dans l'histogramme du profil, n, « au-dessus de 44 % des élèves de ce profil » (maths, étude 5–10 h, note 12) |
+| **U2-3** | Question 2 : lignes « Sorties entre amis » et « Alcool (indice) » | « plus de sorties : réussite un peu plus basse ▼ », « plus d'alcool déclaré : réussite un peu plus basse ▼ », « Association, pas cause » |
+| **U2-4** | Question 1 : « Comparer selon » → Niveau de risque | Maths : 2 facteurs ou plus médiane 9 (n = 42), aucun facteur 12 (n = 235). Portugais : 10 (67) contre 13 (441) |
+| **U2-5** | Simulateur : temps d'étude « < 2 h » puis « 5–10 h » | Maths : moyenne 11,5 (n = 92) → 12,6 (n = 59), avec « association observée, pas une cause » |
+| Lien permanent | « 🔗 Copier le lien de cette vue » puis ouvrir l'adresse | Matière, filtres, critères, groupe, profil simulé et élève restaurés |

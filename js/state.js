@@ -4,16 +4,11 @@
    Les vues ne se parlent jamais directement : elles écrivent dans l'état
    avec setState(), et main.js redessine toutes les vues à partir de ce
    même état. C'est ce qui garantit la cohérence des vues liées
-   (un filtre, un brush ou une sélection se propagent partout).
+   (un filtre, un critère ou une sélection se propagent partout).
 
-   Les brushes sont stockés en UNITÉS DE DONNÉES, pas en pixels :
-     { kind: "range", lo, hi }      pour un axe quantitatif
-     { kind: "set",   values: [] }  pour un axe ordinal ou nominal
-   Ainsi n'importe quelle vue peut appliquer le filtre sans connaître
-   les échelles des coordonnées parallèles.
+   Tous les filtres sont exprimés en UNITÉS DE DONNÉES (critères, modalité,
+   bande de notes), jamais en pixels : n'importe quelle vue peut les appliquer.
    ===================================================================== */
-
-import { DEFAULT_AXES, DEFAULT_PANELS } from "./meta.js";
 
 export function initialState() {
   return {
@@ -23,18 +18,16 @@ export function initialState() {
     school: "",            // "" | "GP" | "MS"
     sex: "",               // "" | "F" | "M"
     excludeNoGrade: true,  // exclut par défaut G3 = 0 ET absences = 0
-    groupFilter: null,     // { key, value } — posé par un clic sur un boxplot
-    trend: "all",          // "all" | "down" | "flat" | "up" — posé par le slope graph
-    brushes: {},           // clé d'attribut -> brush en unités de données
-    axes: DEFAULT_AXES.slice(),
-    colorBy: "result",
-    panels: DEFAULT_PANELS.slice(),
-    panelSort: "manual",   // "manual" | "gap" — ordre des panneaux de boxplots (U1.3)
-    matrixOrder: "meta",   // "meta" | "g3"
-    highlightPair: null,   // [a, b] — dernière cellule cliquée dans la matrice
+    criteria: [],          // facteurs de risque cochés dans la grille (meta.RISK_FACTORS, ET logique)
+    riskMin: 0,            // niveau de risque minimal (0 = pas de filtre) — grille de Quentin
+    unitGroup: "risque",   // regroupement des carrés de la grille : "risque" | "none" | "school" | "sex"
+    groupBy: "",           // groupe des histogrammes d'Alexandre ("" = tous les élèves)
+    groupFilter: null,     // { key, value } — posé par un clic sur un histogramme
+    sim: {},               // simulateur de profil : { studytime, goout, alc, failures, note }
+    trend: "all",          // "all" | "down" — posé par la vue de Gabriel
+    flow: null,            // { s, a, b } — flux de notes cliqué dans le diagramme alluvial
     selectedId: null,      // __i de l'élève sélectionné (niveau détail)
-    interacting: false,    // true pendant un geste de brush : les vues coûteuses attendent la fin
-    custom: null           // { name, rows, meta, keys } si un CSV a été importé
+    custom: null           // jeu importé, si un CSV a été chargé
   };
 }
 
@@ -68,11 +61,8 @@ export function setState(patch, source = "app") {
 
 /** Réinitialise filtres et sélection sans changer de jeu de données. */
 export function resetFilters() {
-  const fresh = initialState();
   setState({
-    school: "", sex: "", excludeNoGrade: true, groupFilter: null, trend: "all",
-    brushes: {}, axes: state.ds === "custom" ? state.axes : fresh.axes,
-    colorBy: "result", highlightPair: null, selectedId: null, interacting: false,
-    panels: state.ds === "custom" ? state.panels : fresh.panels, panelSort: "manual"
+    school: "", sex: "", excludeNoGrade: true, criteria: [], riskMin: 0, unitGroup: "risque",
+    groupBy: "", groupFilter: null, sim: {}, trend: "all", flow: null, selectedId: null
   }, "reset");
 }
