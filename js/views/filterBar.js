@@ -93,6 +93,8 @@ export function init(container) {
     else if (what === "trend") setState({ trend: "all" }, "filters");
     else if (what === "flow") setState({ flow: null }, "filters");
     else if (what === "criteria") setState({ criteria: [], riskMin: 0 }, "filters");
+    else if (what === "drill") setState({ drill: [] }, "filters");
+    else if (what === "slide") setState({ slide: {} }, "filters");
   });
 }
 
@@ -124,7 +126,17 @@ export function update(state, derived) {
     chips.push(`<span class="fchip">Groupe : ${esc(titleOf(ds.meta, key))} = ${esc(shown)}
       <button type="button" data-clear="group" aria-label="Retirer le filtre de groupe ${esc(labelOf(ds.meta, key, value))}">✕</button></span>`);
   }
-  if (derived.nCrit) {
+  if (derived.drill && derived.drill.length) {
+    const lab = c => { const M = ds.meta[c.key]; return M.bins ? M.bins.s[M.bins.d.indexOf(c.value)] : shortOf(ds.meta, c.key, c.value); };
+    chips.push(`<span class="fchip">Sélection : ${esc(derived.drill.map(c => titleOf(ds.meta, c.key) + " = " + lab(c)).join(" › "))}
+      <button type="button" data-clear="drill" aria-label="Retirer la sélection partagée">✕</button></span>`);
+  }
+  const sl = Object.entries(state.slide || {}).filter(([, v]) => v != null);
+  if (sl.length) {
+    chips.push(`<span class="fchip">Curseurs : ${esc(sl.map(([k, v]) => titleOf(ds.meta, k) + " = " + shortOf(ds.meta, k, v)).join(", "))}
+      <button type="button" data-clear="slide" aria-label="Retirer les curseurs">✕</button></span>`);
+  }
+  if (state.criteria.length || state.riskMin) {
     const parts = state.criteria.map(id => (RISK_FACTORS.find(f => f.id === id) || {}).label).filter(Boolean);
     if (state.riskMin) parts.unshift(`au moins ${state.riskMin} facteur${state.riskMin > 1 ? "s" : ""} de risque`);
     chips.push(`<span class="fchip">Critères : ${esc(parts.join(" + "))}

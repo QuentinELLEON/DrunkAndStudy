@@ -97,6 +97,64 @@
         <div class="view" id="allu-view"></div>
       </section>
 
+      <!-- 2e partie : les quatre techniques du projet (spécification « tâches et visualisations ») -->
+      <div class="parthead" id="part2"><h2>Techniques du projet</h2>
+        <p class="note">Quatre vues complémentaires, liées entre elles et aux questions ci-dessus : un clic dans les ensembles parallèles, le sunburst ou le graphe
+          sélectionne les mêmes élèves partout et alimente les panneaux de détail à droite.</p></div>
+
+      <!-- A — Quentin -->
+      <section class="card q" id="qa" aria-labelledby="qa-title">
+        <div class="qhead"><span class="qnum">A</span>
+          <h2 id="qa-title">Ensembles parallèles</h2>
+          <span class="who">Quentin · U1-3, U1-5, U2-3, U2-4, U2-5</span></div>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Chaque ligne est un attribut, découpé en catégories dont la largeur est le nombre d'élèves. Les bandes relient les catégories
+            d'une ligne à la suivante : bleues pour les élèves qui réussissent, orange pour ceux en échec. Cliquer une catégorie ne garde que ces élèves
+            (dans toutes les vues) et réétalonne le diagramme ; le fil d'Ariane permet de revenir. ▲ ▼ déplacent une ligne. Les curseurs filtrent
+            par temps d'étude et sorties, avec la note moyenne de la sélection.</p>
+        </details>
+        <div class="view" id="pset-view"></div>
+      </section>
+
+      <!-- B — Jim -->
+      <section class="card q" id="qb" aria-labelledby="qb-title">
+        <div class="qhead"><span class="qnum">B</span>
+          <h2 id="qb-title">Matrice de corrélation</h2>
+          <span class="who">Jim · U1-1, U2-3</span></div>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Chaque case croise deux attributs. Bleu : ils augmentent ensemble ; rouge : quand l'un augmente, l'autre diminue ; gris : pas de lien net.
+            La valeur (ρ de Spearman, de −1 à +1) est écrite dans la case. Triée par force du lien avec la note finale. Cliquer une case ouvre le nuage
+            de points de la paire, où le sens du lien se voit à l'œil.</p>
+        </details>
+        <div class="view" id="matrix-view"></div>
+      </section>
+
+      <!-- C — Alexandre -->
+      <section class="card q" id="qc" aria-labelledby="qc-title">
+        <div class="qhead"><span class="qnum">C</span>
+          <h2 id="qc-title">Sunburst</h2>
+          <span class="who">Alexandre · U1-2, U2-1</span></div>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Les élèves sont emboîtés en anneaux : école, puis sexe, puis niveau de risque (ordre modifiable). L'angle d'un secteur est le nombre
+            d'élèves ; sa couleur, le taux de réussite (orange sous la moyenne, bleu au-dessus). Hachures : moins de 10 élèves. Cliquer un secteur zoome
+            et sélectionne ces élèves partout ; cliquer le centre remonte.</p>
+        </details>
+        <div class="view" id="sun-view"></div>
+      </section>
+
+      <!-- D — Gabriel -->
+      <section class="card q" id="qd" aria-labelledby="qd-title">
+        <div class="qhead"><span class="qnum">D</span>
+          <h2 id="qd-title">Graphe de similarité d'élèves</h2>
+          <span class="who">Gabriel · U1-4, U2-2</span></div>
+        <details class="howto"><summary>Comment lire</summary>
+          <p class="note">Un point par élève, relié à ses 5 élèves les plus ressemblants (échecs, absences, temps d'étude, trajet, sorties, alcool, éducation
+            des parents, école, sexe, domicile, projet d'études — sans les notes). La position n'a pas de sens précis : seuls les liens comptent.
+            Les élèves hors de la sélection des autres vues sont estompés. Un profil fictif peut être placé : il apparaît relié à ses 5 voisins.</p>
+        </details>
+        <div class="view" id="graph-view"></div>
+      </section>
+
       <section class="card" id="table-card" aria-labelledby="tb-title">
         <details class="tablewrap">
           <summary id="table-summary"><h2 id="tb-title">Table de la sélection · liste nominative et export CSV</h2></summary>
@@ -107,7 +165,9 @@
 
     <!-- Niveau détail : visible à côté des quatre questions -->
     <aside class="card detail" id="detail-card" aria-labelledby="dt-title">
-      <h2 id="dt-title">Fiche élève <span class="who">Gabriel</span></h2>
+      <h2 id="sb-title">Distribution de la sélection</h2>
+      <div class="view" id="selbox-view"></div>
+      <h2 id="dt-title" style="margin-top:12px">Fiche élève <span class="who">Gabriel</span></h2>
       <p class="note">Clic sur un élève dans la grille, la liste des trajectoires ou la table · ← / → : élève précédent / suivant.</p>
       <div class="view" id="detail-view"></div>
     </aside>

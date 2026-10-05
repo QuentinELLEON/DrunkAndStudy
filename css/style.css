@@ -294,3 +294,45 @@ td.pass { color: var(--s1); font-weight: 600; } td.fail { color: var(--s2); font
 @media (forced-colors: active) { .res::before { forced-color-adjust: none; } }
 .toolbar select { max-width: 100%; min-width: 0; }
 .simctl .seg, .unitctl .seg { flex-wrap: wrap; }
+
+/* ---------------- 2e partie : techniques du projet ---------------- */
+.parthead { margin: 10px 0 -4px; }
+.parthead h2 { font-family: var(--serif); font-size: 20px; margin: 0 0 2px; }
+.crumbs { font-size: 12px; color: var(--text-2); margin: 2px 0 6px; display: flex; flex-wrap: wrap; align-items: center; gap: 2px; }
+.crumb { appearance: none; border: 1px solid transparent; background: var(--chip); color: var(--text-1); font: inherit; font-size: 12px;
+         padding: 2px 8px; border-radius: 12px; cursor: pointer; }
+.crumb[aria-current="true"] { border-color: var(--chip-on-border); background: var(--chip-on); font-weight: 600; }
+.slide { display: inline-flex; align-items: center; gap: 6px; }
+.slide input[type=range] { width: 120px; accent-color: var(--s1); }
+.slideout { font-size: 12.5px; color: var(--text-1); }
+.psbox svg, .graph svg { display: block; max-width: 100%; height: auto; }
+.psbox .psseg, .psbox .psmove { cursor: pointer; }
+.psbox .psmove { fill: var(--muted); }
+.psbox .psmove:hover, .psbox .psmove:focus { fill: var(--text-1); outline: none; }
+.psbox .psseg:focus { outline: none; stroke: var(--text-1); stroke-width: 2; }
+details.axes { margin-top: 8px; }
+details.axes summary, details.ghost summary { font-size: 12px; color: var(--text-2); cursor: pointer; }
+details.ghost { margin-top: 10px; border-top: 1px solid var(--grid); padding-top: 8px; }
+details.ghost select, details.ghost input { max-width: 150px; }
+.chip:disabled { opacity: .6; cursor: default; }
+.matrix svg { display: block; max-width: 100%; height: auto; }
+.matrix .cell { cursor: pointer; }
+.matrix .cell:focus { outline: none; }
+.matrix .cell:focus rect.bg, .matrix .cell:hover rect.bg { stroke: var(--text-1); stroke-width: 1.5; }
+.matrix .cell.pair rect.bg { stroke: var(--text-1); stroke-width: 2.5; }
+.matrix .rowlab, .matrix .collab { fill: var(--text-2); }
+.matrix-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 11px; color: var(--text-2); margin-top: 6px; }
+.matrix-legend .ramp { width: 160px; height: 10px; border-radius: 3px; }
+#mx-scatter { margin-top: 10px; }
+#mx-scatter svg { display: block; max-width: 100%; height: auto; }
+.scatterhead { font-size: 12.5px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.sunwrap { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+.sunwrap svg { display: block; max-width: 100%; height: auto; }
+.sunwrap .sec { cursor: pointer; }
+.sunwrap .sec:focus { outline: none; }
+.sunwrap .sec:focus path, .sunwrap .sec:hover path:first-child { stroke: var(--text-1); stroke-width: 2; }
+.suncenter.up { cursor: pointer; }
+.legend.vert { flex-direction: column; align-items: flex-start; max-width: 240px; }
+.legend .sw.hatch { background: repeating-linear-gradient(45deg, var(--hatch) 0 2px, transparent 2px 5px); border: 1px solid var(--border); }
+.graph { border: 1px solid var(--grid); border-radius: 8px; overflow: hidden; cursor: grab; }
+#selbox-view { margin-bottom: 4px; }

@@ -26,6 +26,14 @@ export function initialState() {
     sim: {},               // simulateur de profil : { studytime, goout, alc, failures, note }
     trend: "all",          // "all" | "down" — posé par la vue de Gabriel
     flow: null,            // { s, a, b } — flux de notes cliqué dans le diagramme alluvial
+    drill: [],             // sélection partagée : [{ key, value, src: "pset" | "sun" }] — catégories zoomées dans A et C
+    slide: {},             // curseurs { studytime, goout } (U2-5) — filtres posés depuis les ensembles parallèles
+    psetKeys: null,        // dimensions des ensembles parallèles (null = défaut)
+    sunKeys: null,         // niveaux du sunburst (null = défaut)
+    graphColor: "reussite",// couleur des nœuds du graphe : "reussite" | "tendance"
+    ghost: null,           // profil fictif placé dans le graphe de similarité (U2-2)
+    mxPair: null,          // [a, b] — cellule de la matrice ouverte en nuage de points
+    mxOrder: "g3",         // ordre de la matrice : "g3" (|ρ| avec G3) | "meta"
     selectedId: null,      // __i de l'élève sélectionné (niveau détail)
     custom: null           // jeu importé, si un CSV a été chargé
   };
@@ -63,6 +71,7 @@ export function setState(patch, source = "app") {
 export function resetFilters() {
   setState({
     school: "", sex: "", excludeNoGrade: true, criteria: [], riskMin: 0, unitGroup: "risque",
-    groupBy: "", groupFilter: null, sim: {}, trend: "all", flow: null, selectedId: null
+    groupBy: "", groupFilter: null, sim: {}, trend: "all", flow: null, selectedId: null,
+    drill: [], slide: {}, ghost: null, mxPair: null
   }, "reset");
 }

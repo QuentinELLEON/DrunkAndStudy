@@ -34,7 +34,7 @@ for (const [f, nDown, nRisk, medHi, medZero, passPct] of [["mat", 34, 42, 9, 12,
   const dk = derivedKeysFor(EXPECTED_COLUMNS);
   const R = typeRows(raw, META, EXPECTED_COLUMNS, dk), G = R.filter(d => !d.__nograde);
   const count = (rows, k) => rows.reduce((m, d) => m.set(d[k], (m.get(d[k]) || 0) + 1), new Map());
-  ok(dk.length === 6, `${f} : 6 dérivés (${dk.join(", ")})`);
+  ok(dk.length === 7, `${f} : 7 dérivés (${dk.join(", ")})`);
   ok([...count(G, "alc").values()].every(n => n >= 10), `${f} : indice alcool sans groupe < 10 (${[...count(G, "alc")].sort().map(e => e.join("→")).join(", ")})`);
   ok(!count(G, "pedu").has(0), `${f} : éducation parentale sans modalité 0`);
   ok(R.filter(d => d.__nograde).every(d => isNaN(d.prog) && isNaN(d.risque) && d.absCat === 9 && d.reussite === ""), `${f} : non-évalués → prog, risque et réussite manquants, absCat « n. r. »`);
@@ -42,7 +42,25 @@ for (const [f, nDown, nRisk, medHi, medZero, passPct] of [["mat", 34, 42, 9, 12,
   ok(hi.length === nRisk, `${f} : ${nRisk} élèves à risque ≥ 2 (U1-3, trouvé ${hi.length})`);
   ok(med(hi.map(d => d.G3)) === medHi && med(zero.map(d => d.G3)) === medZero, `${f} : médiane de G3 ${medHi} (risque ≥ 2) contre ${medZero} (risque 0) (U2-4)`);
   ok(Math.round(100 * G.filter(d => d.reussite === "oui").length / G.length) === passPct, `${f} : ${passPct} % des élèves évalués ont G3 ≥ 10 (U2-1)`);
+  const tc = k => G.filter(d => d.tendance === k).length;
+  ok(tc("baisse") === nDown && tc("stable") === (f === "mat" ? 245 : 461) && tc("hausse") === (f === "mat" ? 78 : 153),
+    `${f} : tendance baisse / stable / hausse = ${tc("baisse")} / ${tc("stable")} / ${tc("hausse")}`);
   ok(G.filter(d => d.__trend === "down").length === nDown, `${f} : ${nDown} trajectoires en baisse (G3 − G1 ≤ −2)`);
+}
+
+// Graphe de similarité : des profils proches ont des notes à peine plus proches qu'au hasard (U2-2)
+const { gower, knn } = await import("../js/stats.js");
+const { SIMILARITY_KEYS, NEIGHBORS } = await import("../js/meta.js");
+for (const [f, expNear, expRand] of [["mat", 3.3, 3.6], ["por", 2.5, 3.1]]) {
+  const t = readFileSync(new URL(`../data/student-${f}.csv`, import.meta.url), "utf8").trim().split(/\r?\n/);
+  const h = t[0].split(","), raw = t.slice(1).map(l => Object.fromEntries(l.split(",").map((v, i) => [h[i], v])));
+  const G = typeRows(raw, META, EXPECTED_COLUMNS, derivedKeysFor(EXPECTED_COLUMNS)).filter(d => !d.__nograde);
+  const types = Object.fromEntries(SIMILARITY_KEYS.map(k => [k, META[k].t]));
+  const nn = knn(G, NEIGHBORS, gower(G, SIMILARITY_KEYS, types));
+  let sN = 0, cN = 0; nn.forEach((l, i) => l.forEach(([, j]) => { sN += Math.abs(G[i].G3 - G[j].G3); cN++; }));
+  let sR = 0, cR = 0; for (let i = 0; i < G.length; i++) for (let j = i + 1; j < G.length; j++) { sR += Math.abs(G[i].G3 - G[j].G3); cR++; }
+  const near = sN / cN, rand = sR / cR;
+  ok(Math.abs(near - expNear) < 0.15 && Math.abs(rand - expRand) < 0.15, `${f} : écart de G3 entre voisins ${near.toFixed(2)} contre ${rand.toFixed(2)} au hasard`);
 }
 
 process.exit(fails ? 1 : 0);

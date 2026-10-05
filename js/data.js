@@ -27,8 +27,17 @@ export const DERIVATIONS = {
   // nombre de facteurs de risque cumulés (meta.RISK_FACTORS) ; un non-évalué n'a pas d'absences fiables
   risque: { needs: ["failures", "absences", "traveltime", "higher", "G3"],
             fn: d => d.__nograde ? NaN : RISK_FACTORS.filter(f => f.test(d)).length },
-  reussite: { needs: ["G3"], fn: d => d.__nograde || !isFinite(d.G3) ? "" : d.G3 >= 10 ? "oui" : "non" }
+  reussite: { needs: ["G3"], fn: d => d.__nograde || !isFinite(d.G3) ? "" : d.G3 >= 10 ? "oui" : "non" },
+  // prog découpé pour les ensembles parallèles (catégories seulement)
+  tendance: { needs: ["G1", "G3"], fn: d => d.__nograde || !isFinite(d.G1) || !isFinite(d.G3) ? ""
+              : d.G3 - d.G1 <= -2 ? "baisse" : d.G3 - d.G1 >= 2 ? "hausse" : "stable" }
 };
+
+/** Valeur d'un attribut telle qu'on la groupe : modalités réunies si meta.bins (ex. risque 2, 3, 4 → « 2 ou plus »). */
+export function groupValue(meta, key, d) {
+  const B = meta[key] && meta[key].bins, v = d[key];
+  return B ? B.of(v) : v;
+}
 
 /** Dérivés calculables pour un ensemble de colonnes brutes. */
 export function derivedKeysFor(rawKeys) {
@@ -239,12 +248,22 @@ export function derive(state, ds) {
   const byGroup = d => !gf || (bins ? bins.of(d[gf.key]) : d[gf.key]) === gf.value;
   const byTrend = d => state.trend === "all" || d.__trend === state.trend;
   const byFlow = d => passesFlow(d, state.flow);
-  const exceptFlow = scoped.filter(d => byCrit(d) && byGroup(d));
+  // sélection partagée des techniques de la 2e partie : catégories zoomées (A, C) et curseurs (U2-5)
+  const drill = (state.drill || []).filter(c => has(c.key));
+  const bySlide = d => Object.entries(state.slide || {}).every(([k, v]) => v == null || !has(k) || d[k] === v);
+  const byDrillExcept = src => d => drill.every(c => c.src === src || groupValue(ds.meta, c.key, d) === c.value);
+  const byDrill = byDrillExcept(null);
+  const others = d => byCrit(d) && bySlide(d);
+  const exceptFlow = scoped.filter(d => others(d) && byGroup(d) && byDrill(d));
   const selection = exceptFlow.filter(d => byTrend(d) && byFlow(d));
-  const exceptGroup = gf ? scoped.filter(d => byCrit(d) && byTrend(d) && byFlow(d)) : selection;
-  const nCrit = std ? state.criteria.length + (state.riskMin > 0 ? 1 : 0) : 0;
+  const exceptGroup = gf ? scoped.filter(d => others(d) && byDrill(d) && byTrend(d) && byFlow(d)) : selection;
+  // sunburst : tout sauf ses propres zooms (le zoom choisit la racine affichée)
+  const exceptSun = drill.some(c => c.src === "sun")
+    ? scoped.filter(d => others(d) && byGroup(d) && byDrillExcept("sun")(d) && byTrend(d) && byFlow(d)) : selection;
+  const nCrit = std ? state.criteria.length + (state.riskMin > 0 ? 1 : 0) + drill.length
+    + Object.values(state.slide || {}).filter(v => v != null).length : 0;
   return {
-    ds, base, scoped, exceptFlow, exceptGroup, selection,
+    ds, base, scoped, exceptFlow, exceptGroup, exceptSun, selection, drill,
     selectionIds: new Set(selection.map(d => d.__i)),
     selected: state.selectedId == null ? null : base.find(d => d.__i === state.selectedId) || null,
     filtered: selection.length !== scoped.length,

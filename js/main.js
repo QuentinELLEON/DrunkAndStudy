@@ -21,6 +21,11 @@ import * as factorRanking from "./views/factorRanking.js";
 import * as unitChart from "./views/unitChart.js";
 import * as alluvial from "./views/alluvial.js";
 import * as detailPanel from "./views/detailPanel.js";
+import * as parallelSets from "./views/parallelSets.js";
+import * as correlationMatrix from "./views/correlationMatrix.js";
+import * as sunburst from "./views/sunburst.js";
+import * as similarityGraph from "./views/similarityGraph.js";
+import * as selectionBox from "./views/selectionBox.js";
 import * as table from "./views/table.js";
 
 const statusEl = document.getElementById("status");
@@ -46,6 +51,11 @@ const VIEWS = [
   [factorRanking, "rank-view"],       // Q2 — Jim
   [unitChart, "unit-view"],           // Q3 — Quentin
   [alluvial, "allu-view"],            // Q4 — Gabriel
+  [parallelSets, "pset-view"],        // A — Quentin (techniques du projet)
+  [correlationMatrix, "matrix-view"], // B — Jim
+  [sunburst, "sun-view"],             // C — Alexandre
+  [similarityGraph, "graph-view"],    // D — Gabriel
+  [selectionBox, "selbox-view"],      // panneau de détail : distribution de la sélection
   [detailPanel, "detail-view"],       // niveau détail (Gabriel)
   [table, "table-view"]
 ];
@@ -76,6 +86,12 @@ function sanitize(patch, ds) {
   if (out.flow && !(out.flow.s === 0 || out.flow.s === 1)) delete out.flow;
   if (out.selectedId != null && !ds.rows.some(d => d.__i === out.selectedId)) delete out.selectedId;
   if (out.trend && !["all", "down"].includes(out.trend)) delete out.trend;
+  if (out.drill) out.drill = out.drill.filter(c => c && ds.keys.includes(c.key) && ["pset", "sun"].includes(c.src));
+  if (out.slide) out.slide = Object.fromEntries(Object.entries(out.slide).filter(([k, v]) => ["studytime", "goout"].includes(k) && isFinite(v)));
+  if (out.psetKeys) out.psetKeys = out.psetKeys.filter(k => ds.keys.includes(k));
+  if (out.sunKeys) out.sunKeys = out.sunKeys.filter(k => ds.keys.includes(k)).slice(0, 3);
+  if (out.mxPair && !(out.mxPair.length === 2 && out.mxPair.every(k => ds.keys.includes(k)))) delete out.mxPair;
+  if (out.graphColor && !["reussite", "tendance"].includes(out.graphColor)) delete out.graphColor;
   return out;
 }
 
@@ -86,7 +102,7 @@ function activate(ds, key) {
   setState({
     ds: key, status: "ready", error: null,
     criteria: [], riskMin: 0, groupFilter: null, trend: "all", flow: null,
-    groupBy: "", sim: {},
+    groupBy: "", sim: {}, drill: [], slide: {}, ghost: null, mxPair: null,
     selectedId: seedSelection(ds),
     ...restore
   }, "main");
