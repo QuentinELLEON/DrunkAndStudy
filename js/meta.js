@@ -109,6 +109,10 @@ Object.assign(META, {
               def: "nombre de facteurs parmi : au moins 1 échec passé, plus de 10 absences, trajet de 30 min ou plus, ne vise pas le supérieur ; vide pour les non-évalués",
               // pour comparer des groupes (U2-4) : 2, 3 et 4 facteurs sont réunis (3 et 4 comptent moins de 10 élèves)
               bins: { d: [0, 1, 2], s: ["aucun facteur", "1 facteur", "2 facteurs ou plus"], of: v => isFinite(v) ? Math.min(2, v) : NaN } },
+  tendance: { l: "Tendance de l'année", t: "nom", g: "Résultats", derived: true,
+              d: ["baisse", "stable", "hausse"], s: ["▼ baisse", "● stable", "▲ hausse"],
+              v: { baisse: "▼ baisse (G3 − G1 ≤ −2)", stable: "● stable", hausse: "▲ hausse (G3 − G1 ≥ +2)" },
+              def: "G3 − G1 découpé en trois : baisse (au moins 2 points de moins), hausse (au moins 2 de plus), stable ; vide pour les non-évalués" },
   reussite: { l: "Réussite", t: "nom", g: "Résultats", derived: true,
               d: ["oui", "non"], s: ["réussite", "échec"], v: { oui: "▲ réussite (G3 ≥ 10)", non: "▼ échec (G3 < 10)" },
               def: "G3 ≥ 10 ; vide pour les non-évalués" }
@@ -172,3 +176,22 @@ export const TABLE_COLS = ["school", "sex", "risque", "failures", "absences", "t
 
 /** Attributs comparés à la moyenne de l'école dans la fiche (U1-4) ; les autres sont repliés. */
 export const KEY_ATTRS = ["failures", "absences", "traveltime", "higher", "studytime", "goout", "alc", "pedu", "risque", "G1", "G2", "G3", "prog"];
+
+/* ---------------------------------------------------------------------
+   Les quatre techniques de la 2e partie (docs/taches.md, « Techniques du projet »)
+   --------------------------------------------------------------------- */
+
+/** Dimensions proposées pour les ensembles parallèles (Quentin) ; reussite est toujours la dernière. */
+export const PSET_KEYS = ["school", "sex", "address", "studytime", "goout", "alc", "absCat", "failures", "higher", "risque", "tendance", "reussite"];
+export const PSET_DEFAULT = ["school", "sex", "address", "alc", "absCat", "risque", "tendance", "reussite"];
+
+/** Attributs ordonnables de la matrice de corrélation (Jim). */
+export const MATRIX_KEYS = ["G3", "failures", "absences", "studytime", "traveltime", "goout", "alc", "Dalc", "Walc", "pedu", "Medu", "Fedu"];
+
+/** Niveaux proposés pour le sunburst (Alexandre), 3 au plus. */
+export const SUN_KEYS = ["school", "sex", "address", "risque", "higher", "alc", "studytime", "tendance"];
+export const SUN_DEFAULT = ["school", "sex", "risque"];
+
+/** Profil utilisé par le graphe de similarité (Gabriel), sans les notes. */
+export const SIMILARITY_KEYS = ["failures", "absences", "studytime", "traveltime", "goout", "alc", "pedu", "school", "sex", "address", "higher"];
+export const NEIGHBORS = 5;

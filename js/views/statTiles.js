@@ -30,6 +30,9 @@ export function update(state, derived) {
   if (ds.keys.includes("G3")) {
     const g = graded.map(d => d.G3);
     const ok = g.length > 0;
+    // U2-5 : la note moyenne de la sélection se met à jour avec les curseurs et les zooms
+    tiles.push(tile("Note moyenne de la sélection", ok ? fmt1(d3.mean(g)) + "<small> /20</small>" : "—",
+      ok ? `n = ${g.length}${g.length < SMALL_N ? " ⚠ moins de 10" : ""} · association, pas cause` : "&nbsp;"));
     tiles.push(tile("Note habituelle (médiane)", ok ? fmt1(d3.median(g)).replace(/,0$/, "") + "<small> /20</small>" : "—",
       ok ? `moyenne ${fmt2(d3.mean(g))} · n = ${g.length} évalués` : "aucun élève évalué"));
     const k = g.filter(v => v >= PASS).length;

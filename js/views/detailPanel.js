@@ -55,7 +55,7 @@ export function update(state, derived) {
   cur = { state, derived };
   const ds = derived.ds, d = derived.selected;
   if (!ds || !d) {
-    root.innerHTML = `<p class="empty">Aucun élève sélectionné.<br>Cliquez un carré de la grille, une trajectoire de la liste ou une ligne de la table.</p>`;
+    root.innerHTML = `<p class="empty">Aucun élève sélectionné.<br>Cliquez un carré de la grille, une trajectoire, un nœud du graphe de similarité, un point du nuage ou une ligne de la table.</p>`;
     return;
   }
   const sel = derived.selection;
@@ -93,7 +93,7 @@ export function update(state, derived) {
       refTxt = vals.length ? `${pct(yes / vals.length)} « oui »` : "—";
     } else if (vals.length) {
       const m = d3.mean(vals);
-      refTxt = `moy. ${fmt1(m)}`;
+      refTxt = `moy. ${fmt1(m)} · méd. ${fmt1(d3.median(vals)).replace(/,0$/, "")}`;
       const g = GOOD[k] ?? 0;
       if (g && typeof v === "number" && isFinite(v) && Math.abs(v - m) >= 0.5) cmp = (v - m) * g > 0 ? `<span class="up">▲</span>` : `<span class="down">▼</span>`;
     }

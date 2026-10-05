@@ -140,8 +140,18 @@ Question 4 : « Comment évoluent les notes pendant l'année ? » — tâches U1
 
 ---
 
+## 4 bis. Techniques du projet (2e partie de la page)
+
+| Visu | Données | Transformation | Marques et canaux | Interactions |
+|---|---|---|---|---|
+| A Ensembles parallèles (Quentin) | `selection` | catégorie de chaque élève par dimension (`groupValue` : risque réuni en 0 / 1 / 2 et plus, `tendance`, `absCat`) ; effectifs par passage entre dimensions voisines, séparés par `reussite` | segments (largeur = n), bandes (largeur = n, teinte = réussite) ; chemin de l'élève sélectionné | zoom → `state.drill` (src `pset`), fil d'Ariane, ▲ ▼, choix des dimensions, curseurs → `state.slide` |
+| B Matrice (Jim) | `selection` | ρ de Spearman (`stats.spearmanMatrix`) sur `meta.MATRIX_KEYS` | cellule, teinte divergente centrée sur 0, valeur écrite, gris si |ρ| < 0,1 | ordre, clic → nuage de points (`state.mxPair`) |
+| C Sunburst (Alexandre) | `exceptSun` (sélection sans ses propres zooms) | hiérarchie dérivée sur 3 attributs, `d3.partition` | angle = n, teinte divergente = taux de réussite centré sur la moyenne, hachures n < 10 | zoom → `state.drill` (src `sun`), clic au centre = remonter |
+| D Graphe (Gabriel) | `scoped` (disposition), `selection` (opacité) | distance de Gower (`stats.gower`), 5 plus proches voisins (`stats.knn`), `d3.forceSimulation` 240 itérations, mis en cache | nœud par élève, lien par voisin, teinte = réussite ou tendance | clic → fiche, zoom / déplacement, profil fictif (`state.ghost`) relié à ses 5 voisins |
+
 ## 5. Vues de support
-- **Tuiles** (`statTiles.js`) : part des élèves qui ont au moins 10/20 (en premier, U2-1), élèves affichés, note habituelle (médiane) avec la moyenne en sous-texte.
+- **Tuiles** (`statTiles.js`) : part des élèves qui ont au moins 10/20 (en premier, U2-1), élèves affichés, note moyenne de la sélection (U2-5), note habituelle (médiane).
+- **Distribution de la sélection** (`selectionBox.js`) : boîtes à moustaches de G3, sélection contre périmètre, médiane et n.
 - **Table** (`table.js`), repliée par défaut : 11 colonnes (`meta.TABLE_COLS`), tri, clavier (Tab, ↑ ↓, Entrée), export CSV de la sélection (33 colonnes d'origine). Liste nominative pour U1.
 - **Lien permanent** (`permalink.js`) : matière, filtres, critères, groupe, profil simulé, tendance, ruban et élève sont écrits dans le fragment de l'URL et relus au chargement ; bouton « Copier le lien de cette vue ».
 

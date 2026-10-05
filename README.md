@@ -12,6 +12,17 @@ La page répond à quatre questions, une par membre, avec des représentations l
 | 3. Quels élèves cumulent les risques ? | Grille d'élèves (1 carré = 1 élève) avec critères de risque | Quentin | `js/views/unitChart.js` |
 | 4. Comment évoluent les notes pendant l'année ? | Diagramme alluvial P1 → P2 → finale + fiche élève | Gabriel | `js/views/alluvial.js`, `js/views/detailPanel.js` |
 
+Sous ces quatre questions, une 2e partie « Techniques du projet » ajoute les quatre techniques de la spécification, liées aux vues précédentes par une sélection partagée (détail : **[`docs/visualisations.md`](docs/visualisations.md)**) :
+
+| Visu | Technique | Membre | Fichier |
+|---|---|---|---|
+| A | Ensembles parallèles (zoom, fil d'Ariane, curseurs) | Quentin | `js/views/parallelSets.js` |
+| B | Matrice de corrélation de Spearman + nuage de points | Jim | `js/views/correlationMatrix.js` |
+| C | Sunburst zoomable | Alexandre | `js/views/sunburst.js` |
+| D | Graphe de similarité d'élèves (Gower, 5 voisins) + profil fictif | Gabriel | `js/views/similarityGraph.js` |
+
+Panneaux de détail à droite : distribution de G3 de la sélection (`selectionBox.js`), fiche élève avec trajectoire (`detailPanel.js`).
+
 Tout tient sur **une seule page** (`index.html`). Les utilisateurs (U1, équipe pédagogique ; U2, parents et élèves), les 10 tâches, leur couverture par les quatre techniques et la checklist « tâche → comment la réaliser » sont dans **[`docs/taches.md`](docs/taches.md)**.
 
 ### Ce qui est affiché, et ce qui ne l'est pas

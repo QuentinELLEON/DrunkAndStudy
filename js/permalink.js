@@ -28,6 +28,14 @@ export function readHash() {
     if (p.has("trend")) out.trend = p.get("trend");
     if (p.has("flow")) out.flow = JSON.parse(p.get("flow"));
     if (p.has("sel")) out.selectedId = +p.get("sel");
+    if (p.has("drill")) out.drill = JSON.parse(p.get("drill"));
+    if (p.has("slide")) out.slide = JSON.parse(p.get("slide"));
+    if (p.has("ps")) out.psetKeys = p.get("ps").split(",").filter(Boolean);
+    if (p.has("sun")) out.sunKeys = p.get("sun").split(",").filter(Boolean);
+    if (p.has("gc")) out.graphColor = p.get("gc");
+    if (p.has("ghost")) out.ghost = JSON.parse(p.get("ghost"));
+    if (p.has("mx")) out.mxPair = p.get("mx").split(",");
+    if (p.has("mxo")) out.mxOrder = p.get("mxo");
   } catch (e) {
     console.warn("Lien d'état illisible, ignoré :", e.message);
     return null;
@@ -54,6 +62,14 @@ export function writeHash(state) {
   if (state.trend !== "all") p.set("trend", state.trend);
   if (state.flow) p.set("flow", JSON.stringify(state.flow));
   if (state.selectedId != null) p.set("sel", String(state.selectedId));
+  if (state.drill.length) p.set("drill", JSON.stringify(state.drill));
+  if (Object.keys(state.slide).length) p.set("slide", JSON.stringify(state.slide));
+  if (state.psetKeys) p.set("ps", state.psetKeys.join(","));
+  if (state.sunKeys) p.set("sun", state.sunKeys.join(","));
+  if (state.graphColor !== "reussite") p.set("gc", state.graphColor);
+  if (state.ghost) p.set("ghost", JSON.stringify(state.ghost));
+  if (state.mxPair) p.set("mx", state.mxPair.join(","));
+  if (state.mxOrder !== "g3") p.set("mxo", state.mxOrder);
   const h = "#" + p.toString();
   lastWritten = h;
   if (h !== location.hash) {

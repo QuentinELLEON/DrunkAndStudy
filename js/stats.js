@@ -102,3 +102,43 @@ export function hash01(i) {
   x ^= x >>> 16; x = Math.imul(x, 2246822507) >>> 0; x ^= x >>> 13;
   return (x >>> 0) / 4294967296;
 }
+
+/**
+ * Distance de Gower (attributs mixtes) — graphe de similarité (Gabriel).
+ * Quantitatifs et ordinaux : |a − b| / étendue ; nominaux : 0 si égaux, 1 sinon.
+ * Une valeur manquante retire l'attribut de la moyenne pour cette paire.
+ * Renvoie dist(a, b) qui accepte deux objets élèves (ou un profil fictif).
+ */
+export function gower(rows, keys, types) {
+  const span = {};
+  keys.forEach(k => {
+    if (types[k] === "nom") return;
+    let lo = Infinity, hi = -Infinity;
+    rows.forEach(d => { const v = d[k]; if (typeof v === "number" && isFinite(v)) { if (v < lo) lo = v; if (v > hi) hi = v; } });
+    span[k] = hi > lo ? hi - lo : 1;
+  });
+  return (a, b) => {
+    let s = 0, n = 0;
+    for (const k of keys) {
+      const x = a[k], y = b[k];
+      if (types[k] === "nom") { if (x === "" || y === "" || x == null || y == null) continue; s += x === y ? 0 : 1; n++; }
+      else { if (!isFinite(x) || !isFinite(y)) continue; s += Math.abs(x - y) / span[k]; n++; }
+    }
+    return n ? s / n : 1;
+  };
+}
+
+/** Indices des k plus proches voisins de chaque élève (k petit : on évite la « pelote »). */
+export function knn(rows, k, dist) {
+  return rows.map((a, i) => {
+    const best = [];                                   // [distance, j] triés, au plus k
+    for (let j = 0; j < rows.length; j++) {
+      if (j === i) continue;
+      const d = dist(a, rows[j]);
+      if (best.length < k || d < best[best.length - 1][0]) {
+        best.push([d, j]); best.sort((p, q) => p[0] - q[0] || p[1] - q[1]); if (best.length > k) best.pop();
+      }
+    }
+    return best;
+  });
+}

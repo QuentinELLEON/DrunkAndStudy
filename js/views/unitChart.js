@@ -86,7 +86,7 @@ export function update(state, derived) {
   const sel = derived.selection, scope = derived.scoped;
   const failRate = rows => { const g = rows.filter(d => !d.__nograde); return g.length ? g.filter(d => d.G3 < 10).length / g.length : NaN; };
   const sg = sel.filter(d => !d.__nograde), nf = sg.filter(d => d.G3 < 10).length;
-  const what = std && derived.nCrit ? describeCriteria(state) : derived.filtered ? "correspondent aux filtres" : "";
+  const what = std && derived.nCrit ? describeCriteria(state) || "correspondent à la sélection" : derived.filtered ? "correspondent aux filtres" : "";
   headEl.innerHTML = !what
     ? `${scope.length} élèves dans le périmètre, dont <b>${pct(failRate(scope))}</b> en échec.` +
       (std ? ` Cochez des facteurs ou choisissez « ≥ 2 » pour isoler les élèves qui les cumulent.` : "")
