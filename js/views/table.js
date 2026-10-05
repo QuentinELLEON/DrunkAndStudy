@@ -2,7 +2,7 @@
    views/table.js — table de la sélection (accès aux valeurs exactes)
    Toutes les valeurs des graphiques sont lisibles ici ; c'est aussi le
    chemin d'accès au clavier (Tab, Entrée) vers la fiche élève.
-   Colonnes : meta.TABLE_COLS (attributs analysés, dont les dérivés pedu, alc, prog).
+   Colonnes : meta.TABLE_COLS (dont les dérivés risque et prog) ; liste nominative pour l'équipe (U1).
    Export   : les 33 colonnes d'origine seulement (compatibilité avec le fichier source).
    ===================================================================== */
 /* global d3 */

@@ -3,20 +3,22 @@
 Application de visualisation D3.js (v7) liée, en quatre techniques, du jeu de données **Student Performance / Student Alcohol Consumption**.
 Projet de visualisation de l'information de Quentin ELLEON, Jim LAINEL, Alexandre LARGUECH et Gabriel LOIRAT.
 
-| Technique | Membre | Fichier |
-|---|---|---|
-| Coordonnées parallèles + brushing + réordonnancement | Quentin | `js/views/parallelCoords.js` |
-| Matrice de corrélation de Spearman | Jim | `js/views/correlationMatrix.js` |
-| Small multiples de boxplots / strip plots de G3 | Alexandre | `js/views/boxplots.js` |
-| Slope graph G1 → G2 → G3 + fiche élève | Gabriel | `js/views/slopeGraph.js`, `js/views/detailPanel.js` |
+La page répond à quatre questions, une par membre, avec des représentations lisibles sans formation en visualisation :
 
-Tout tient sur **une seule page** (`index.html`). Les 20 tâches de la spécification (profils U1–U4), leur couverture par les quatre techniques et la checklist « tâche → comment la réaliser » sont dans **[`docs/taches.md`](docs/taches.md)**.
+| Question | Technique | Membre | Fichier |
+|---|---|---|---|
+| 1. Comment se répartissent les notes ? | Histogrammes de la note finale par groupe + simulateur de profil | Alexandre | `js/views/histograms.js` |
+| 2. Qu'est-ce qui est associé à l'échec ? | Classement des facteurs (taux de réussite par modalité) | Jim | `js/views/factorRanking.js` |
+| 3. Quels élèves cumulent les risques ? | Grille d'élèves (1 carré = 1 élève) avec critères de risque | Quentin | `js/views/unitChart.js` |
+| 4. Comment évoluent les notes pendant l'année ? | Diagramme alluvial P1 → P2 → finale + fiche élève | Gabriel | `js/views/alluvial.js`, `js/views/detailPanel.js` |
+
+Tout tient sur **une seule page** (`index.html`). Les utilisateurs (U1, équipe pédagogique ; U2, parents et élèves), les 10 tâches, leur couverture par les quatre techniques et la checklist « tâche → comment la réaliser » sont dans **[`docs/taches.md`](docs/taches.md)**.
 
 ### Ce qui est affiché, et ce qui ne l'est pas
 
-- **Attributs retirés des vues d'analyse** parce qu'aucune tâche ne les utilise ou qu'ils surchargent l'écran : `age`, `famsize`, `Pstatus`, `guardian`, `famrel`, `nursery`, `famsup`, `activities`, `internet`, `romantic`, et `paid` (non comparable entre matières : 46 % de « oui » en maths, 6 % en portugais). Ils restent dans la fiche élève (repliés) et dans l'export CSV.
-- **Attributs dérivés** (`js/data.js`, `DERIVATIONS`) : `pedu` = max(Medu, Fedu) ; `alc` = indice d'alcool (5·Dalc + 2·Walc) / 7 en 3 niveaux ; `prog` = G3 − G1 ; `g3band` = G3 en 3 bandes (option de couleur) ; `absC` et `absCat` = absences corrigées des non-évalués, et en classes. Les paires redondantes Dalc/Walc et Medu/Fedu restent séparées dans la matrice, qui montre leur redondance.
-- **G1 et G2** ne sont plus que dans le slope graph, la fiche et la table : ils écrasaient la matrice (ρ ≈ 0,9 avec G3).
+- **Attributs retirés des vues** parce qu'aucune tâche ne les utilise : `age`, `famsize`, `Pstatus`, `guardian`, `famrel`, `nursery`, `famsup`, `activities`, `internet`, `romantic`, `health`, `freetime`, `reason`, `Mjob`, `Fjob`, `schoolsup`, et `paid` (non comparable entre matières : 46 % de « oui » en maths, 6 % en portugais). Ils restent dans la fiche élève (repliés) et dans l'export CSV.
+- **Attributs dérivés** (`js/data.js`, `DERIVATIONS`) : `reussite` = G3 ≥ 10 ; `risque` = nombre de facteurs parmi « au moins 1 échec passé », « plus de 10 absences », « trajet de 30 min ou plus », « ne vise pas le supérieur » ; `pedu` = max(Medu, Fedu) ; `alc` = indice d'alcool (5·Dalc + 2·Walc) / 7 en 3 niveaux ; `absCat` = absences en classes ; `prog` = G3 − G1.
+
 ## Lancer la démonstration
 
 Les données sont lues directement dans `data/*.csv` avec **`d3.csv()`**. Il n'y a pas de serveur applicatif ni de Python. En revanche, la page doit être servie en **`http://`**, et non ouverte par double-clic en `file://`. En `file://`, Chrome, Edge et Firefox bloquent à la fois les modules ES (`<script type="module">`, imposés par la consigne) et la lecture de fichiers par `d3.csv()` (sécurité CORS). N'importe quel serveur de fichiers statiques convient :
@@ -24,7 +26,7 @@ Les données sont lues directement dans `data/*.csv` avec **`d3.csv()`**. Il n'y
 - **VS Code** : installer l'extension *Live Server* (Ritwick Dey), puis clic droit sur `index.html` → **Open with Live Server**.
 - **Node** (déjà installé avec npm) :
   ```bash
-  cd student-performance-explorer
+  cd DrunkAndStudy
   npx serve .          # puis ouvrir l'URL affichée (http://localhost:3000)
   ```
 - **WebStorm / IntelliJ** : ouvrir `index.html` puis cliquer sur l'icône de navigateur (serveur intégré).
@@ -49,12 +51,12 @@ Le code utilise la variable globale `d3`, donc aucun autre changement n'est néc
 node tools/test-stats.mjs
 ```
 
-Ce script vérifie les rangs avec ex æquo, Spearman, les quartiles, le changement de signe de `absences × G3` selon que les non-évalués sont inclus ou non, et les attributs dérivés sur les vraies données (aucun groupe d'alcool sous 10 élèves, 34 / 20 trajectoires en baisse, non-évalués sans progression).
+Ce script vérifie les rangs avec ex æquo, Spearman, les quartiles, le changement de signe de `absences × G3` selon que les non-évalués sont inclus ou non, et les chiffres de la spécification sur les vraies données : 42 / 67 élèves à risque ≥ 2, médianes 9 contre 12 et 10 contre 13, 74 % / 87 % de réussite, 34 / 20 trajectoires en baisse.
 
 ## Structure
 
 ```
-student-performance-explorer/
+DrunkAndStudy/
 ├── index.html                 structure de la page (conteneurs des vues), aucune donnée, aucun code D3
 ├── README.md
 ├── css/style.css              thème clair/sombre par variables CSS, palette accessible
@@ -69,18 +71,18 @@ student-performance-explorer/
     ├── main.js                initialisation, chargement asynchrone, orchestration du rendu
     ├── state.js               état global unique + bus d'événements (on / emit / setState)
     ├── data.js                chargement, détection du séparateur, typage, drapeau « non évalué », attributs dérivés, filtres, import CSV
-    ├── meta.js                métadonnées des 33 attributs + 6 dérivés ; attributs retenus par technique
-    ├── permalink.js           état de l'analyse encodé dans l'URL (#…) : retrouver une sélection (U4.5)
-    ├── stats.js               (ajout) fonctions pures : rangs, Spearman, quartiles, IC 95 %
+    ├── meta.js                métadonnées des 33 attributs + 6 dérivés ; facteurs de risque ; attributs retenus par technique
+    ├── permalink.js           état de l'analyse encodé dans l'URL (#…) : lien permanent
+    ├── stats.js               fonctions pures : rangs, Spearman, quartiles, rang centile
     ├── utils.js               couleurs, formatage français, libellés, info-bulle
     └── views/
-        ├── filterBar.js       (ajout) barre de filtres unique + rappel des filtres posés par les vues
-        ├── statTiles.js       indicateurs de synthèse
-        ├── parallelCoords.js  technique 1
-        ├── correlationMatrix.js technique 2
-        ├── boxplots.js        technique 3
-        ├── slopeGraph.js      technique 4 (vue d'ensemble)
-        ├── detailPanel.js     technique 4 (niveau détail : fiche élève)
+        ├── filterBar.js       barre de filtres unique + rappel des filtres posés par les vues
+        ├── statTiles.js       indicateurs de synthèse (part ≥ 10/20, effectif, médiane)
+        ├── histograms.js      question 1 — Alexandre
+        ├── factorRanking.js   question 2 — Jim
+        ├── unitChart.js       question 3 — Quentin
+        ├── alluvial.js        question 4 — Gabriel (vue d'ensemble)
+        ├── detailPanel.js     question 4 — Gabriel (niveau détail : fiche élève)
         └── table.js           table triable + export CSV de la sélection
 ```
 
@@ -94,17 +96,16 @@ student-performance-explorer/
 1. Chaque vue exporte `init(container)` et `update(state, derived)`.
 2. Une vue ne modifie jamais une autre vue. Elle appelle `setState({...})`, qui émet `change`.
 3. `main.js` reçoit `change` et calcule une seule fois les sous-ensembles dérivés (`data.derive`) : `scoped`, `noBrush`, `selection`, etc. Il appelle ensuite `update` sur toutes les vues, dans le même `requestAnimationFrame`.
-4. Les brushes sont stockés **en unités de données** (`{kind:"range", lo, hi}` ou `{kind:"set", values}`), ce qui permet à toutes les vues de les appliquer.
+4. Les filtres sont stockés **en unités de données** (facteurs de risque cochés, modalité d'un groupe, passage de bande `{ s, a, b }`), ce qui permet à toutes les vues de les appliquer.
 
 | Action | Effet sur les autres vues |
 |---|---|
-| Brush sur un axe parallèle | filtre les tuiles, les boxplots, le slope graph, la table et la fiche (pas la matrice, voir `docs/conception.md`) |
-| Clic sur une cellule de la matrice | ajoute les deux attributs comme axes adjacents dans les coordonnées parallèles, qui les mettent en évidence |
-| Clic sur une boîte (boxplot) | filtre global sur ce groupe, avec une puce supprimable dans la barre de filtres |
-| Filtre de tendance (slope graph) | filtre global baisse / stable / hausse |
-| Clic sur un élève (ligne, point, trajectoire, ligne de table) | ouvre la fiche élève et le met en évidence dans toutes les vues |
-| « Isoler ces élèves » dans la fiche | pose dans les coordonnées parallèles un brush par attribut du profil de l'élève : toutes les vues montrent les élèves qui lui ressemblent |
-| « Copier le lien de cette vue » | l'adresse de la page contient tout l'état (matière, filtres, brushes, axes, panneaux, élève) : la rouvrir restaure la même vue |
+| Cocher des facteurs ou « ≥ 2 » dans la grille | filtre les tuiles, les histogrammes, le diagramme alluvial, la table et la fiche (pas le classement des facteurs, voir `docs/conception.md`) |
+| Cliquer un facteur dans le classement | les histogrammes se regroupent selon ce facteur |
+| Cliquer un histogramme | filtre global sur ce groupe, avec une puce supprimable dans la barre de filtres |
+| « ▼ En baisse » ou clic sur un ruban | filtre global sur les élèves en baisse ou sur ce passage de bande ; leurs trajectoires sont listées |
+| Clic sur un élève (carré, trajectoire, ligne de table) | ouvre la fiche, comparée à la moyenne de son école |
+| « Copier le lien de cette vue » | l'adresse contient tout l'état : la rouvrir restaure la même vue |
 
 ## Changer de jeu de données
 

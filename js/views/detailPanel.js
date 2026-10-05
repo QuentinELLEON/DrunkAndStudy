@@ -1,63 +1,36 @@
 /* =====================================================================
-   views/detailPanel.js — Technique 4 (Gabriel), niveau « détail »
-   Fiche élève : 33 attributs + trajectoire personnelle située dans la sélection
+   views/detailPanel.js — Technique de Gabriel, niveau « détail »
+   Fiche élève : valeurs de l'élève à côté de la moyenne de son école
    ---------------------------------------------------------------------
-   Transformation : quartiles de G1, G2, G3 dans la sélection courante,
-                    rang centile de G3, effectif des élèves de même trajectoire,
-                    effectif des élèves au même PROFILE (tâche U2.5 : « ils sont 12 comme lui »).
-   Lien vers les autres vues : « Isoler ces élèves » pose dans les coordonnées
-                    parallèles un brush par attribut du profil (meta.PROFILE_KEYS).
-   Marques   : bande (Q1–Q3 de la sélection), ligne pointillée (médiane),
-               ligne pleine + points (l'élève).
-   Canaux    : position verticale = note 0–20 ; teinte = résultat de l'élève.
+   Tâche : U1-4 (consulter le profil d'un élève et le situer par rapport à la
+           moyenne de son école et de sa matière, en un clic).
+   Transformation : groupe de référence = élèves évalués du même établissement,
+           dans la matière affichée (jamais les deux matières ensemble) ;
+           moyenne (quantitatifs, ordinaux) ou part de « oui » (binaires),
+           quartiles et médiane de G1, G2, G3 pour la mini-trajectoire.
+   Marques   : tableau élève / école ; trajectoire de l'élève sur la bande Q1–Q3
+               de son école ; attributs non analysés repliés.
+   Canaux    : position verticale = note 0–20, seuil à 10 ; teinte = résultat ;
+               ▲ ▼ = écart à la moyenne de l'école, dans le sens favorable ou non.
    Interactions : ← / → (élève précédent / suivant de la sélection), fermer.
    ===================================================================== */
 /* global d3 */
 
 import { setState } from "../state.js";
-import { GROUPS, PASS, SMALL_N, KEY_ATTRS, PROFILE_KEYS } from "../meta.js";
-import { percentBelow } from "../stats.js";
-import { css, resultOf, resultSpec, resultBadge, labelOf, shortOf, titleOf, esc, pct, widthOf } from "../utils.js";
+import { GROUPS, PASS, SMALL_N, KEY_ATTRS, RISK_FACTORS } from "../meta.js";
+import { css, resultOf, resultSpec, resultBadge, labelOf, titleOf, esc, fmt1, pct, widthOf } from "../utils.js";
 
-/* ---------------- profil (U2.5) ---------------- */
-const bandOf = v => v < PASS ? [0, PASS - 1] : v < 14 ? [PASS, 13] : [14, 20];
-
-/** Profil clé d'un élève : mêmes valeurs sur PROFILE_KEYS, G3 dans la même bande. */
-function profileOf(ds, d) {
-  const keys = PROFILE_KEYS.filter(k => ds.keys.includes(k));
-  if (!ds.standard || d.__nograde || keys.length < 3) return null;
-  const band = bandOf(d.G3);
-  const match = r => !r.__nograde && keys.every(k => k === "G3" ? r.G3 >= band[0] && r.G3 <= band[1] : r[k] === d[k]);
-  return { keys, band, match };
-}
-
-/** Pose dans les coordonnées parallèles un brush par attribut du profil (vues liées). */
-function isolateProfile(ds, d, prof) {
-  const brushes = {};
-  prof.keys.forEach(k => {
-    if (k === "G3") brushes.G3 = { kind: "range", lo: prof.band[0], hi: prof.band[1] };
-    else if (ds.meta[k].t === "quant") brushes[k] = { kind: "range", lo: d[k], hi: d[k] };
-    else brushes[k] = { kind: "set", values: [d[k]] };
-  });
-  const axes = cur.state.axes.filter(k => k !== "G3").concat(prof.keys.filter(k => k !== "G3" && !cur.state.axes.includes(k)));
-  if (ds.keys.includes("G3")) axes.push("G3");
-  setState({ axes, brushes, groupFilter: null, trend: "all" }, "detail");
-}
+/** Sens favorable d'un attribut : +1 = plus haut est mieux, −1 = plus bas est mieux, 0 = neutre. */
+const GOOD = { failures: -1, absences: -1, traveltime: -1, risque: -1, studytime: 1, pedu: 1, G1: 1, G2: 1, G3: 1, prog: 1, higher: 1, goout: 0, alc: -1 };
 
 let root;
 let cur = { state: null, derived: null };
-let moreOpen = false;                                     // « Autres attributs » déplié : conservé entre deux rendus
+let moreOpen = false;
 
 export function init(container) {
   root = container;
   root.addEventListener("toggle", e => { if (e.target.matches("details.dmore")) moreOpen = e.target.open; }, true);
   root.addEventListener("click", e => {
-    const iso = e.target.closest("button[data-isolate]");
-    if (iso && cur.derived && cur.derived.selected) {
-      const ds = cur.derived.ds, d = cur.derived.selected, prof = profileOf(ds, d);
-      if (prof) isolateProfile(ds, d, prof);
-      return;
-    }
     const b = e.target.closest("button[data-nav]"); if (!b) return;
     if (b.dataset.nav === "close") setState({ selectedId: null }, "detail");
     else step(b.dataset.nav === "next" ? 1 : -1);
@@ -65,7 +38,7 @@ export function init(container) {
   document.addEventListener("keydown", e => {
     if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
     const t = e.target;
-    if (t.closest && (t.closest("input, select, textarea, .matrix, .seg, .brush"))) return;
+    if (t.closest && t.closest("input, select, textarea, .seg, .rank, .tlist")) return;
     if (cur.state && cur.state.selectedId != null) { e.preventDefault(); step(e.key === "ArrowRight" ? 1 : -1); }
   });
 }
@@ -82,111 +55,102 @@ export function update(state, derived) {
   cur = { state, derived };
   const ds = derived.ds, d = derived.selected;
   if (!ds || !d) {
-    root.innerHTML = `<p class="empty">Aucun élève sélectionné.<br>Cliquez une ligne des coordonnées parallèles, un point des boxplots,
-      une trajectoire du slope graph ou une ligne de la table.</p>`;
+    root.innerHTML = `<p class="empty">Aucun élève sélectionné.<br>Cliquez un carré de la grille, une trajectoire de la liste ou une ligne de la table.</p>`;
     return;
   }
   const sel = derived.selection;
   const idx = sel.findIndex(r => r.__i === d.__i);
-  const inSel = idx >= 0;
   const hasGrades = ["G1", "G2", "G3"].every(k => ds.keys.includes(k));
+  const hasSchool = ds.keys.includes("school");
+  // groupe de référence : même établissement, même matière, élèves évalués (indépendant des filtres)
+  const ref = ds.rows.filter(r => !r.__nograde && (!hasSchool || r.school === d.school));
+  const refName = `${hasSchool ? (d.school === "GP" ? "Gabriel Pereira" : d.school === "MS" ? "Mousinho da Silveira" : d.school) + ", " : ""}${ds.name.toLowerCase()}`;
 
   const flags = [];
   if (d.__nograde) flags.push(`<div class="flag">✕ Non évalué : G3 = 0 avec 0 absence. À lire comme un dossier non renseigné (abandon, absence à l'épreuve), pas comme une note de 0.</div>`);
-  if (!inSel) flags.push(`<div class="flag info">ⓘ Cet élève est hors de la sélection courante (filtres ou brushes) : il est comparé à une sélection dont il ne fait pas partie.</div>`);
+  if (idx < 0) flags.push(`<div class="flag info">ⓘ Cet élève est hors de la sélection courante (filtres ou critères).</div>`);
 
   let summary = "", chart = "";
   if (hasGrades) {
-    const graded = sel.filter(r => !r.__nograde);
-    const below = percentBelow(graded.map(r => r.G3), d.G3);
-    const same = sel.filter(r => r.G1 === d.G1 && r.G2 === d.G2 && r.G3 === d.G3).length;
     const delta = d.__delta;
+    const facs = ds.standard ? RISK_FACTORS.filter(f => f.test(d)).map(f => f.label.toLowerCase()) : [];
     summary = `<div class="dsum">
-      <div><b>${d.G1} → ${d.G2} → ${d.G3}</b>G1 → G2 → G3 (/20)</div>
-      <div><b>${!isFinite(delta) ? "—" : delta > 0 ? "▲ +" + delta : delta < 0 ? "▼ " + delta : "● 0"}</b>progression G3 − G1</div>
-      <div><b>${isFinite(below) && !d.__nograde ? pct(below) : "—"}</b>de la sélection a une note finale inférieure (n = ${graded.length})</div>
-      <div><b>${same}</b>élève${same > 1 ? "s" : ""} avec exactement cette trajectoire dans la sélection</div>
-    </div>`;
-    chart = miniSlope(d, graded);
+      <div><b>${d.G1} → ${d.G2} → ${d.G3}</b>notes P1 → P2 → finale (/20)</div>
+      <div><b>${!isFinite(delta) ? "—" : delta > 0 ? "▲ +" + delta : delta < 0 ? "▼ −" + -delta : "● 0"}</b>progression G3 − G1</div>` +
+      (ds.standard ? `<div><b>${isFinite(d.risque) ? d.risque + " / 4" : "—"}</b>facteurs de risque${facs.length ? " : " + esc(facs.join(", ")) : ""}</div>` : "") +
+    `</div>`;
+    chart = miniSlope(d, ref, refName);
   }
 
-  // Profil clé (U2.5) : combien d'élèves du périmètre (filtres de la barre) partagent ces valeurs ?
-  let profile = "";
-  const prof = profileOf(ds, d);
-  if (prof) {
-    const same = derived.scoped.filter(prof.match).length;
-    const desc = prof.keys.map(k => k === "G3" ? `G3 ${prof.band[0]}–${prof.band[1]}` : `${titleOf(ds.meta, k)} : ${shortOf(ds.meta, k, d[k])}`).join(" · ");
-    const verdict = same <= 1 ? "cas isolé : aucun autre élève n'a ce profil"
-      : same < SMALL_N ? `profil rare : ${same} élèves (⚠ moins de ${SMALL_N})` : `profil représentatif : ${same} élèves`;
-    profile = `<div class="dprofile">
-      <div><b>${verdict}</b> <span class="nbadge">sur ${derived.scoped.length} dans le périmètre</span></div>
-      <div class="note">${esc(desc)}</div>
-      <button type="button" class="btn small" data-isolate>Isoler ces élèves dans toutes les vues</button>
-    </div>`;
-  }
+  // tableau élève / moyenne de l'école
+  const keys = (ds.standard ? KEY_ATTRS : ds.keys.filter(k => ds.meta[k].t !== "nom").slice(0, 12)).filter(k => ds.keys.includes(k));
+  const rowsHtml = keys.map(k => {
+    const M = ds.meta[k], v = d[k];
+    const vals = ref.map(r => r[k]).filter(x => x !== "" && !(typeof x === "number" && isNaN(x)));
+    let refTxt = "—", cmp = "";
+    if (M.t === "nom") {
+      const yes = vals.filter(x => x === "yes").length;
+      refTxt = vals.length ? `${pct(yes / vals.length)} « oui »` : "—";
+    } else if (vals.length) {
+      const m = d3.mean(vals);
+      refTxt = `moy. ${fmt1(m)}`;
+      const g = GOOD[k] ?? 0;
+      if (g && typeof v === "number" && isFinite(v) && Math.abs(v - m) >= 0.5) cmp = (v - m) * g > 0 ? `<span class="up">▲</span>` : `<span class="down">▼</span>`;
+    }
+    const tip = [M.def ? "Dérivé : " + M.def : "", M.note || ""].filter(Boolean).join(" — ");
+    return `<tr><th scope="row">${esc(titleOf(ds.meta, k))}${tip ? ` <span class="info" title="${esc(tip)}">ⓘ</span>` : ""}</th>
+      <td>${cmp} ${esc(labelOf(ds.meta, k, v))}</td><td class="ref">${refTxt}</td></tr>`;
+  }).join("");
+  const table = `<table class="dcmp"><thead><tr><th></th><th>Élève</th><th>Son école (n = ${ref.length})</th></tr></thead><tbody>${rowsHtml}</tbody></table>
+    <p class="note" style="margin:4px 0 0">▲ / ▼ : valeur plus favorable / moins favorable que la moyenne de l'école (association, pas jugement).</p>`;
 
-  // Attributs : ceux qu'analysent les vues d'abord, les autres repliés (les 33 restent accessibles, U2.2)
-  const row = k => {
-    const m = ds.meta[k] || {};
-    const tip = [m.def ? "Dérivé : " + m.def : "", m.note || ""].filter(Boolean).join(" — ");
-    return `<dt>${esc(titleOf(ds.meta, k))}${tip ? ` <span class="info" title="${esc(tip)}">ⓘ</span>` : ""}</dt><dd>${esc(labelOf(ds.meta, k, d[k]))}</dd>`;
-  };
-  const grouped = ks => ds.builtin || ds.standard
-    ? GROUPS.map(g => [g, ks.filter(k => ds.meta[k].g === g)]).filter(g => g[1].length)
-    : [["Attributs", ks]];
-  const block = ks => grouped(ks).map(([g, gk]) => `<div><h4>${esc(g)}</h4><dl>${gk.map(row).join("")}</dl></div>`).join("");
-  let attrs;
-  if (ds.standard) {
-    const main = KEY_ATTRS.filter(k => ds.keys.includes(k));
-    const rest = ds.rawKeys.filter(k => !main.includes(k));
-    attrs = `<div class="dgroups">${block(main)}</div>` +
-      (rest.length ? `<details class="dmore"${moreOpen ? " open" : ""}><summary>Autres attributs du fichier (${rest.length}) : non utilisés par les vues</summary>
-        <div class="dgroups">${block(rest)}</div></details>` : "");
-  } else attrs = `<div class="dgroups">${block(ds.keys)}</div>`;
+  // autres attributs, repliés (les 33 restent accessibles)
+  const rest = ds.rawKeys.filter(k => !keys.includes(k));
+  const block = ks => (ds.standard ? GROUPS.map(g => [g, ks.filter(k => ds.meta[k].g === g)]).filter(g => g[1].length) : [["Attributs", ks]])
+    .map(([g, gk]) => `<div><h4>${esc(g)}</h4><dl>${gk.map(k => {
+      const n = ds.meta[k].note;
+      return `<dt>${esc(titleOf(ds.meta, k))}${n ? ` <span class="info" title="${esc(n)}">ⓘ</span>` : ""}</dt><dd>${esc(labelOf(ds.meta, k, d[k]))}</dd>`;
+    }).join("")}</dl></div>`).join("");
+  const more = rest.length ? `<details class="dmore"${moreOpen ? " open" : ""}><summary>Autres attributs du fichier (${rest.length})</summary>
+      <div class="dgroups">${block(rest)}</div></details>` : "";
 
   root.innerHTML = `
     <div class="dhead">
       <span class="who2">Élève n° ${d.__i + 1} · ${esc(ds.name)} ${resultBadge(d)}</span>
       <span class="dnav">
         <button type="button" class="btn small" data-nav="prev" aria-label="Élève précédent de la sélection">←</button>
-        <span class="nbadge" style="align-self:center">${inSel ? `${idx + 1} / ${sel.length}` : `– / ${sel.length}`}</span>
+        <span class="nbadge" style="align-self:center">${idx >= 0 ? `${idx + 1} / ${sel.length}` : `– / ${sel.length}`}</span>
         <button type="button" class="btn small" data-nav="next" aria-label="Élève suivant de la sélection">→</button>
         <button type="button" class="btn small" data-nav="close" aria-label="Fermer la fiche">✕</button>
       </span>
     </div>
-    ${flags.join("")}${summary}${chart}${profile}
-    ${attrs}`;
+    ${flags.join("")}${summary}${chart}${table}${more}`;
 }
 
-/** Trajectoire de l'élève sur fond de bande interquartile et médiane de la sélection. */
-function miniSlope(d, graded) {
-  const w = Math.min(460, widthOf(root, 400)), h = 170, m = { t: 12, r: 64, b: 20, l: 40 };
-  const x = d3.scalePoint().domain(["G1", "G2", "G3"]).range([m.l, w - m.r]);
-  const y = d3.scaleLinear().domain([0, 20]).range([h - m.b, m.t]);
-  const q = k => {
-    const v = graded.map(r => r[k]).sort(d3.ascending);
-    return [d3.quantileSorted(v, 0.25), d3.quantileSorted(v, 0.5), d3.quantileSorted(v, 0.75)];
-  };
+/** Trajectoire de l'élève sur la bande Q1–Q3 et la médiane de son école. */
+function miniSlope(d, ref, refName) {
+  const w = Math.min(420, widthOf(root, 340)), h = 150, m = { t: 12, r: 70, b: 20, l: 30 };
   const keys = ["G1", "G2", "G3"];
+  const x = d3.scalePoint().domain(keys).range([m.l, w - m.r]);
+  const y = d3.scaleLinear().domain([0, 20]).range([h - m.b, m.t]);
   const col = resultSpec()[resultOf(d)].color;
   let band = "", med = "";
-  if (graded.length) {
-    const Q = keys.map(q);
-    band = `<path d="M${keys.map((k, i) => `${x(k)},${y(Q[i][2])}`).join("L")}L${keys.slice().reverse().map((k, i) => `${x(k)},${y(Q[2 - i][0])}`).join("L")}Z"
-      fill="${css("--chip-on")}" stroke="none"/>`;
-    med = `<path d="M${keys.map((k, i) => `${x(k)},${y(Q[i][1])}`).join("L")}" fill="none" stroke="${css("--text-2")}" stroke-width="1.4" stroke-dasharray="5 3"/>`;
+  if (ref.length) {
+    const Q = keys.map(k => { const v = ref.map(r => r[k]).sort(d3.ascending); return [0.25, 0.5, 0.75].map(p => d3.quantileSorted(v, p)); });
+    band = `<path d="M${keys.map((k, i) => `${x(k)},${y(Q[i][2])}`).join("L")}L${keys.slice().reverse().map((k, i) => `${x(k)},${y(Q[2 - i][0])}`).join("L")}Z" fill="${css("--chip-on")}"/>`;
+    med = `<path d="M${keys.map((k, i) => `${x(k)},${y(Q[i][1])}`).join("L")}" fill="none" stroke="${css("--text-2")}" stroke-width="1.5" stroke-dasharray="5 3"/>`;
   }
   const path = `M${keys.map(k => `${x(k)},${y(d[k])}`).join("L")}`;
   const dots = keys.map(k => `<circle cx="${x(k)}" cy="${y(d[k])}" r="4.5" fill="${col}" stroke="${css("--surface-1")}" stroke-width="2"/>`).join("");
-  const labs = keys.map(k => `<text x="${x(k)}" y="${h - 4}" text-anchor="middle" style="font-size:10px;fill:${css("--muted")}">${k}</text>`).join("");
-  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;display:block;margin-bottom:6px" role="img"
-      aria-label="Notes de l'élève ${d.G1}, ${d.G2}, ${d.G3} comparées à la médiane et aux quartiles de la sélection">
-    ${[0, 5, 10, 15, 20].map(t => `<text x="${m.l - 8}" y="${y(t)}" dy="0.32em" text-anchor="end" style="font-size:9.5px;fill:${css("--muted")}">${t}</text>`).join("")}
-    <line x1="${m.l - 4}" x2="${w - m.r + 4}" y1="${y(PASS)}" y2="${y(PASS)}" class="passline"/>
+  const labs = ["P1", "P2", "finale"].map((t, i) => `<text x="${x(keys[i])}" y="${h - 4}" text-anchor="middle" style="font-size:10px;fill:${css("--muted")}">${t}</text>`).join("");
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" style="max-width:${w}px;display:block;margin-bottom:4px" role="img"
+      aria-label="Notes de l'élève ${d.G1}, ${d.G2}, ${d.G3}, comparées à la médiane et aux quartiles de son école">
+    ${[0, 10, 20].map(t => `<text x="${m.l - 8}" y="${y(t)}" dy="0.32em" text-anchor="end" style="font-size:10px;fill:${css("--muted")}">${t}</text>`).join("")}
     ${band}${med}
-    <path d="${path}" fill="none" stroke="${col}" stroke-width="2.6" stroke-linejoin="round" ${d.__nograde ? 'stroke-dasharray="5 3"' : ""}/>
+    <line x1="${m.l - 4}" x2="${w - m.r + 4}" y1="${y(PASS)}" y2="${y(PASS)}" class="passline"/>
+    <path d="${path}" fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round" ${d.__nograde ? 'stroke-dasharray="5 3"' : ""}/>
     ${dots}${labs}
-    <text x="${w - m.r + 8}" y="${y(d.G3)}" dy="0.32em" style="font-size:10.5px;font-weight:700;fill:${css("--text-1")}">élève ${d.G3}</text>
+    <text x="${w - m.r + 8}" y="${y(d.G3)}" dy="0.32em" style="font-size:11px;font-weight:600;fill:${css("--text-1")}">élève ${d.G3}</text>
   </svg>
-  <p class="note" style="margin:0 0 8px">Bande : Q1–Q3 de la sélection · tirets : médiane (n = ${graded.length}) · trait plein : l'élève.</p>`;
+  <p class="note" style="margin:0 0 8px">Bande : moitié centrale des élèves de son école (${esc(refName)}, n = ${ref.length}${ref.length < SMALL_N ? " ⚠" : ""}) · tirets : leur médiane.</p>`;
 }

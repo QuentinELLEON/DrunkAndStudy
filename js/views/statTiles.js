@@ -30,11 +30,12 @@ export function update(state, derived) {
   if (ds.keys.includes("G3")) {
     const g = graded.map(d => d.G3);
     const ok = g.length > 0;
-    tiles.push(tile("Médiane de G3", ok ? fmt1(d3.median(g)).replace(/,0$/, "") + "<small> /20</small>" : "—",
+    tiles.push(tile("Note habituelle (médiane)", ok ? fmt1(d3.median(g)).replace(/,0$/, "") + "<small> /20</small>" : "—",
       ok ? `moyenne ${fmt2(d3.mean(g))} · n = ${g.length} évalués` : "aucun élève évalué"));
     const k = g.filter(v => v >= PASS).length;
-    tiles.push(tile("Taux de réussite", ok ? pct(k / g.length) : "—",
-      ok ? `▲ ${k} sur ${g.length} ont G3 ≥ ${PASS}` : "&nbsp;"));
+    // U2-1 : la part des élèves au-dessus de 10/20 est la première chose lue
+    tiles.splice(0, 0, tile("Ont au moins 10/20", ok ? pct(k / g.length) : "—",
+      ok ? `▲ ${k} élèves sur ${g.length} évalués` : "&nbsp;"));
   }
   if (!ds.builtin) tiles.push(tile("Colonnes", ds.rawKeys.length, `fichier importé · séparateur « ${ds.separator === "\t" ? "tab" : ds.separator} »`));
   root.innerHTML = tiles.join("");

@@ -27,7 +27,8 @@ console.log(`ρ Spearman absences × G3 (évalués) = ${spearman(graded.map(d =>
 // Attributs dérivés (docs/taches.md, étape 2) : calculés par data.js sur les vraies données
 const { typeRows, derivedKeysFor } = await import("../js/data.js");
 const { META, EXPECTED_COLUMNS } = await import("../js/meta.js");
-for (const [f, nDown] of [["mat", 34], ["por", 20]]) {
+const med = a => { const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+for (const [f, nDown, nRisk, medHi, medZero, passPct] of [["mat", 34, 42, 9, 12, 74], ["por", 20, 67, 10, 13, 87]]) {
   const t = readFileSync(new URL(`../data/student-${f}.csv`, import.meta.url), "utf8").trim().split(/\r?\n/);
   const h = t[0].split(","), raw = t.slice(1).map(l => Object.fromEntries(l.split(",").map((v, i) => [h[i], v])));
   const dk = derivedKeysFor(EXPECTED_COLUMNS);
@@ -36,7 +37,11 @@ for (const [f, nDown] of [["mat", 34], ["por", 20]]) {
   ok(dk.length === 6, `${f} : 6 dérivés (${dk.join(", ")})`);
   ok([...count(G, "alc").values()].every(n => n >= 10), `${f} : indice alcool sans groupe < 10 (${[...count(G, "alc")].sort().map(e => e.join("→")).join(", ")})`);
   ok(!count(G, "pedu").has(0), `${f} : éducation parentale sans modalité 0`);
-  ok(R.filter(d => d.__nograde).every(d => isNaN(d.prog) && isNaN(d.absC) && d.absCat === 9), `${f} : non-évalués → prog et absC manquants, absCat « n. r. »`);
+  ok(R.filter(d => d.__nograde).every(d => isNaN(d.prog) && isNaN(d.risque) && d.absCat === 9 && d.reussite === ""), `${f} : non-évalués → prog, risque et réussite manquants, absCat « n. r. »`);
+  const hi = G.filter(d => d.risque >= 2), zero = G.filter(d => d.risque === 0);
+  ok(hi.length === nRisk, `${f} : ${nRisk} élèves à risque ≥ 2 (U1-3, trouvé ${hi.length})`);
+  ok(med(hi.map(d => d.G3)) === medHi && med(zero.map(d => d.G3)) === medZero, `${f} : médiane de G3 ${medHi} (risque ≥ 2) contre ${medZero} (risque 0) (U2-4)`);
+  ok(Math.round(100 * G.filter(d => d.reussite === "oui").length / G.length) === passPct, `${f} : ${passPct} % des élèves évalués ont G3 ≥ 10 (U2-1)`);
   ok(G.filter(d => d.__trend === "down").length === nDown, `${f} : ${nDown} trajectoires en baisse (G3 − G1 ≤ −2)`);
 }
 
