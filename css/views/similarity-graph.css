@@ -9,3 +9,5 @@
 .fake-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 12px}
 .fake-fields label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
 .fake-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.node:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.graph-zoom-bar button{padding:2px 8px;min-width:26px;font-weight:600}
