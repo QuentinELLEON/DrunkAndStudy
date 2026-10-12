@@ -48,6 +48,7 @@ DrunkAndStudy/
 │   ├── utils.js                 formats français, couleurs lues dans le CSS, info-bulle, accessibilité
 │   ├── controls/
 │   │   ├── header.js            matière, non-évalués, réinitialiser
+│   │   ├── theme.js             bouton clair / sombre (data-theme, mémorisé dans le navigateur)
 │   │   ├── selectionPanel.js    puces de filtres, tuiles n / % / médiane / moyenne, curseurs studytime et goout
 │   │   └── studentCard.js       fiche élève (tableau élève contre médiane de l'école)
 │   └── views/
