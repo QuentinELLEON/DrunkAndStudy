@@ -1,0 +1,839 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qu'est-ce qui accompagne la réussite au lycée ?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#F4F6FA;--panel:#FFFFFF;--ink:#1B2333;--muted:#5B6476;--line:#D8DDE7;--soft:#EEF1F6;
+  --grid:rgba(31,79,163,.055);--ok:#1F4FA3;--ko:#D9822B;--mid:#E4E8EF;--focus:#1F4FA3;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#151A24;--panel:#1C2230;--ink:#E6E9F0;--muted:#9AA3B5;--line:#323A4C;--soft:#232A3A;
+    --grid:rgba(110,155,234,.06);--ok:#6E9BEA;--ko:#F0A65A;--mid:#3A4256;--focus:#8FB3F0;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151A24;--panel:#1C2230;--ink:#E6E9F0;--muted:#9AA3B5;--line:#323A4C;--soft:#232A3A;
+  --grid:rgba(110,155,234,.06);--ok:#6E9BEA;--ko:#F0A65A;--mid:#3A4256;--focus:#8FB3F0;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;color:var(--ink);
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%;
+}
+.page{max-width:1480px;margin:0 auto;padding:28px 20px 40px}
+.top{display:flex;flex-wrap:wrap;gap:18px 40px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+h1{font-size:clamp(25px,3.2vw,36px);line-height:1.1;margin:0 0 10px;font-weight:700;letter-spacing:-.01em;max-width:22ch}
+.lede{margin:0;color:var(--muted);max-width:70ch}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-right:1px solid var(--line);background:transparent;padding:7px 13px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;min-height:36px}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.seg-sm button{padding:5px 9px;font-size:13px;min-height:32px}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:14px;cursor:pointer;min-height:36px}
+.btn-sm{padding:4px 10px;min-height:30px;font-size:13px}
+.btn:hover{border-color:var(--muted)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.views{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;min-width:0}
+.view{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px 16px;min-width:0}
+.view.hero{grid-column:1/-1;border-top:4px solid var(--ink)}
+.view.wide{grid-column:1/-1}
+.view h2{font-size:19px;line-height:1.25;margin:0 0 6px}
+.view.hero h2{font-size:23px}
+.how{margin:0 0 12px;color:var(--muted);font-size:14px;max-width:78ch}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
+.toolbar label{font-size:13.5px;color:var(--muted)}
+select{font:inherit;font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-height:36px}
+.chart{width:100%;overflow-x:auto}
+svg{display:block;max-width:100%;height:auto;font-family:inherit}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px;color:var(--muted);margin-top:10px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.bar{display:inline-block;width:130px;height:12px;border-radius:3px;vertical-align:-1px;margin:0 6px}
+.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100vh - 24px - env(safe-area-inset-top,0px));overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.panel h3{font-size:16px;margin:0 0 8px}
+.panel section+section{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:4px 10px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.chip .x{font-size:15px;line-height:1;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 6px}
+.stats div{background:var(--soft);border-radius:8px;padding:8px 10px}
+.stats b{display:block;font-size:20px;line-height:1.15}
+.stats small{color:var(--muted);font-size:12.5px}
+.note{font-size:13px;color:var(--muted);margin:6px 0 0}
+.mini-lab{font-size:13px;color:var(--muted);margin:0 0 4px}
+.empty{color:var(--muted);padding:24px 0;margin:0}
+.tip{position:fixed;z-index:20;left:0;top:0;pointer-events:none;opacity:0;background:var(--ink);color:var(--panel);padding:8px 10px;border-radius:8px;font-size:13px;line-height:1.35;max-width:290px;transition:opacity .12s}
+.tip table{border-collapse:collapse;margin-top:4px}
+.tip td{padding:1px 10px 1px 0;vertical-align:top}
+.tip td+td{opacity:.85}
+.attr{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.attr th,.attr td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);font-weight:400}
+.attr thead th{color:var(--muted);font-size:12.5px}
+.attr td.grp{color:var(--muted)}
+.rib{opacity:.5;transition:opacity .15s}
+.rib.ok{fill:var(--ok)}
+.rib.ko{fill:var(--ko)}
+.rib:hover{opacity:.9}
+.blk{fill:var(--ink);cursor:pointer}
+.lbl{font-size:12.5px;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.axt{font-size:13px;font-weight:700;fill:var(--ink)}
+.axrm{font-size:15px;fill:var(--muted);cursor:pointer}
+.cell{cursor:pointer}
+.cell.sel{stroke:var(--ink);stroke-width:2.5}
+.ctxt{pointer-events:none;text-anchor:middle;font-size:11px}
+.mlab{font-size:12px;fill:var(--ink)}
+.mlab.g3{font-weight:700}
+.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5}
+.arc:hover{opacity:.85}
+.hatch line{stroke:var(--ink);stroke-width:1.2;opacity:.45}
+.arclbl{font-size:11.5px;fill:var(--ink);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
+.center{fill:var(--soft);cursor:pointer}
+.ctr{text-anchor:middle;fill:var(--ink);pointer-events:none}
+.link{stroke:var(--muted);stroke-opacity:.22;stroke-width:1}
+.link.hi{stroke:var(--ink);stroke-opacity:.9;stroke-width:1.6}
+.node{stroke:var(--panel);stroke-width:1;cursor:pointer}
+.node.hi{stroke:var(--ink);stroke-width:2}
+.node.me{stroke:var(--ink);stroke-width:3}
+.axis text{font-size:11px;fill:var(--muted)}
+.axis path,.axis line{stroke:var(--line)}
+.mini{font-size:11.5px;fill:var(--muted);paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
+.seuil{stroke:var(--ink);stroke-dasharray:3 3;stroke-width:1;opacity:.6}
+.bx-all{fill:var(--soft);stroke:var(--line)}
+.bx-sel{fill:var(--ok);fill-opacity:.22;stroke:var(--ok)}
+.dot{fill:var(--ink);opacity:.3}
+.traj{fill:none;stroke:var(--ink);stroke-width:2.5}
+.trajg{fill:none;stroke:var(--muted);stroke-width:2;opacity:.8}
+.trend{fill:none;stroke:var(--ok);stroke-width:2.5}
+.fake{margin:0 0 12px;padding:12px 14px;background:var(--soft);border-radius:10px}
+.fake[hidden]{display:none}
+.fake-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 12px}
+.fake-fields label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.fake-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.foot{margin-top:24px;color:var(--muted);font-size:13px;max-width:90ch}
+@media (max-width:1150px){.layout{grid-template-columns:1fr}.panel{position:static;max-height:none}}
+@media (max-width:780px){.views{grid-template-columns:1fr}.page{padding:20px 14px 32px}.view{padding:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hatch" class="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6"/></pattern>
+  </defs>
+</svg>
+<div class="page">
+  <header class="top">
+    <div>
+      <h1>Qu'est-ce qui accompagne la réussite au lycée ?</h1>
+      <p class="lede">Deux lycées portugais en 2005-2006, 395 élèves en maths et 649 en portugais. Choisissez une matière, puis cliquez sur une catégorie, un secteur ou un point pour filtrer toutes les vues. Ce qui apparaît ici, ce sont des associations, jamais des causes.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Matière" id="matSeg">
+        <button type="button" data-v="mat">Maths</button><button type="button" data-v="por">Portugais</button>
+      </div>
+      <label class="check"><input type="checkbox" id="ne"> <span id="neLbl">Inclure les élèves non évalués</span></label>
+      <button type="button" class="btn" id="reset">Tout réinitialiser</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="views">
+      <section class="view hero" aria-labelledby="a-q">
+        <h2 id="a-q"></h2>
+        <p class="how">Chaque bande regroupe des élèves qui partagent les mêmes catégories, sa largeur suit leur nombre. Bleu pour une note finale de 10 ou plus, orange en dessous. Cliquez sur une catégorie pour zoomer dessus.</p>
+        <div class="toolbar">
+          <div class="seg" role="group" aria-label="Question" id="presetSeg"></div>
+          <label for="addAxis">Ajouter un axe</label><select id="addAxis"></select>
+        </div>
+        <div class="chart" id="psets"></div>
+        <div class="legend"><span><i class="sw" style="background:var(--ok)"></i>Note finale de 10 ou plus</span><span><i class="sw" style="background:var(--ko)"></i>Note finale sous 10</span></div>
+      </section>
+
+      <section class="view" aria-labelledby="b-t">
+        <h2 id="b-t">Quels attributs varient avec la note finale, et dans quel sens ?</h2>
+        <p class="how">Vert quand deux attributs augmentent ensemble, violet quand l'un baisse lorsque l'autre augmente, gris quand il n'y a pas de lien net. Cliquez sur une case pour voir les élèves.</p>
+        <div class="toolbar"><label class="check"><input type="checkbox" id="showG"> Afficher aussi les notes G1 et G2</label></div>
+        <div class="chart" id="matrix"></div>
+        <div class="legend" id="bLegend"></div>
+        <p class="note" id="bInfo"></p>
+      </section>
+
+      <section class="view" aria-labelledby="c-t">
+        <h2 id="c-t">Où se concentre l'échec dans la population ?</h2>
+        <p class="how">Chaque anneau découpe les élèves selon un attribut. La taille d'un secteur suit le nombre d'élèves, sa couleur leur réussite comparée à la moyenne. Cliquez sur un secteur pour zoomer, au centre pour revenir.</p>
+        <div class="toolbar">
+          <label for="sb0">Anneau 1</label><select id="sb0"></select>
+          <label for="sb1">Anneau 2</label><select id="sb1"></select>
+          <label for="sb2">Anneau 3</label><select id="sb2"></select>
+        </div>
+        <div class="chart" id="sunburst"></div>
+        <div class="legend" id="cLegend"></div>
+      </section>
+
+      <section class="view wide" aria-labelledby="d-t">
+        <h2 id="d-t">Les élèves qui se ressemblent réussissent-ils pareil ?</h2>
+        <p class="how">Chaque point regroupe les élèves qui ont la même vie scolaire (échecs passés, absences, temps d'étude, trajet, sorties, alcool, études des parents, projet d'études), sans tenir compte des notes, du sexe ni de l'école. Il est relié à ses 3 profils les plus proches. Survolez un point pour voir ses voisins, cliquez pour ouvrir la fiche, ou testez un profil.</p>
+        <div class="toolbar">
+          <span class="mini-lab" style="margin:0">Couleur</span>
+          <div class="seg" role="group" aria-label="Couleur des points" id="gSeg">
+            <button type="button" data-v="reussite">Réussite</button><button type="button" data-v="risque">Facteurs de risque</button>
+          </div>
+          <button type="button" class="btn" id="fakeBtn" aria-expanded="false" aria-controls="fakeForm">Tester un profil</button>
+        </div>
+        <form class="fake" id="fakeForm" hidden>
+          <div class="fake-fields" id="fakeFields"></div>
+          <div class="fake-actions"><button type="submit" class="btn">Placer ce profil</button><button type="button" class="btn" id="fakeClear">Retirer</button></div>
+        </form>
+        <div class="chart" id="graph"></div>
+        <div class="legend" id="dLegend"></div>
+        <p class="note" id="dFake" style="font-size:14px;color:var(--ink);max-width:80ch"></p>
+        <p class="note" id="dTake" style="font-size:14px;color:var(--ink);max-width:80ch"></p>
+      </section>
+    </main>
+
+    <aside class="panel" id="panel" aria-live="polite"></aside>
+  </div>
+
+  <p class="foot">Source, jeu Student Alcohol Consumption (Kaggle), miroir du jeu UCI Student Performance (Cortez et Silva, 2008). Les élèves notés 0 sans aucune absence sont des dossiers non évalués, exclus par défaut. Les deux matières ne sont jamais cumulées. Démonstrateur pédagogique, pas un outil de suivi d'élèves.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script>
+"use strict";
+const RAW = {"cols":["school","sex","address","higher","failures","absences","studytime","traveltime","goout","Dalc","Walc","Medu","Fedu","G1","G2","G3"],"mat":[["GP","F","U","yes",0,6,2,2,4,1,1,4,4,5,6,6],["GP","F","U","yes",0,4,2,1,3,1,1,1,1,5,5,6],["GP","F","U","yes",3,10,2,1,2,2,3,1,1,7,8,10],["GP","F","U","yes",0,2,3,1,2,1,1,4,2,15,14,15],["GP","F","U","yes",0,4,2,1,2,1,2,3,3,6,10,10],["GP","M","U","yes",0,10,2,1,2,1,2,4,3,15,15,15],["GP","M","U","yes",0,0,2,1,4,1,1,2,2,12,12,11],["GP","F","U","yes",0,6,2,2,4,1,1,4,4,6,5,6],["GP","M","U","yes",0,0,2,1,2,1,1,3,2,16,18,19],["GP","M","U","yes",0,0,2,1,1,1,1,3,4,14,15,15],["GP","F","U","yes",0,0,2,1,3,1,2,4,4,10,8,9],["GP","F","U","yes",0,4,3,3,2,1,1,2,1,10,12,12],["GP","M","U","yes",0,2,1,1,3,1,3,4,4,14,14,14],["GP","M","U","yes",0,2,2,2,3,1,2,4,3,10,10,11],["GP","M","U","yes",0,0,3,1,2,1,1,2,2,14,16,16],["GP","F","U","yes",0,4,1,1,4,1,2,4,4,14,14,14],["GP","F","U","yes",0,6,3,1,3,1,2,4,4,13,14,14],["GP","F","U","yes",0,4,2,3,2,1,1,3,3,8,10,10],["GP","M","U","yes",3,16,1,1,5,2,4,3,2,6,5,5],["GP","M","U","yes",0,4,1,1,3,1,3,4,3,8,10,10],["GP","M","U","yes",0,0,2,1,1,1,1,4,3,13,14,15],["GP","M","U","yes",0,0,1,1,2,1,1,4,4,12,15,15],["GP","M","U","yes",0,2,2,1,1,1,3,4,2,15,15,16],["GP","M","U","yes",0,0,2,2,4,2,4,2,2,13,13,12],["GP","F","R","yes",0,2,3,1,2,1,1,2,4,10,9,8],["GP","F","U","yes",2,14,1,1,2,1,3,2,2,6,9,8],["GP","M","U","yes",0,2,1,1,2,1,2,2,2,12,12,11],["GP","M","U","yes",0,4,1,1,4,2,4,4,2,15,16,15],["GP","M","U","yes",0,4,2,1,3,1,1,3,4,11,11,11],["GP","M","U","yes",0,16,2,1,5,5,5,4,4,10,12,11],["GP","M","U","yes",0,0,2,1,2,3,4,4,4,9,11,12],["GP","M","U","yes",0,0,2,2,1,1,1,4,4,17,16,17],["GP","M","R","yes",0,0,2,1,2,1,1,4,3,17,16,16],["GP","M","U","yes",0,0,2,1,2,1,1,3,3,8,10,12],["GP","M","U","yes",0,0,1,1,3,1,1,3,2,12,14,15],["GP","F","U","yes",0,0,1,2,1,1,1,2,3,8,7,6],["GP","M","U","yes",0,2,3,1,3,1,1,4,3,15,16,18],["GP","M","R","yes",0,7,3,2,3,1,1,4,4,15,16,15],["GP","F","R","yes",0,2,3,1,2,1,1,3,4,12,12,11],["GP","F","R","yes",0,8,1,1,1,1,1,2,2,14,13,13],["GP","F","U","yes",1,25,2,2,3,1,2,2,2,7,10,11],["GP","M","U","yes",0,8,1,1,3,2,4,4,4,12,12,12],["GP","M","U","yes",0,2,2,1,3,1,1,4,4,19,18,18],["GP","M","U","yes",0,0,1,1,1,1,1,2,2,8,8,11],["GP","F","U","yes",1,14,2,2,3,2,2,2,2,10,10,9],["GP","F","U","yes",0,8,2,1,2,1,1,4,3,8,8,6],["GP","F","U","yes",0,12,2,1,5,1,4,3,3,11,12,11],["GP","M","U","yes",0,4,4,1,2,1,1,4,3,19,19,20],["GP","M","U","yes",0,2,2,1,3,2,2,4,2,15,15,14],["GP","F","U","yes",1,2,2,1,4,1,1,4,4,7,7,7],["GP","F","U","yes",0,2,2,3,3,2,3,2,2,12,13,13],["GP","F","U","yes",0,2,2,1,3,1,1,4,2,11,13,13],["GP","M","U","yes",1,6,1,2,5,3,4,4,2,11,11,10],["GP","F","U","yes",0,0,1,1,4,2,3,4,4,8,10,11],["GP","F","U","yes",0,6,1,1,4,4,4,3,3,10,13,13],["GP","F","U","yes",0,8,2,1,4,1,1,2,1,8,9,10],["GP","F","U","yes",0,0,2,1,2,1,1,4,3,14,15,15],["GP","M","U","yes",0,4,2,1,2,1,1,4,4,14,15,15],["GP","M","U","yes",0,2,2,1,2,1,1,1,2,9,10,9],["GP","F","U","yes",0,2,2,1,3,1,1,4,2,15,16,16],["GP","F","R","yes",0,6,2,1,4,2,3,4,4,10,11,11],["GP","F","U","yes",0,6,1,4,5,5,5,1,1,10,8,11],["GP","F","U","yes",0,4,2,1,3,1,1,1,2,8,10,9],["GP","F","U","yes",0,2,3,1,4,2,4,4,3,10,9,9],["GP","F","U","yes",0,0,2,1,4,2,4,4,3,10,10,10],["GP","F","U","yes",0,2,2,3,3,1,2,4,3,16,15,15],["GP","M","U","yes",0,4,4,1,3,5,5,4,4,13,13,12],["GP","F","U","yes",0,4,4,1,3,1,2,3,1,7,7,6],["GP","F","R","yes",0,2,2,2,3,1,3,2,2,8,9,8],["GP","F","R","yes",0,12,4,2,2,2,3,3,1,16,16,16],["GP","M","U","yes",0,0,4,2,2,1,1,3,1,13,15,15],["GP","M","U","yes",0,0,4,1,3,1,1,4,2,10,10,10],["GP","F","R","yes",2,2,2,1,4,2,4,1,1,8,6,5],["GP","M","U","yes",0,2,1,1,2,2,2,3,1,12,12,14],["GP","F","U","yes",0,54,2,1,3,2,4,3,3,11,12,11],["GP","M","U","yes",0,6,2,1,3,2,3,4,3,9,9,10],["GP","M","U","yes",0,8,4,2,3,1,1,4,0,11,11,10],["GP","F","U","yes",0,0,4,1,3,1,3,2,2,11,11,11],["GP","M","U","no",3,2,1,2,1,1,1,2,1,8,8,10],["GP","F","U","yes",0,12,2,1,3,1,2,3,4,5,5,5],["GP","M","U","yes",0,2,1,1,2,1,3,2,3,10,12,12],["GP","M","U","yes",0,4,3,1,2,1,2,2,3,11,10,11],["GP","F","U","yes",0,10,2,1,4,1,1,3,2,7,6,6],["GP","M","U","yes",0,4,2,2,3,1,3,2,2,15,15,15],["GP","F","U","yes",0,2,2,1,2,2,3,1,1,9,10,10],["GP","F","U","yes",2,6,2,2,4,2,3,4,4,7,9,8],["GP","F","U","yes",0,4,2,1,4,1,2,2,2,8,7,6],["GP","F","U","yes",0,4,3,1,3,1,3,4,2,13,14,14],["GP","M","U","yes",1,12,2,2,2,1,1,2,2,11,10,10],["GP","M","U","yes",0,18,2,1,3,3,5,4,4,8,6,7],["GP","F","U","yes",0,0,3,1,3,1,3,3,3,7,7,8],["GP","F","U","yes",0,4,1,1,5,1,3,4,3,16,17,18],["GP","F","U","yes",0,4,2,1,3,2,3,3,1,7,6,6],["GP","F","U","yes",0,0,2,2,3,1,1,4,2,11,10,10],["GP","M","U","yes",0,6,4,1,4,1,1,2,2,11,13,14],["GP","F","R","yes",1,2,4,2,2,1,1,1,1,7,10,10],["GP","M","R","yes",0,2,1,2,3,1,1,4,3,11,15,15],["GP","F","U","yes",0,2,2,1,5,1,1,2,1,8,9,10],["GP","F","U","yes",0,6,1,1,4,1,2,4,4,11,14,14],["GP","F","U","yes",0,0,3,1,5,1,1,4,3,7,9,8],["GP","M","U","yes",0,14,1,1,5,5,5,4,4,7,7,5],["GP","M","U","yes",0,0,3,1,3,1,1,4,4,16,17,17],["GP","M","U","yes",0,4,1,1,3,1,1,4,4,10,13,14],["GP","F","U","yes",0,26,2,2,5,1,1,3,2,7,6,6],["GP","M","U","yes",0,0,2,1,4,1,1,3,4,16,18,18],["GP","F","U","yes",0,10,4,1,3,1,1,3,3,10,11,11],["GP","F","U","yes",0,8,4,1,2,1,1,2,2,7,8,8],["GP","M","U","yes",0,2,3,1,3,1,1,3,3,16,18,18],["GP","M","R","yes",0,6,4,4,5,3,5,4,4,10,13,13],["GP","F","U","yes",0,4,3,1,5,1,1,4,4,14,15,16],["GP","M","U","yes",0,6,1,1,3,1,1,4,4,18,19,19],["GP","F","R","yes",1,0,3,1,2,1,1,3,3,7,10,10],["GP","F","U","yes",1,6,2,1,2,1,1,2,2,10,13,13],["GP","M","U","yes",0,10,1,1,2,1,1,4,2,18,19,19],["GP","M","R","yes",0,8,2,1,2,1,1,2,1,9,9,9],["GP","M","U","yes",0,2,2,1,4,1,2,4,4,15,15,16],["GP","M","U","yes",0,2,2,2,3,1,1,4,4,11,13,14],["GP","M","U","yes",0,0,1,2,2,1,1,3,3,13,14,13],["GP","M","R","yes",1,20,2,3,4,1,4,1,3,9,7,8],["GP","M","U","yes",0,6,1,1,3,1,2,3,4,14,13,13],["GP","F","U","yes",0,2,2,1,3,1,2,1,2,16,15,15],["GP","M","U","yes",0,6,4,1,4,1,2,2,2,16,14,15],["GP","F","U","yes",0,2,2,2,2,1,2,2,4,13,13,13],["GP","M","U","yes",0,18,1,1,4,1,4,4,4,14,11,13],["GP","F","U","yes",0,0,2,1,4,1,1,2,2,8,7,8],["GP","M","U","yes",0,0,1,1,5,3,2,3,4,13,13,12],["GP","F","U","yes",0,0,2,1,2,1,1,3,4,7,10,11],["GP","F","U","no",3,2,2,1,2,1,1,0,1,7,8,9],["GP","M","R","yes",2,0,1,1,3,1,2,2,2,7,4,0],["GP","M","R","yes",0,8,1,1,5,2,5,4,4,18,18,18],["GP","F","R","yes",2,0,3,2,2,2,2,3,4,12,0,0],["GP","F","U","yes",0,0,1,3,3,1,2,1,1,8,0,0],["GP","F","U","yes",0,12,1,1,4,1,3,2,2,10,13,12],["GP","F","U","yes",0,16,1,1,1,1,4,3,4,12,11,11],["GP","M","R","yes",0,0,2,4,3,1,1,3,4,9,0,0],["GP","F","U","yes",0,0,3,1,3,1,1,4,4,11,0,0],["GP","M","R","yes",0,0,2,3,5,2,4,3,4,10,0,0],["GP","F","U","yes",2,0,1,2,2,1,1,3,3,4,0,0],["GP","M","U","yes",1,0,2,1,4,1,3,1,1,14,12,12],["GP","F","U","yes",0,0,1,2,2,1,1,4,4,16,16,15],["GP","M","U","yes",0,0,4,2,2,1,1,4,3,7,9,0],["GP","M","U","yes",2,8,1,2,3,2,2,2,2,9,9,9],["GP","F","U","yes",0,2,3,1,2,1,1,4,4,9,11,11],["GP","F","U","yes",0,2,1,1,4,3,3,1,1,14,14,13],["GP","M","U","yes",3,0,1,1,5,1,2,2,1,5,0,0],["GP","F","U","yes",0,0,2,1,2,1,2,1,1,8,11,11],["GP","F","U","yes",3,0,2,1,2,1,1,3,2,6,7,0],["GP","F","U","yes",0,2,2,1,2,1,1,1,2,10,11,11],["GP","M","U","no",0,0,1,1,2,2,1,4,4,7,6,0],["GP","M","U","yes",3,0,1,4,5,2,5,2,1,8,9,10],["GP","M","U","no",3,0,1,1,5,2,5,1,1,6,5,0],["GP","M","U","yes",1,6,1,1,4,3,5,2,1,12,13,14],["GP","F","R","yes",2,8,3,2,1,2,3,3,3,10,10,10],["GP","M","U","no",3,0,1,1,4,1,1,3,2,5,0,0],["GP","F","U","yes",0,0,1,1,1,1,1,4,4,11,11,12],["GP","M","R","yes",0,2,2,1,4,1,1,2,3,11,8,8],["GP","M","R","yes",0,8,1,1,2,3,3,1,2,16,12,13],["GP","F","R","yes",3,6,1,3,5,1,5,1,1,9,8,10],["GP","M","R","yes",0,2,1,3,2,1,2,2,2,17,15,15],["GP","M","U","yes",1,4,2,1,5,4,4,3,3,10,12,12],["GP","M","R","no",2,0,1,2,2,2,2,2,1,7,6,0],["GP","M","R","yes",2,6,2,2,4,1,4,3,2,5,9,7],["GP","M","U","yes",1,0,1,2,4,2,4,1,2,7,0,0],["GP","M","U","no",0,2,1,1,3,1,4,1,3,10,10,10],["GP","M","R","no",3,0,2,4,5,1,5,1,1,5,8,7],["GP","M","U","no",1,16,1,2,2,1,1,3,2,12,11,12],["GP","M","U","no",0,4,2,1,5,2,4,2,2,10,10,10],["GP","F","U","yes",0,0,2,1,3,1,1,4,2,14,15,16],["GP","F","U","yes",0,0,2,1,5,1,1,2,2,6,7,0],["GP","F","U","yes",0,0,2,1,2,1,1,4,4,14,14,14],["GP","M","U","yes",2,0,1,3,5,2,4,3,4,6,5,0],["GP","M","U","yes",0,2,2,2,2,1,1,1,0,13,15,16],["GP","M","U","yes",0,0,2,1,4,1,3,4,4,13,11,10],["GP","F","U","yes",3,0,2,1,5,1,1,1,3,8,7,0],["GP","F","U","yes",0,4,2,2,5,1,1,3,3,10,11,9],["GP","M","U","yes",0,4,2,2,4,4,4,4,3,10,9,9],["GP","F","U","yes",0,2,2,2,4,1,4,2,2,13,13,11],["GP","M","U","yes",0,4,2,1,4,1,4,3,3,6,5,6],["GP","M","R","yes",0,10,1,1,3,3,4,4,2,10,8,9],["GP","M","U","yes",0,4,2,1,3,1,1,4,3,10,10,11],["GP","M","U","yes",0,10,2,1,3,2,3,4,3,9,8,8],["GP","M","U","yes",0,2,2,1,3,1,2,3,3,12,13,12],["GP","F","U","yes",0,0,2,1,2,2,3,2,4,16,17,17],["GP","F","U","yes",0,56,2,1,3,2,3,3,3,9,9,8],["GP","F","U","yes",0,14,2,1,2,1,2,3,2,12,13,12],["GP","M","U","yes",0,12,2,1,4,2,3,3,3,12,12,11],["GP","M","U","yes",0,2,1,1,3,1,2,1,2,11,12,11],["GP","M","U","yes",0,0,2,1,3,1,2,2,1,15,15,15],["GP","F","U","yes",0,6,2,1,3,1,3,3,3,8,7,9],["GP","M","R","yes",0,4,2,1,3,1,5,1,2,8,9,10],["GP","F","U","yes",0,10,2,1,3,1,1,2,3,11,12,13],["GP","F","U","yes",0,0,2,1,3,1,1,1,1,8,8,9],["GP","M","U","yes",0,12,2,2,4,4,5,1,2,7,8,8],["GP","M","R","yes",0,8,1,1,2,3,4,3,3,8,9,10],["GP","M","U","yes",0,0,1,2,3,1,1,2,3,13,14,14],["GP","F","U","yes",0,0,2,1,2,1,1,2,4,14,15,15],["GP","M","U","yes",0,4,1,1,3,1,2,4,4,17,15,16],["GP","M","R","yes",0,8,1,3,4,3,5,3,3,9,9,10],["GP","F","U","yes",1,24,1,2,4,2,3,4,4,18,18,18],["GP","F","U","yes",0,0,2,1,2,1,2,4,4,9,9,10],["GP","F","U","yes",0,2,2,1,5,1,5,4,3,16,16,16],["GP","F","U","yes",0,6,2,1,3,1,3,2,3,8,10,10],["GP","F","U","yes",0,4,2,1,4,1,3,1,1,9,9,10],["GP","F","R","yes",0,18,1,1,2,1,2,2,2,7,6,6],["GP","F","R","yes",0,6,4,2,5,1,1,2,2,10,10,11],["GP","F","U","yes",1,28,3,1,3,3,4,3,4,10,9,9],["GP","F","U","yes",3,5,2,1,3,2,2,3,1,7,7,7],["GP","F","U","yes",0,10,2,1,2,1,1,4,3,11,12,13],["GP","F","U","yes",0,6,1,2,2,1,4,1,1,9,9,10],["GP","F","R","yes",0,6,3,2,2,1,1,4,3,7,7,7],["GP","F","U","yes",0,10,4,1,3,1,2,3,3,8,8,8],["GP","M","U","yes",0,13,2,1,5,4,5,4,4,12,12,13],["GP","F","U","yes",0,0,2,1,4,1,1,2,2,12,13,14],["GP","M","U","yes",1,15,2,1,4,2,4,2,2,6,7,8],["GP","F","R","yes",0,12,1,1,1,1,2,4,4,8,10,10],["GP","F","U","yes",0,2,2,2,4,1,3,3,2,14,15,15],["GP","F","U","yes",2,22,2,1,5,2,4,4,3,6,6,4],["GP","M","U","yes",1,13,2,1,4,2,4,3,3,6,6,8],["GP","F","U","yes",0,3,1,2,3,1,4,2,3,7,7,8],["GP","F","U","yes",0,4,3,1,3,1,1,2,2,9,10,10],["GP","F","R","yes",0,2,2,2,5,1,2,2,1,6,6,6],["GP","F","U","yes",1,0,3,1,4,1,1,1,1,6,5,0],["GP","F","U","yes",0,2,2,1,1,1,1,2,3,16,16,17],["GP","M","U","yes",0,0,2,2,3,5,5,2,2,12,13,13],["GP","F","U","yes",0,0,3,1,2,1,1,4,4,13,13,14],["GP","F","R","yes",1,16,2,1,3,1,1,3,1,9,8,7],["GP","F","U","yes",0,10,2,1,4,1,3,3,2,16,15,15],["GP","M","U","yes",0,2,2,1,3,1,3,2,3,12,11,12],["GP","M","U","yes",0,14,2,4,2,4,5,2,1,10,8,9],["GP","F","U","yes",0,10,3,2,3,1,2,2,1,12,10,12],["GP","F","U","yes",0,14,2,1,3,1,2,4,3,13,13,14],["GP","M","R","yes",0,4,2,2,2,1,1,2,2,11,11,11],["GP","M","U","yes",0,14,2,1,5,1,3,4,4,11,9,9],["GP","M","U","yes",0,2,2,1,4,2,4,4,4,14,13,13],["GP","M","U","yes",0,18,2,2,2,1,1,1,1,9,7,6],["GP","M","U","yes",0,10,3,2,3,1,3,3,2,11,9,10],["GP","M","U","yes",0,4,2,1,2,5,5,2,2,14,13,13],["GP","F","U","yes",0,20,1,1,2,1,1,2,1,13,12,12],["GP","F","R","yes",0,2,2,3,1,1,1,2,1,13,11,11],["GP","M","U","no",1,0,2,1,4,3,5,2,2,7,7,0],["GP","M","U","yes",0,14,2,2,5,1,4,4,3,12,12,12],["GP","M","R","yes",0,2,2,2,3,2,3,4,4,10,11,12],["GP","M","U","yes",0,0,1,1,5,1,1,4,3,6,0,0],["GP","M","U","yes",0,0,1,1,2,1,2,4,4,13,12,12],["GP","F","U","yes",0,0,3,2,4,1,1,2,1,7,0,0],["GP","M","U","yes",0,6,1,3,3,1,1,2,1,18,18,18],["GP","M","U","yes",0,4,1,2,2,1,1,2,3,12,12,13],["GP","M","U","no",3,16,1,1,5,5,5,3,1,6,8,8],["GP","M","R","yes",1,8,2,1,3,1,3,3,3,3,5,5],["GP","M","U","yes",0,0,1,1,2,2,4,0,2,13,15,15],["GP","M","U","no",1,0,1,2,5,2,4,3,2,6,8,8],["GP","M","U","yes",0,6,2,3,3,1,3,3,3,7,10,10],["GP","M","U","no",1,4,1,1,5,2,5,2,1,6,9,8],["GP","M","R","yes",0,0,1,2,2,1,3,2,1,8,9,8],["GP","M","R","yes",0,0,1,1,2,2,4,2,1,8,12,12],["GP","M","U","yes",1,2,1,2,4,1,2,1,1,7,9,8],["GP","F","U","yes",0,6,4,1,3,1,1,4,2,14,12,13],["GP","M","U","yes",0,12,2,1,1,1,1,4,3,11,11,11],["GP","M","U","yes",0,8,2,1,4,1,2,2,1,15,14,14],["GP","F","U","yes",0,0,4,1,1,1,1,2,2,10,9,0],["GP","F","U","yes",0,21,2,1,2,1,3,4,3,17,18,18],["GP","M","U","yes",0,2,2,1,2,1,1,4,3,8,8,8],["GP","M","R","yes",0,1,3,1,2,1,1,3,2,13,12,12],["GP","F","U","yes",0,4,3,1,3,1,1,3,3,10,9,9],["GP","F","U","yes",0,0,3,1,3,1,1,2,2,9,10,0],["GP","M","R","yes",0,13,2,2,5,3,4,3,4,17,17,17],["GP","M","U","yes",0,2,2,1,4,3,4,3,1,9,9,10],["GP","F","R","yes",0,8,2,2,4,2,2,4,4,12,10,11],["GP","M","U","yes",0,10,2,1,5,1,3,4,2,10,9,10],["GP","F","R","no",0,0,2,2,5,1,2,2,1,6,0,0],["GP","F","U","yes",2,15,2,1,5,3,3,3,3,9,9,9],["GP","F","U","yes",0,4,4,1,5,1,3,2,3,15,14,14],["GP","F","U","yes",0,2,2,2,3,1,1,1,1,11,11,11],["GP","M","R","yes",0,2,2,1,2,2,2,1,2,15,14,14],["GP","F","U","yes",0,2,2,2,3,1,1,2,4,10,10,10],["GP","F","U","yes",0,6,2,2,4,2,3,2,2,12,12,12],["GP","F","R","no",0,75,2,2,1,1,1,3,2,10,9,9],["GP","M","U","yes",0,22,1,2,4,1,4,4,4,9,9,9],["GP","F","U","yes",1,15,2,1,4,1,1,4,4,9,8,8],["GP","M","U","yes",0,8,1,2,3,1,2,4,3,10,11,10],["GP","M","U","yes",0,30,1,2,4,2,4,4,1,8,8,8],["GP","M","U","yes",1,19,1,1,4,3,4,3,2,11,9,10],["GP","F","R","yes",0,1,4,2,2,1,1,1,1,12,12,12],["GP","F","U","yes",0,4,2,2,4,1,1,1,1,8,9,10],["GP","F","U","yes",0,4,2,1,5,1,2,2,2,10,9,11],["GP","M","U","yes",0,2,2,1,3,1,2,1,1,12,10,11],["GP","F","U","yes",0,5,3,1,3,1,2,2,2,18,18,19],["GP","F","U","yes",0,6,3,1,3,1,1,1,1,13,12,12],["GP","M","U","yes",0,6,3,1,4,1,3,2,1,15,14,14],["GP","M","U","yes",0,9,2,1,3,1,1,4,4,15,13,15],["GP","M","U","yes",0,11,2,1,2,1,4,4,2,12,11,11],["GP","F","U","yes",0,0,3,1,2,1,2,4,3,15,15,15],["GP","F","U","yes",1,12,2,1,3,1,1,2,1,12,12,13],["GP","F","R","yes",0,6,4,2,2,1,1,3,1,18,18,18],["GP","M","R","yes",0,8,3,2,2,1,1,3,2,14,13,14],["GP","M","U","yes",0,4,1,1,3,1,3,3,3,14,12,11],["GP","F","U","yes",0,0,2,2,4,2,3,4,4,10,9,0],["GP","F","U","yes",0,10,2,2,5,1,2,4,3,10,8,8],["GP","F","U","yes",0,0,4,1,3,1,1,4,3,14,13,14],["GP","M","U","yes",0,5,1,1,2,2,2,4,4,16,15,16],["GP","F","U","yes",0,14,2,1,4,1,1,4,4,12,10,11],["GP","M","U","yes",0,0,1,2,1,2,2,4,4,11,11,10],["GP","F","U","yes",0,0,3,2,3,1,1,4,2,15,12,14],["GP","F","U","yes",0,0,4,1,2,1,2,3,2,17,17,18],["GP","M","U","yes",1,20,2,1,4,1,1,3,3,15,14,13],["GP","F","U","yes",1,8,2,1,3,1,1,2,4,14,12,12],["GP","M","U","yes",0,0,1,1,3,1,1,3,2,17,18,18],["GP","M","U","yes",1,38,1,2,4,1,1,4,4,8,9,8],["GP","M","R","yes",1,0,2,1,3,1,2,3,3,15,12,12],["GP","F","U","yes",1,18,2,1,3,1,3,1,1,12,10,10],["GP","F","U","yes",1,0,2,1,4,2,2,1,2,9,9,0],["GP","F","U","no",0,20,2,3,1,1,1,2,1,14,12,13],["GP","M","U","yes",1,3,2,1,2,2,2,1,2,13,11,11],["GP","F","U","yes",1,22,2,2,2,1,2,3,2,13,10,11],["GP","F","U","yes",2,14,3,1,2,1,1,1,1,15,13,13],["GP","F","R","yes",1,40,3,1,2,1,1,2,3,13,11,11],["GP","F","U","yes",0,0,2,2,3,1,2,2,1,8,8,0],["GP","F","U","yes",0,9,3,1,4,1,1,4,3,9,10,9],["GP","F","R","yes",0,0,3,1,4,2,5,3,4,11,11,10],["GP","F","U","yes",0,2,2,1,4,3,3,4,4,11,11,11],["GP","F","U","yes",0,23,2,1,2,1,2,4,3,13,13,13],["GP","F","U","yes",0,12,2,1,2,1,1,2,2,11,9,9],["GP","F","R","yes",0,3,3,1,2,2,2,2,2,11,11,11],["GP","F","U","yes",0,1,3,1,3,2,3,3,1,12,14,15],["GP","F","U","yes",0,0,3,2,3,2,3,0,2,16,15,15],["GP","M","U","yes",0,3,3,1,3,2,2,4,4,9,12,11],["GP","M","U","yes",0,3,1,1,5,3,5,3,3,14,15,16],["GP","M","R","yes",0,8,1,4,5,5,5,2,2,11,10,10],["GP","F","U","yes",0,7,3,1,4,1,3,4,4,10,9,9],["GP","F","U","yes",0,4,3,2,3,1,2,4,4,14,14,14],["GP","M","U","yes",0,2,4,1,5,2,4,2,2,9,8,8],["GP","F","R","yes",0,7,3,1,3,1,1,2,4,12,14,14],["GP","F","U","yes",0,0,2,1,4,1,1,3,3,7,0,0],["GP","F","U","yes",0,0,2,1,3,1,1,2,2,8,8,0],["GP","F","R","yes",0,0,4,2,4,1,1,2,2,10,9,0],["GP","F","U","yes",0,16,3,1,5,1,3,3,4,16,15,15],["GP","F","R","yes",1,12,3,1,3,1,2,3,1,14,13,13],["GP","F","U","yes",0,0,2,1,2,2,3,3,2,7,8,0],["GP","F","U","yes",0,7,4,1,3,1,1,3,3,16,15,17],["GP","F","R","yes",0,4,2,1,3,2,3,3,2,9,10,10],["GP","F","U","yes",1,4,3,1,4,1,3,2,1,11,12,11],["GP","M","U","yes",1,0,2,1,3,2,2,4,4,10,10,0],["GP","M","U","yes",0,11,2,1,3,1,3,3,4,16,15,15],["GP","F","U","yes",1,0,2,1,1,1,2,2,2,9,8,0],["GP","F","U","yes",0,4,3,1,3,1,2,2,3,11,10,10],["GP","F","U","yes",0,7,3,1,3,2,3,3,2,13,13,14],["GP","M","R","yes",0,9,3,1,2,1,2,4,3,16,15,16],["GP","M","U","yes",0,0,3,1,5,2,3,4,3,10,10,9],["GP","F","U","yes",0,0,3,1,3,1,3,4,3,13,15,15],["MS","M","R","yes",1,10,1,2,5,5,5,3,2,11,13,13],["MS","M","R","yes",3,8,2,3,4,3,3,1,1,8,7,8],["MS","M","U","yes",0,2,2,2,4,2,3,3,3,13,13,13],["MS","M","U","no",1,7,1,1,3,2,3,1,3,8,7,8],["MS","M","R","yes",1,4,1,3,4,3,3,1,1,8,8,8],["MS","M","R","yes",0,4,2,2,5,1,3,4,3,13,11,11],["MS","F","U","yes",0,0,2,1,4,1,1,3,3,10,9,9],["MS","F","R","yes",0,4,2,2,3,1,2,4,4,12,13,13],["MS","F","U","yes",0,2,2,2,3,1,2,3,2,12,12,11],["MS","M","U","yes",0,4,1,2,2,1,2,1,1,10,10,10],["MS","F","U","yes",0,0,3,2,2,1,1,1,1,18,16,16],["MS","F","R","yes",0,0,2,3,4,1,4,1,4,13,13,13],["MS","M","R","no",1,2,2,2,3,2,3,1,1,13,12,12],["MS","F","U","yes",0,0,2,2,2,1,3,3,3,11,11,10],["MS","F","U","yes",0,0,2,1,4,1,1,4,4,16,15,15],["MS","F","R","yes",0,0,2,2,2,1,2,1,2,12,11,12],["MS","M","R","yes",0,4,2,2,4,2,4,1,3,10,10,10],["MS","M","U","yes",0,0,3,2,2,2,2,4,4,13,13,13],["MS","F","R","yes",1,0,1,3,1,1,2,1,1,7,6,0],["MS","F","U","yes",0,0,1,2,3,1,2,2,3,11,10,10],["MS","F","R","yes",0,10,2,3,2,4,2,4,4,14,12,11],["MS","F","U","yes",2,4,2,2,2,1,1,3,2,7,7,9],["MS","M","R","no",0,3,1,3,3,2,3,1,2,14,12,12],["MS","F","U","yes",0,8,3,1,3,1,1,2,2,13,11,11],["MS","F","R","yes",0,14,1,1,5,1,3,1,2,6,5,5],["MS","F","R","yes",0,0,3,2,4,1,1,4,4,19,18,19],["MS","F","R","yes",0,2,3,4,2,1,2,1,1,8,8,10],["MS","F","U","yes",2,4,3,2,3,1,1,4,2,15,14,15],["MS","F","R","yes",0,4,2,1,3,3,4,4,4,8,9,10],["MS","F","U","yes",0,0,2,1,3,1,2,3,3,15,15,15],["MS","F","R","yes",0,17,2,1,4,2,3,3,1,10,10,10],["MS","M","U","yes",0,4,2,1,4,1,4,4,4,15,14,14],["MS","M","R","yes",0,5,1,2,3,1,3,2,1,7,6,7],["MS","M","U","yes",0,2,2,2,3,1,1,2,3,11,11,10],["MS","M","R","yes",1,0,1,2,2,1,3,1,1,6,5,0],["MS","M","R","yes",1,14,1,2,3,4,3,4,2,6,5,5],["MS","F","R","yes",0,2,3,2,3,1,3,2,2,10,9,10],["MS","F","R","yes",0,7,1,3,3,2,2,4,4,6,5,6],["MS","F","R","yes",1,0,3,1,2,1,2,2,3,7,5,0],["MS","F","U","yes",0,0,2,1,4,1,1,3,1,7,9,8],["MS","F","U","yes",1,0,2,2,1,1,1,1,1,6,5,0],["MS","M","U","yes",2,11,2,1,4,4,5,2,2,9,9,9],["MS","M","U","yes",0,3,1,2,5,3,4,3,1,14,16,16],["MS","M","R","yes",3,3,1,1,3,3,3,1,1,10,8,7],["MS","M","R","yes",0,0,1,3,1,3,4,3,2,11,12,10],["MS","M","U","yes",0,5,1,1,3,3,3,1,1,8,9,9]],"por":[["GP","F","U","yes",0,4,2,2,4,1,1,4,4,0,11,11],["GP","F","U","yes",0,2,2,1,3,1,1,1,1,9,11,11],["GP","F","U","yes",0,6,2,1,2,2,3,1,1,12,13,12],["GP","F","U","yes",0,0,3,1,2,1,1,4,2,14,14,14],["GP","F","U","yes",0,0,2,1,2,1,2,3,3,11,13,13],["GP","M","U","yes",0,6,2,1,2,1,2,4,3,12,12,13],["GP","M","U","yes",0,0,2,1,4,1,1,2,2,13,12,13],["GP","F","U","yes",0,2,2,2,4,1,1,4,4,10,13,13],["GP","M","U","yes",0,0,2,1,2,1,1,3,2,15,16,17],["GP","M","U","yes",0,0,2,1,1,1,1,3,4,12,12,13],["GP","F","U","yes",0,2,2,1,3,1,2,4,4,14,14,14],["GP","F","U","yes",0,0,3,3,2,1,1,2,1,10,12,13],["GP","M","U","yes",0,0,1,1,3,1,3,4,4,12,13,12],["GP","M","U","yes",0,0,2,2,3,1,2,4,3,12,12,13],["GP","M","U","yes",0,0,3,1,2,1,1,2,2,14,14,15],["GP","F","U","yes",0,6,1,1,4,1,2,4,4,17,17,17],["GP","F","U","yes",0,10,3,1,3,1,2,4,4,13,13,14],["GP","F","U","yes",0,2,2,3,2,1,1,3,3,13,14,14],["GP","M","U","yes",3,2,1,1,5,2,4,3,2,8,8,7],["GP","M","U","yes",0,6,1,1,3,1,3,4,3,12,12,12],["GP","M","U","yes",0,0,2,1,1,1,1,4,3,12,13,14],["GP","M","U","yes",0,0,1,1,2,1,1,4,4,11,12,12],["GP","M","U","yes",0,0,2,1,1,1,3,4,2,12,13,14],["GP","M","U","yes",0,2,2,2,4,2,4,2,2,10,10,10],["GP","F","R","yes",0,2,3,1,2,1,1,2,4,10,11,10],["GP","F","U","yes",0,6,1,1,2,1,3,2,2,10,11,12],["GP","M","U","yes",0,8,1,1,2,1,2,2,2,11,12,12],["GP","M","U","yes",0,0,1,1,4,2,4,4,2,11,11,11],["GP","M","U","yes",0,2,2,1,3,1,1,3,4,12,12,13],["GP","M","U","yes",0,4,2,1,5,5,5,4,4,12,11,12],["GP","M","U","yes",0,0,2,1,2,3,4,4,4,10,11,11],["GP","M","U","yes",0,2,2,2,1,1,1,4,4,15,15,15],["GP","M","R","yes",0,0,2,1,2,1,1,4,3,13,14,15],["GP","M","U","yes",0,0,2,1,2,1,1,3,3,13,12,12],["GP","M","U","yes",0,4,1,1,3,1,1,3,2,12,12,12],["GP","F","U","yes",0,4,1,2,1,1,1,2,3,11,11,11],["GP","M","U","yes",0,0,3,1,3,1,1,4,3,14,14,14],["GP","M","R","yes",0,4,3,2,3,1,1,4,4,13,13,13],["GP","F","R","yes",0,2,3,1,2,1,1,3,4,11,12,12],["GP","F","R","yes",0,8,1,1,1,1,1,2,2,14,13,12],["GP","F","U","yes",0,16,2,2,3,1,2,2,2,11,11,10],["GP","M","U","yes",0,8,1,1,3,2,4,4,4,10,11,11],["GP","M","U","yes",0,0,2,1,3,1,1,4,4,14,15,15],["GP","M","U","yes",0,0,1,1,1,1,1,2,2,9,10,10],["GP","F","U","yes",1,14,2,2,3,2,2,2,2,10,11,11],["GP","F","U","yes",0,4,2,1,2,1,1,4,3,10,11,11],["GP","F","U","yes",0,6,2,1,5,1,4,3,3,13,12,13],["GP","M","U","yes",0,2,4,1,2,1,1,4,3,17,17,17],["GP","M","U","yes",0,4,2,1,3,2,2,4,2,11,12,13],["GP","F","U","yes",0,2,2,1,4,1,1,4,4,13,12,12],["GP","F","U","yes",0,0,2,3,3,2,3,2,2,14,13,13],["GP","F","U","yes",0,0,2,1,3,1,1,4,2,16,14,16],["GP","M","U","yes",0,4,1,2,5,3,4,4,2,10,9,9],["GP","F","U","yes",0,0,1,1,4,2,3,4,4,13,12,12],["GP","F","U","yes",0,0,1,1,4,4,4,3,3,13,12,13],["GP","F","U","yes",0,2,2,1,4,1,1,2,1,12,13,12],["GP","F","U","yes",0,0,2,1,2,1,1,4,3,15,14,15],["GP","M","U","yes",0,8,2,1,2,1,1,4,4,15,15,16],["GP","M","U","yes",0,0,2,1,2,1,1,1,2,14,13,14],["GP","F","U","yes",0,2,2,1,3,1,1,4,2,16,15,16],["GP","F","R","yes",0,0,2,1,4,2,3,4,4,17,16,16],["GP","F","U","yes",0,0,1,4,5,5,5,1,1,10,10,16],["GP","F","U","yes",0,0,2,1,3,1,1,1,2,13,13,10],["GP","F","U","yes",0,0,3,1,4,2,4,4,3,14,13,13],["GP","F","U","yes",0,0,2,1,4,2,4,4,3,13,12,12],["GP","F","U","yes",0,2,2,3,3,1,2,4,3,16,15,16],["GP","M","U","yes",0,0,4,1,3,5,5,4,4,11,12,12],["GP","F","U","yes",0,0,4,1,3,1,2,3,1,10,9,10],["GP","F","R","yes",0,0,2,2,3,1,3,2,2,11,10,11],["GP","F","R","yes",0,6,4,2,2,2,3,3,1,15,15,15],["GP","M","U","yes",0,2,4,2,2,1,1,3,1,13,11,11],["GP","M","U","yes",0,0,4,1,3,1,1,4,2,11,9,10],["GP","F","R","yes",0,2,2,1,4,2,4,1,1,13,11,11],["GP","M","U","yes",0,0,1,1,2,2,2,3,1,13,13,14],["GP","F","U","yes",0,4,2,1,3,2,4,3,3,11,11,11],["GP","M","U","yes",0,0,2,1,3,2,3,4,3,11,11,11],["GP","M","U","yes",0,0,4,2,3,1,1,4,0,12,11,11],["GP","F","U","yes",0,1,4,1,3,1,3,2,2,13,13,13],["GP","M","U","no",3,0,1,2,1,1,1,2,1,9,9,10],["GP","F","U","yes",0,14,2,1,3,1,2,3,4,12,11,11],["GP","M","U","yes",0,0,1,1,2,1,3,2,3,11,11,12],["GP","M","U","yes",0,2,3,1,2,1,2,2,3,10,9,9],["GP","F","U","yes",0,4,2,1,4,1,1,3,2,12,11,11],["GP","M","U","yes",0,2,2,2,3,1,3,2,2,13,12,13],["GP","F","U","yes",0,2,2,1,2,2,3,1,1,13,12,12],["GP","F","U","yes",0,4,2,2,4,2,3,4,4,12,11,12],["GP","F","U","yes",0,6,2,1,4,1,2,2,2,13,11,11],["GP","F","U","yes",0,4,3,1,3,1,3,4,2,15,15,15],["GP","M","U","yes",0,6,2,2,2,1,1,2,2,12,10,11],["GP","M","U","yes",0,6,2,1,3,3,5,4,4,9,9,10],["GP","F","U","yes",0,2,3,1,3,1,3,3,3,9,11,11],["GP","F","U","yes",0,6,1,1,5,1,3,4,3,14,13,13],["GP","F","U","yes",0,0,2,1,3,2,3,3,1,12,13,12],["GP","F","U","yes",0,2,2,2,3,1,1,4,2,13,14,14],["GP","M","U","yes",0,2,4,1,4,1,1,2,2,11,12,12],["GP","F","R","yes",0,4,4,2,2,1,1,1,1,13,13,13],["GP","M","R","yes",0,6,1,2,3,1,1,4,3,9,11,11],["GP","F","U","yes",0,0,2,1,5,1,1,2,1,13,12,12],["GP","F","U","yes",0,4,1,1,4,1,2,4,4,12,13,13],["GP","F","U","yes",0,2,3,1,5,1,1,4,3,12,13,13],["GP","M","U","yes",0,12,1,1,5,5,5,4,4,9,9,8],["GP","M","U","yes",0,0,3,1,3,1,1,4,4,16,16,16],["GP","M","U","yes",0,2,1,1,3,1,1,4,4,12,13,12],["GP","F","U","yes",0,16,2,2,5,1,1,3,2,11,10,10],["GP","M","U","yes",0,0,2,1,4,1,1,3,4,16,16,16],["GP","F","U","yes",0,10,4,1,3,1,1,3,3,10,10,10],["GP","F","U","yes",0,4,4,1,2,1,1,2,2,10,10,10],["GP","M","U","yes",0,4,3,1,3,1,1,3,3,13,14,14],["GP","M","R","yes",0,8,4,4,5,3,5,4,4,12,10,11],["GP","F","U","yes",0,2,3,1,5,1,1,4,4,15,15,14],["GP","M","U","yes",0,4,1,1,3,1,1,4,4,13,14,14],["GP","F","R","yes",0,4,3,1,2,1,1,3,3,11,11,11],["GP","F","U","yes",1,12,2,1,2,1,1,2,2,8,10,10],["GP","M","U","yes",0,10,1,1,2,1,1,4,2,18,17,18],["GP","M","R","yes",0,4,2,1,2,1,1,2,1,10,9,10],["GP","M","U","yes",0,6,2,1,4,1,2,4,4,16,14,14],["GP","M","U","yes",0,4,2,2,3,1,1,4,4,16,15,16],["GP","M","U","yes",0,6,1,2,2,1,1,3,3,14,14,15],["GP","M","R","yes",1,14,2,3,4,1,4,1,3,12,11,11],["GP","M","U","yes",0,2,1,1,3,1,2,3,4,14,13,14],["GP","F","U","yes",0,0,2,1,3,1,2,1,2,14,14,14],["GP","M","U","yes",0,6,4,1,4,1,2,2,2,14,13,13],["GP","F","U","yes",0,2,2,2,2,1,2,2,4,14,12,13],["GP","M","U","yes",0,4,1,1,4,1,4,4,4,12,13,13],["GP","F","U","yes",0,0,2,1,4,1,1,2,2,12,11,11],["GP","M","U","yes",0,2,1,1,5,3,2,3,4,9,9,9],["GP","F","U","yes",0,0,2,1,2,1,1,3,4,10,11,11],["GP","F","U","no",2,0,2,1,2,1,1,0,1,9,10,11],["GP","M","R","yes",0,8,1,1,5,2,5,4,4,14,14,15],["GP","M","U","yes",0,4,3,2,3,2,2,2,3,13,12,13],["GP","F","R","yes",0,0,3,2,2,2,2,3,4,10,11,12],["GP","F","U","no",3,10,2,1,5,1,3,2,1,10,9,8],["GP","F","U","yes",0,8,1,3,2,1,2,2,1,11,10,11],["GP","F","U","yes",0,6,1,3,3,1,2,1,1,11,12,13],["GP","F","U","yes",0,2,1,1,4,1,3,2,2,13,12,12],["GP","F","U","yes",0,12,1,1,1,1,4,3,4,15,13,14],["GP","M","U","yes",0,4,1,4,1,1,1,2,1,9,9,11],["GP","F","U","yes",1,12,1,1,4,1,1,2,2,13,11,11],["GP","M","R","yes",0,2,2,4,3,1,1,3,4,12,11,11],["GP","F","U","yes",0,4,3,1,3,1,1,4,4,13,14,15],["GP","M","R","yes",0,2,2,3,5,2,4,3,4,10,9,10],["GP","F","R","yes",0,0,2,4,3,1,1,1,1,14,13,13],["GP","M","U","yes",0,2,1,2,4,4,5,3,1,11,11,12],["GP","F","U","yes",0,10,3,1,3,5,1,3,2,12,11,11],["GP","F","R","yes",0,8,1,2,3,1,2,1,1,12,11,11],["GP","F","U","yes",0,4,1,2,2,1,1,3,3,9,9,10],["GP","M","U","yes",2,0,2,1,4,1,3,1,1,10,10,10],["GP","F","U","yes",0,6,1,2,2,1,1,4,4,13,14,14],["GP","F","R","yes",1,2,1,3,5,1,1,1,1,8,9,9],["GP","M","U","yes",0,6,4,2,2,1,1,4,3,9,11,11],["GP","F","U","yes",0,24,2,1,2,2,3,3,3,9,8,9],["GP","M","U","yes",0,0,3,1,3,1,3,4,4,15,13,13],["GP","M","U","yes",0,4,1,2,3,2,2,2,2,12,11,11],["GP","F","U","yes",0,2,3,1,2,1,1,4,4,13,13,13],["GP","F","U","yes",0,4,1,1,4,3,3,1,1,10,11,11],["GP","M","U","yes",0,22,1,1,5,1,2,2,1,9,7,6],["GP","F","U","yes",0,0,2,1,2,1,2,1,1,12,12,12],["GP","F","U","no",0,0,1,2,2,1,1,2,1,11,10,10],["GP","F","U","yes",1,2,2,1,2,1,1,3,2,11,11,11],["GP","F","U","yes",0,6,2,1,2,1,1,1,2,13,12,13],["GP","F","U","yes",0,6,2,1,4,2,4,1,2,11,11,11],["GP","M","U","no",0,16,1,1,2,2,1,4,4,9,9,8],["GP","M","U","yes",0,0,1,4,5,2,5,2,1,12,11,11],["GP","M","U","no",2,0,1,1,5,2,5,1,1,11,9,0],["GP","M","U","yes",1,6,1,1,4,3,5,2,1,9,10,10],["GP","F","R","yes",0,2,3,2,1,2,3,3,3,13,13,13],["GP","M","U","no",0,6,1,1,4,1,1,3,2,11,9,11],["GP","F","U","yes",0,0,1,1,1,1,1,4,4,13,13,13],["GP","M","R","yes",0,0,2,1,4,1,1,2,3,7,8,8],["GP","M","R","yes",3,14,1,1,2,3,3,1,2,9,8,10],["GP","F","R","yes",3,6,1,3,5,1,5,1,1,11,10,11],["GP","M","R","yes",0,4,1,3,2,1,2,2,2,12,10,11],["GP","M","U","yes",1,0,2,1,5,4,4,3,3,10,10,1],["GP","M","U","yes",2,0,1,2,5,3,5,1,2,9,8,10],["GP","M","R","no",1,8,1,2,2,2,2,2,1,8,8,9],["GP","M","R","yes",2,4,2,2,4,1,4,3,2,7,6,8],["GP","M","U","yes",0,2,1,2,4,2,4,1,2,8,9,10],["GP","M","U","no",1,2,1,1,3,1,4,1,3,9,8,8],["GP","M","R","no",0,0,2,4,5,1,5,1,1,8,8,8],["GP","M","U","no",3,10,1,2,2,1,1,3,2,8,7,8],["GP","M","U","no",0,0,2,1,5,2,4,2,2,9,10,11],["GP","F","U","yes",0,0,2,1,3,1,1,4,2,17,17,18],["GP","F","U","yes",0,0,2,1,5,1,1,2,2,12,12,13],["GP","F","U","yes",0,0,2,1,2,1,1,4,4,16,16,17],["GP","M","U","yes",1,4,1,3,5,2,4,3,4,9,9,10],["GP","M","U","yes",0,0,2,2,2,1,1,1,0,16,17,18],["GP","M","U","yes",0,0,2,1,4,1,3,4,4,11,9,10],["GP","F","U","yes",0,0,2,1,5,1,1,1,3,14,13,13],["GP","F","U","yes",0,0,2,2,5,1,1,3,3,14,14,15],["GP","M","U","yes",0,0,2,2,4,4,4,4,3,10,11,11],["GP","F","U","yes",0,0,2,2,4,1,4,2,2,13,12,14],["GP","M","U","yes",0,4,2,1,4,1,4,3,3,11,9,10],["GP","M","R","yes",0,8,1,1,3,3,4,4,2,10,9,11],["GP","M","U","yes",0,4,2,1,3,1,1,4,3,11,11,13],["GP","M","U","yes",0,4,2,1,3,2,3,4,3,11,10,11],["GP","M","U","yes",0,0,2,1,3,1,2,3,3,11,12,13],["GP","F","U","yes",0,0,2,1,2,2,3,2,4,17,18,17],["GP","F","U","yes",0,32,2,1,3,2,3,3,3,14,13,14],["GP","F","U","yes",0,8,2,1,2,1,2,3,2,14,15,16],["GP","M","U","yes",0,6,2,1,4,2,3,3,3,11,13,14],["GP","M","U","yes",0,0,1,1,3,1,2,1,2,10,9,11],["GP","M","U","yes",0,0,2,1,3,1,2,2,1,13,14,16],["GP","F","U","yes",0,10,2,1,3,1,3,3,3,12,13,14],["GP","M","R","yes",0,6,2,1,3,1,5,1,2,9,9,10],["GP","F","U","yes",0,6,2,1,3,1,1,2,3,12,12,13],["GP","F","U","yes",0,0,2,1,3,1,1,1,1,12,11,12],["GP","M","U","yes",0,16,2,2,4,4,5,1,2,10,11,12],["GP","M","R","yes",0,0,1,1,2,3,4,3,3,11,10,10],["GP","M","U","yes",0,0,1,2,3,1,1,2,3,13,12,12],["GP","F","U","yes",0,8,2,1,2,1,1,2,4,14,15,16],["GP","M","U","yes",0,4,1,1,3,1,2,4,4,13,13,14],["GP","M","R","yes",0,16,1,3,4,3,5,3,3,10,11,12],["GP","F","U","yes",1,30,1,2,4,2,3,4,4,14,15,16],["GP","F","U","yes",0,0,2,1,2,1,2,4,4,11,10,11],["GP","F","U","yes",0,2,2,1,5,1,5,4,3,14,14,15],["GP","F","U","yes",0,4,2,1,3,1,3,2,3,11,12,12],["GP","F","U","yes",0,0,2,1,4,1,3,1,1,14,15,15],["GP","F","R","yes",0,21,1,1,2,1,2,2,2,13,13,13],["GP","F","R","yes",0,6,4,2,5,1,1,2,2,13,13,13],["GP","F","U","yes",1,14,3,1,3,3,4,3,4,8,9,8],["GP","F","U","yes",0,2,2,1,3,2,2,3,1,11,11,12],["GP","F","U","yes",0,4,2,1,2,1,1,4,3,14,15,15],["GP","F","U","yes",0,2,1,2,2,1,4,1,1,12,13,13],["GP","F","R","yes",0,0,3,2,2,1,1,4,3,11,12,12],["GP","F","U","yes",0,4,4,1,3,1,2,3,3,12,12,12],["GP","M","U","yes",0,15,2,1,5,4,5,4,4,13,12,12],["GP","F","U","yes",0,0,2,1,4,1,1,2,2,13,13,13],["GP","M","U","yes",0,10,2,1,4,2,4,2,2,12,11,11],["GP","F","R","yes",0,6,1,1,1,1,2,4,4,12,11,11],["GP","F","U","yes",0,2,2,2,4,1,3,3,2,14,16,15],["GP","F","U","yes",0,16,2,1,5,2,4,4,3,11,9,10],["GP","M","U","yes",0,10,2,1,4,2,4,3,3,10,10,10],["GP","F","U","yes",0,4,1,2,3,1,4,2,3,12,13,13],["GP","F","U","yes",0,0,3,1,3,1,1,2,2,12,12,13],["GP","F","R","yes",0,0,2,2,5,1,2,2,1,11,10,11],["GP","F","U","yes",0,12,3,1,4,1,1,1,1,12,12,12],["GP","F","U","yes",0,0,2,1,1,1,1,2,3,13,13,14],["GP","M","U","yes",3,9,2,2,3,5,5,2,2,10,9,10],["GP","F","U","yes",0,4,3,1,2,1,1,4,4,15,16,16],["GP","F","R","yes",0,4,2,1,3,1,1,3,1,8,8,8],["GP","F","U","yes",0,2,2,1,4,1,3,3,2,17,18,17],["GP","M","U","yes",0,0,2,1,3,1,3,2,3,10,11,11],["GP","M","U","yes",0,2,2,4,2,4,5,2,1,9,10,11],["GP","F","U","yes",0,0,3,2,3,1,2,2,1,15,15,16],["GP","F","U","yes",0,0,2,1,3,1,2,4,3,14,12,12],["GP","M","R","yes",0,0,2,2,2,1,1,2,2,12,13,13],["GP","M","U","yes",0,0,2,1,5,1,3,4,4,13,13,13],["GP","M","U","yes",0,0,2,1,4,2,4,4,4,13,13,14],["GP","M","U","yes",0,2,2,2,2,1,1,1,1,9,9,9],["GP","M","U","yes",0,0,3,2,3,1,3,3,2,12,12,12],["GP","M","U","yes",0,0,2,1,2,5,5,2,2,16,16,16],["GP","F","U","yes",0,4,1,1,2,1,1,2,1,9,10,10],["GP","F","U","yes",0,0,2,1,3,1,2,4,1,14,13,13],["GP","F","U","yes",1,18,2,2,3,1,1,2,4,10,10,10],["GP","F","U","yes",1,16,2,1,1,1,1,2,2,9,8,10],["GP","F","U","no",1,14,1,2,1,1,1,3,3,8,7,7],["GP","M","U","no",1,26,1,1,3,2,2,2,2,7,8,8],["GP","M","U","yes",0,6,1,1,1,1,2,4,4,10,8,9],["GP","F","U","yes",0,4,2,1,2,1,1,3,2,14,14,15],["GP","F","U","yes",0,10,3,1,2,1,2,1,1,11,10,10],["GP","F","U","no",0,4,1,1,5,1,2,1,2,12,11,11],["GP","F","R","yes",0,2,2,3,1,1,1,2,1,13,13,13],["GP","F","R","yes",1,14,1,4,4,1,1,1,4,9,9,8],["GP","M","U","no",0,16,2,1,4,3,5,2,2,8,7,8],["GP","F","U","no",1,8,1,1,2,1,1,2,2,11,9,10],["GP","F","R","yes",0,4,3,2,3,1,3,1,1,15,14,15],["GP","F","U","yes",0,4,2,1,2,1,1,4,2,15,14,14],["GP","M","U","yes",0,8,2,2,5,1,4,4,3,15,15,15],["GP","M","R","yes",0,0,2,2,3,2,3,4,4,12,12,12],["GP","M","U","yes",0,7,1,1,5,1,1,4,3,14,14,15],["GP","M","U","yes",0,4,1,1,2,1,2,4,4,14,15,15],["GP","F","U","yes",0,2,2,1,1,1,4,4,4,11,11,12],["GP","M","R","yes",0,2,3,2,3,1,1,1,1,13,14,15],["GP","F","U","yes",0,10,3,2,2,2,3,3,3,11,11,11],["GP","F","U","yes",0,10,2,1,2,1,1,1,1,10,9,10],["GP","F","U","yes",0,10,3,2,4,1,1,2,1,12,10,11],["GP","M","U","yes",0,7,1,3,3,1,1,2,1,15,16,16],["GP","F","U","yes",0,4,2,1,4,1,2,1,1,11,10,11],["GP","M","U","yes",0,2,1,2,2,1,1,2,3,9,12,13],["GP","M","U","no",3,12,1,1,5,5,5,3,1,7,8,5],["GP","M","R","yes",0,8,2,1,3,1,3,3,3,10,9,10],["GP","M","U","yes",0,0,1,1,2,2,4,0,2,11,12,11],["GP","M","U","no",0,8,1,2,5,2,4,3,2,7,8,7],["GP","M","U","yes",1,4,2,3,3,1,3,3,3,9,11,10],["GP","M","U","no",2,4,1,1,5,2,5,2,1,7,8,6],["GP","M","R","yes",0,2,1,2,2,1,3,2,1,14,13,12],["GP","M","R","yes",0,0,1,1,2,2,4,2,1,12,12,13],["GP","M","U","yes",1,0,1,2,4,1,2,1,1,9,10,10],["GP","F","U","yes",0,2,2,1,4,1,3,2,1,12,12,13],["GP","F","U","yes",0,2,4,1,3,1,1,4,2,14,15,17],["GP","F","U","yes",0,0,2,1,3,1,1,2,2,10,10,11],["GP","M","U","no",1,4,2,3,5,4,4,2,1,11,10,11],["GP","F","R","yes",0,2,3,1,4,1,3,4,2,11,12,14],["GP","F","U","yes",0,4,3,1,3,2,3,1,1,11,12,14],["GP","F","R","yes",0,4,2,1,3,1,1,2,2,11,11,13],["GP","M","U","yes",0,4,2,1,1,1,1,4,3,11,13,14],["GP","M","U","yes",0,2,2,1,4,1,2,2,1,16,16,16],["GP","M","R","no",0,0,1,2,2,1,1,2,2,9,10,10],["GP","F","U","yes",0,2,4,1,1,1,1,2,2,10,11,12],["GP","F","R","no",0,8,2,2,3,1,2,2,1,10,12,12],["GP","F","U","yes",0,2,2,1,2,1,3,4,3,15,15,15],["GP","M","U","yes",0,2,2,1,2,1,1,4,3,10,10,11],["GP","M","R","yes",0,2,3,1,2,1,1,3,2,10,11,12],["GP","F","U","yes",0,2,3,1,3,1,1,3,3,15,12,13],["GP","F","U","yes",0,0,3,1,3,1,1,2,2,11,12,13],["GP","M","U","no",0,8,1,2,4,2,3,2,2,8,8,9],["GP","M","R","yes",0,6,2,2,5,3,4,3,4,15,16,16],["GP","M","U","yes",0,0,2,1,4,3,4,3,1,11,11,14],["GP","F","R","yes",0,8,2,2,4,2,2,4,4,10,11,12],["GP","M","U","yes",0,4,2,1,5,1,3,4,2,10,12,14],["GP","F","R","no",0,12,2,2,5,1,2,2,1,8,9,10],["GP","F","U","yes",0,16,2,1,5,3,3,3,3,11,12,12],["GP","F","U","yes",0,10,4,1,5,1,3,2,3,16,16,16],["GP","F","U","yes",0,2,2,2,3,1,1,1,1,13,13,13],["GP","M","R","yes",0,2,2,1,2,2,2,1,2,16,17,18],["GP","F","U","yes",0,8,2,1,5,1,2,2,1,14,14,15],["GP","F","U","yes",0,6,2,2,3,1,1,2,4,15,16,16],["GP","F","U","yes",0,6,2,2,4,2,3,2,2,12,12,12],["GP","F","R","no",0,15,2,2,1,1,1,3,2,12,9,10],["GP","M","U","yes",0,6,1,2,4,1,4,4,4,11,12,12],["GP","F","U","yes",1,2,2,1,4,1,1,4,4,14,12,13],["GP","F","U","yes",0,8,3,3,3,1,1,2,2,13,15,15],["GP","F","R","no",1,0,2,1,3,4,3,3,2,9,8,10],["GP","M","U","yes",0,0,1,2,3,1,2,4,3,10,10,10],["GP","M","U","no",0,10,1,2,4,2,4,1,2,10,10,11],["GP","M","U","yes",0,22,1,2,4,2,4,4,1,11,11,10],["GP","M","U","yes",0,18,1,1,4,3,4,3,2,13,13,13],["GP","F","R","yes",0,2,4,2,2,1,1,1,1,17,17,18],["GP","F","U","yes",0,0,2,2,4,1,1,1,1,12,13,13],["GP","F","U","yes",0,12,2,1,5,1,2,2,2,12,12,14],["GP","F","U","yes",0,10,2,2,1,1,1,2,1,12,13,14],["GP","M","U","yes",0,0,2,1,3,1,2,1,1,12,12,12],["GP","F","U","yes",0,0,3,1,3,1,2,2,2,18,18,18],["GP","F","U","yes",0,0,3,1,3,1,1,1,1,13,13,14],["GP","M","U","yes",0,0,3,1,4,1,3,2,1,14,15,15],["GP","M","U","yes",0,0,2,1,3,1,1,4,4,17,17,17],["GP","M","U","yes",0,2,2,1,2,1,4,4,2,15,16,16],["GP","F","U","yes",0,0,3,1,2,1,2,4,3,17,18,18],["GP","F","R","yes",0,0,4,2,2,1,1,3,1,18,19,19],["GP","M","R","yes",0,0,3,2,2,1,1,3,2,14,15,15],["GP","M","U","yes",0,0,1,1,3,1,3,3,3,14,15,15],["GP","F","U","yes",0,2,2,2,4,2,3,4,4,14,13,13],["GP","F","U","yes",0,0,2,2,5,1,2,4,3,13,14,14],["GP","F","U","yes",0,0,4,1,3,1,1,4,3,16,17,17],["GP","M","U","yes",0,0,1,1,2,2,2,4,4,18,18,17],["GP","F","U","yes",0,0,2,1,4,1,1,4,4,14,15,15],["GP","M","U","yes",0,0,1,2,1,2,2,4,4,12,13,13],["GP","F","R","yes",0,0,3,2,4,1,1,4,4,7,7,8],["GP","F","U","yes",0,0,3,2,3,1,1,4,2,16,16,16],["GP","F","U","yes",0,0,4,1,2,1,2,3,2,18,18,18],["GP","M","R","yes",1,0,3,2,1,1,1,2,1,9,10,11],["GP","M","U","yes",2,0,1,1,3,1,1,3,2,14,15,15],["GP","M","R","yes",0,0,2,1,3,1,2,3,3,10,10,11],["GP","F","U","yes",0,2,2,1,4,1,2,1,4,10,10,11],["GP","F","U","yes",0,2,2,2,3,1,2,2,1,12,12,15],["GP","F","U","yes",0,2,2,2,1,1,1,2,3,11,12,14],["GP","F","R","yes",0,2,1,1,4,1,1,4,4,15,16,17],["GP","F","U","yes",0,2,3,1,4,1,1,4,3,14,15,17],["GP","F","U","yes",0,8,1,2,4,1,4,4,3,12,12,15],["GP","F","R","yes",0,2,3,1,4,2,5,3,4,15,15,17],["GP","F","U","yes",0,8,2,1,4,1,1,3,3,11,12,14],["GP","M","U","yes",0,9,2,2,4,1,1,4,2,11,10,10],["GP","F","U","yes",0,0,2,1,4,3,3,4,4,12,11,13],["GP","F","U","yes",0,4,1,1,4,1,1,3,4,11,12,14],["GP","F","U","yes",0,2,1,1,4,1,2,4,4,14,15,17],["GP","F","U","yes",0,14,2,1,2,1,2,4,3,15,14,17],["GP","F","U","yes",0,0,2,1,3,1,1,3,3,12,12,13],["GP","F","U","yes",0,2,2,1,3,2,2,2,1,11,12,14],["GP","M","U","yes",0,2,1,1,5,3,4,4,4,8,9,11],["GP","F","U","no",0,12,3,3,5,4,3,1,1,10,10,11],["GP","F","U","yes",2,2,2,3,4,1,1,1,1,8,8,9],["GP","F","U","yes",0,2,1,1,5,2,4,2,2,10,10,10],["GP","F","U","yes",0,4,2,1,2,1,1,2,2,14,13,13],["GP","F","R","yes",0,0,3,1,2,2,2,2,2,11,11,10],["GP","F","U","yes",0,0,3,1,3,2,3,3,1,17,18,17],["GP","F","U","yes",0,0,3,2,3,2,3,0,2,14,14,15],["GP","F","U","yes",0,0,3,2,5,1,2,1,1,14,14,14],["GP","M","U","yes",0,0,3,1,3,2,2,4,4,13,14,13],["GP","M","U","yes",0,0,1,1,5,3,5,3,3,17,18,17],["GP","M","R","yes",0,2,1,4,5,5,5,2,2,11,10,10],["GP","F","U","yes",0,0,3,1,4,1,3,4,4,13,12,13],["GP","F","U","yes",0,4,3,2,3,1,2,4,4,15,14,15],["GP","F","U","yes",0,2,1,1,5,2,5,3,3,11,12,11],["GP","M","U","yes",0,0,4,1,5,2,4,2,2,11,11,12],["GP","M","R","yes",0,0,1,1,4,2,2,3,2,11,10,10],["GP","F","U","yes",0,2,2,4,5,1,1,2,2,10,9,10],["GP","F","R","yes",0,0,3,1,3,1,1,2,4,15,15,15],["GP","M","U","yes",0,6,1,1,2,1,2,2,2,15,14,15],["GP","F","U","yes",0,8,2,1,4,1,1,3,3,10,11,12],["GP","F","U","yes",0,0,2,1,3,1,1,2,2,10,9,12],["GP","F","R","yes",0,6,4,2,4,1,1,2,2,14,13,14],["GP","F","U","yes",0,8,3,1,5,1,3,3,4,11,13,14],["GP","F","U","yes",0,0,2,1,2,2,3,3,2,12,13,15],["GP","F","U","yes",0,4,4,1,3,1,1,3,3,14,14,15],["GP","F","R","yes",0,0,2,1,3,2,3,3,2,14,14,16],["GP","M","U","yes",0,0,2,1,3,2,2,4,4,12,12,13],["GP","M","U","yes",0,6,2,1,3,1,3,3,4,16,16,17],["GP","F","U","yes",0,18,2,1,1,1,2,2,2,10,12,14],["GP","F","U","yes",0,0,3,1,3,1,2,2,3,11,12,14],["GP","F","U","yes",0,4,3,1,3,2,3,3,2,14,16,17],["GP","M","R","yes",0,4,3,1,2,1,2,4,3,15,14,17],["GP","M","U","yes",0,0,3,1,5,2,3,4,3,14,13,14],["GP","F","U","yes",0,0,3,1,3,1,3,4,3,11,12,13],["GP","F","U","yes",0,10,2,2,4,2,2,2,1,12,15,15],["GP","F","U","yes",0,4,2,1,5,2,4,2,1,12,16,16],["GP","F","U","no",1,16,1,2,3,3,4,2,3,10,11,11],["GP","F","U","yes",1,6,1,1,2,1,1,3,1,10,13,13],["GP","F","U","yes",2,0,3,1,2,1,1,4,4,9,12,12],["GP","M","U","no",0,11,2,1,4,1,3,2,2,9,11,12],["GP","M","U","yes",0,9,2,1,5,1,4,3,4,13,14,15],["GP","F","U","yes",0,0,2,1,4,1,3,2,2,13,17,17],["GP","M","U","yes",0,2,3,1,2,1,2,4,4,12,15,15],["GP","F","U","yes",0,0,2,1,2,1,1,4,2,14,17,17],["GP","M","R","no",2,21,2,2,3,5,2,1,1,9,10,10],["GP","F","R","yes",0,8,3,2,2,1,3,1,1,11,15,15],["GP","F","U","yes",1,5,1,1,5,4,4,4,4,9,10,11],["GP","M","U","yes",0,10,2,1,4,1,2,3,2,16,18,18],["GP","F","U","yes",0,5,3,1,4,1,2,3,2,14,17,17],["GP","M","R","yes",0,13,1,1,3,4,5,2,3,13,14,14],["GP","M","U","yes",0,10,1,1,4,1,4,2,1,7,11,11],["GP","F","U","yes",0,10,2,2,4,1,3,2,2,14,17,17],["GP","F","U","yes",1,5,1,2,1,1,1,1,0,8,10,10],["GP","F","U","yes",0,4,2,1,2,1,2,3,2,10,13,13],["MS","F","U","no",0,11,1,2,3,1,3,1,3,10,11,11],["MS","F","R","yes",0,0,2,2,4,1,1,2,2,12,12,12],["MS","F","R","yes",1,6,1,1,3,1,1,1,1,10,10,10],["MS","F","R","yes",0,4,1,2,4,2,3,3,3,10,10,11],["MS","F","R","yes",0,0,2,2,2,1,2,2,3,16,17,17],["MS","F","R","no",0,0,1,2,4,1,1,2,1,6,8,9],["MS","M","R","yes",0,5,2,1,2,1,3,4,4,10,11,11],["MS","M","U","yes",0,0,3,1,3,1,1,1,2,10,11,11],["MS","F","R","yes",1,0,2,1,4,1,2,3,2,10,10,10],["MS","F","R","no",1,0,1,1,4,2,2,1,1,6,6,7],["MS","F","R","yes",0,0,1,2,1,3,5,4,4,13,14,14],["MS","F","U","no",0,4,4,2,1,1,1,2,2,10,9,11],["MS","F","R","yes",0,0,2,2,3,1,2,1,1,10,10,10],["MS","F","R","yes",1,4,1,2,3,1,2,1,1,6,7,8],["MS","F","R","yes",0,0,1,2,3,1,2,0,2,12,11,12],["MS","F","R","yes",0,2,1,2,5,1,3,2,3,10,11,12],["MS","F","R","yes",0,0,1,2,3,1,1,3,3,14,16,16],["MS","M","U","yes",0,0,2,2,5,4,5,1,1,7,0,0],["MS","M","U","yes",0,4,2,1,3,2,4,1,1,8,9,9],["MS","M","R","yes",0,0,2,1,4,1,2,4,1,12,13,14],["MS","M","R","yes",0,7,2,1,4,1,2,4,1,7,9,8],["MS","M","R","yes",0,4,2,3,5,1,2,3,4,9,10,11],["MS","M","R","yes",0,8,2,4,5,2,4,1,1,7,9,9],["MS","M","U","yes",0,0,2,1,3,1,1,3,3,11,11,11],["MS","M","R","no",0,8,1,3,5,5,5,2,1,8,10,9],["MS","F","R","yes",0,6,3,2,2,1,1,4,4,16,16,17],["MS","F","R","yes",0,3,1,2,2,1,1,1,2,11,13,13],["MS","F","R","yes",0,2,2,3,4,1,2,2,3,15,15,15],["MS","M","R","yes",0,0,2,2,3,1,1,1,2,10,11,11],["MS","F","R","yes",0,4,2,3,5,1,1,2,2,9,10,11],["MS","F","U","yes",1,0,3,1,2,1,2,1,2,10,8,8],["MS","F","U","yes",1,3,3,1,2,1,2,1,2,9,8,8],["MS","F","U","yes",0,0,2,1,2,3,3,2,1,9,10,9],["MS","F","U","yes",0,0,2,1,3,2,1,1,1,13,14,15],["MS","M","R","yes",0,4,1,1,5,5,5,1,2,10,11,11],["MS","F","R","yes",0,0,4,4,2,1,1,1,1,13,10,13],["MS","F","R","yes",0,2,3,4,3,1,1,1,1,10,9,10],["MS","F","R","yes",0,1,2,2,3,1,1,1,1,11,10,11],["MS","F","R","yes",0,0,1,2,2,4,3,1,1,13,12,14],["MS","F","R","yes",0,0,2,3,1,1,2,1,1,13,14,14],["MS","F","R","yes",0,2,3,1,3,2,2,2,2,14,11,12],["MS","M","R","yes",0,6,1,2,4,3,4,1,1,11,11,11],["MS","F","U","yes",1,9,2,1,4,2,3,1,2,9,8,8],["MS","M","U","yes",0,0,1,2,3,1,3,3,1,10,9,11],["MS","F","R","yes",0,1,2,3,4,1,1,2,2,14,13,14],["MS","M","U","yes",0,1,1,3,3,1,2,2,2,13,12,13],["MS","M","U","yes",0,0,2,1,1,1,1,4,4,13,12,13],["MS","F","R","yes",0,4,2,1,4,1,1,3,3,13,12,12],["MS","F","R","yes",1,2,2,2,4,2,3,2,2,12,11,12],["MS","F","R","yes",0,0,1,3,2,1,1,2,2,14,14,16],["MS","M","U","yes",0,4,1,2,3,2,3,2,1,10,8,10],["MS","M","R","yes",0,2,1,3,4,3,5,1,3,10,11,11],["MS","F","U","yes",0,0,3,2,2,1,1,2,2,12,13,14],["MS","F","R","yes",0,2,1,1,3,1,1,2,1,10,8,8],["MS","M","U","yes",0,11,1,2,3,2,4,3,3,12,10,11],["MS","F","R","yes",3,0,2,2,3,1,1,1,1,7,7,8],["MS","F","U","no",0,4,1,1,3,1,1,2,2,9,9,10],["MS","F","U","no",1,0,1,1,4,1,1,2,3,9,9,10],["MS","F","R","no",0,2,1,3,3,1,1,2,1,9,10,11],["MS","F","R","no",0,0,1,2,1,1,3,1,1,9,10,9],["MS","F","R","no",0,1,2,3,5,1,2,2,2,9,10,11],["MS","F","U","no",0,6,1,1,4,1,2,2,2,7,7,8],["MS","F","R","yes",0,0,2,2,5,1,2,2,2,11,10,11],["MS","F","U","yes",1,1,1,1,3,1,4,2,2,9,10,10],["MS","F","R","no",2,6,3,2,2,1,1,3,2,7,9,10],["MS","F","U","no",1,6,3,1,1,1,1,1,1,7,9,9],["MS","M","R","no",1,0,1,2,3,3,4,1,1,8,9,10],["MS","F","R","no",1,4,1,2,3,1,1,1,1,9,11,10],["MS","F","U","yes",1,12,2,2,4,4,1,1,1,7,8,9],["MS","F","R","yes",0,2,2,1,2,1,1,2,2,8,10,10],["MS","F","U","yes",0,5,1,2,4,3,5,0,1,9,9,10],["MS","F","R","no",0,0,2,1,5,1,3,1,2,8,9,9],["MS","F","U","no",0,0,1,1,4,1,1,3,3,14,13,13],["MS","F","R","yes",0,2,1,1,4,2,2,1,1,14,14,14],["MS","M","U","yes",1,0,4,2,5,3,4,3,3,10,11,10],["MS","F","U","yes",0,0,2,1,3,1,1,2,1,14,13,14],["MS","F","U","yes",0,0,1,1,5,1,2,2,2,17,16,16],["MS","M","U","no",1,12,1,1,5,5,5,1,2,6,7,7],["MS","M","U","yes",0,8,1,1,5,1,5,4,3,14,12,13],["MS","M","R","yes",1,2,4,3,5,3,5,2,2,10,8,9],["MS","F","U","yes",0,0,4,1,1,1,1,1,1,14,14,14],["MS","F","U","yes",0,0,3,1,5,1,1,2,2,12,13,13],["MS","F","R","yes",0,0,1,2,5,1,2,1,1,11,11,11],["MS","F","U","yes",1,8,2,2,4,2,4,3,3,11,9,10],["MS","F","U","yes",0,0,3,1,3,1,1,1,1,11,11,10],["MS","M","R","yes",1,0,1,3,5,1,2,2,2,10,9,9],["MS","F","R","yes",0,0,2,3,2,1,1,1,1,16,17,18],["MS","F","R","yes",0,0,2,2,2,1,1,2,2,15,17,17],["MS","F","U","yes",0,1,2,2,5,1,1,1,0,11,9,10],["MS","F","R","yes",1,9,2,1,2,1,1,1,1,7,7,7],["MS","F","U","yes",0,0,1,1,3,1,3,3,1,8,6,8],["MS","F","U","yes",0,2,1,1,3,1,4,3,2,7,6,7],["MS","F","U","yes",0,8,2,2,5,1,4,1,1,9,8,10],["MS","F","R","yes",0,0,2,1,3,2,3,4,4,14,16,16],["MS","F","R","yes",0,0,1,2,5,1,4,1,2,14,14,15],["MS","F","U","yes",1,8,2,1,2,1,3,2,4,8,5,8],["MS","M","R","yes",0,0,2,2,1,1,1,2,1,8,7,0],["MS","F","U","yes",0,6,2,3,2,1,3,1,1,6,8,8],["MS","F","R","yes",0,0,2,2,3,1,1,2,3,8,10,10],["MS","F","U","yes",0,4,2,1,4,1,2,4,4,8,8,8],["MS","M","U","no",0,2,4,1,5,5,5,4,4,5,6,6],["MS","F","R","yes",0,2,2,3,1,1,1,3,4,7,9,8],["MS","M","U","yes",0,0,3,1,3,1,2,4,4,15,14,16],["MS","F","R","yes",0,1,1,1,3,1,2,4,1,13,14,14],["MS","M","U","yes",0,0,3,4,3,2,2,2,2,10,9,10],["MS","F","R","yes",0,5,1,1,3,1,2,2,2,9,9,9],["MS","F","U","yes",0,1,1,2,3,1,2,4,4,11,11,11],["MS","M","U","yes",0,8,1,1,4,5,5,3,3,7,10,9],["MS","M","U","yes",0,0,2,3,3,3,3,1,1,10,10,10],["MS","M","U","yes",0,2,2,2,2,1,4,2,1,9,7,8],["MS","F","U","yes",0,0,2,1,2,1,1,2,1,14,15,16],["MS","M","U","yes",0,0,1,1,2,2,5,4,4,11,12,12],["MS","M","R","yes",0,11,2,3,5,1,3,1,2,9,11,10],["MS","M","U","yes",0,8,4,3,5,2,3,2,2,13,14,14],["MS","M","U","yes",0,11,1,1,3,1,2,2,1,12,13,12],["MS","F","R","yes",0,2,3,1,3,2,2,2,2,11,11,11],["MS","F","U","yes",0,8,2,2,4,2,2,4,1,9,10,10],["MS","F","U","yes",0,5,1,2,3,2,2,3,2,9,11,11],["MS","F","R","yes",0,0,2,2,3,1,1,2,2,11,9,11],["MS","F","U","yes",0,1,3,2,5,1,4,4,4,10,11,12],["MS","M","R","yes",3,2,1,3,3,1,3,4,4,9,9,8],["MS","M","R","yes",0,2,1,2,2,3,3,1,3,12,11,12],["MS","M","U","yes",1,8,2,1,4,3,4,3,4,8,9,8],["MS","F","U","yes",0,0,2,1,5,1,1,4,4,13,15,16],["MS","M","R","yes",0,0,1,1,2,2,1,4,1,10,11,11],["MS","F","U","yes",0,2,2,1,5,1,2,1,1,11,10,11],["MS","F","R","yes",0,0,2,2,3,2,3,4,2,17,18,18],["MS","M","U","yes",0,0,2,2,2,2,2,2,2,12,13,13],["MS","M","U","yes",0,0,2,2,2,2,2,3,2,13,14,13],["MS","M","U","no",2,2,2,1,3,3,4,1,1,9,9,10],["MS","M","U","yes",0,4,1,1,2,1,1,1,0,11,11,12],["MS","F","R","no",0,3,1,2,5,2,2,1,1,10,11,10],["MS","F","R","yes",0,5,3,1,4,1,1,1,2,13,14,13],["MS","M","R","yes",0,4,1,1,4,2,4,1,2,9,10,11],["MS","F","R","yes",3,2,2,2,4,1,1,3,1,7,9,10],["MS","M","R","no",0,0,1,2,5,3,5,2,2,8,13,10],["MS","M","R","yes",1,0,1,3,2,1,1,1,0,12,12,13],["MS","M","R","yes",0,0,1,2,5,1,3,1,1,10,9,10],["MS","M","U","yes",0,6,2,2,3,1,4,1,1,10,9,10],["MS","F","R","yes",0,0,2,1,3,1,1,2,2,11,13,12],["MS","M","U","yes",1,0,1,1,1,2,3,2,2,7,0,0],["MS","M","R","yes",0,2,1,2,5,2,3,3,2,11,9,10],["MS","M","R","yes",0,0,1,2,5,2,4,1,1,10,10,9],["MS","M","R","no",1,2,1,2,3,2,3,1,1,9,7,9],["MS","M","R","no",1,0,1,1,1,2,2,3,2,4,0,0],["MS","M","U","yes",3,4,1,2,1,1,1,3,2,6,11,9],["MS","M","U","no",2,9,2,1,5,1,3,3,3,4,8,8],["MS","M","R","yes",0,6,1,2,3,2,4,2,2,7,8,8],["MS","M","U","no",3,4,1,2,3,1,3,2,1,8,9,9],["MS","F","U","yes",2,8,2,2,5,1,1,3,2,5,5,7],["MS","F","U","yes",0,9,1,1,2,1,2,1,1,7,9,10],["MS","M","R","no",1,12,1,2,3,2,4,1,1,8,11,10],["MS","F","R","yes",0,8,1,1,4,3,4,4,3,10,11,10],["MS","M","R","yes",0,8,1,2,5,5,5,3,2,9,10,11],["MS","M","R","yes",1,8,2,3,4,3,3,1,1,10,9,11],["MS","M","U","yes",1,4,2,2,4,2,3,3,3,8,9,10],["MS","M","U","no",0,0,1,1,3,2,3,1,3,9,10,9],["MS","M","R","yes",1,4,1,3,4,3,3,1,1,8,9,10],["MS","F","U","yes",2,2,2,2,3,1,1,1,2,6,8,8],["MS","F","U","no",0,0,1,1,4,1,1,1,1,6,8,7],["MS","F","R","no",1,0,1,2,5,1,1,2,2,8,6,0],["MS","F","R","yes",0,0,1,2,3,1,1,0,0,10,11,11],["MS","F","R","no",0,5,3,2,3,2,2,3,1,8,7,8],["MS","F","U","yes",0,0,2,1,5,1,3,4,2,8,8,0],["MS","F","R","yes",1,3,2,1,3,1,2,2,2,7,6,8],["MS","F","U","yes",0,0,1,1,2,1,1,4,1,8,10,9],["MS","F","U","yes",0,0,1,1,1,1,1,1,2,7,10,10],["MS","F","U","yes",2,3,2,3,4,2,2,1,1,7,8,7],["MS","F","U","yes",0,2,2,2,5,1,1,2,2,12,13,14],["MS","F","U","yes",0,0,1,2,3,1,1,3,3,11,12,13],["MS","F","U","yes",0,0,2,2,3,1,2,1,2,12,13,14],["MS","F","U","yes",0,0,2,2,5,1,2,4,4,18,18,18],["MS","M","U","yes",0,3,1,1,5,1,1,4,4,17,17,17],["MS","F","U","yes",0,0,2,2,3,1,2,4,2,17,18,18],["MS","F","R","yes",1,0,2,3,3,1,1,2,2,9,0,0],["MS","M","U","yes",0,8,1,2,4,5,5,1,2,10,11,11],["MS","M","R","yes",0,5,1,3,5,1,1,4,4,12,13,14],["MS","M","R","no",0,4,1,3,3,3,4,1,1,12,13,14],["MS","F","U","yes",0,4,2,2,1,1,1,2,2,8,8,10],["MS","F","U","yes",0,0,3,2,5,1,4,2,2,11,12,13],["MS","F","R","yes",0,0,2,1,1,1,1,4,2,5,0,0],["MS","F","U","no",1,2,2,3,2,1,2,1,1,9,10,10],["MS","F","U","no",1,0,1,2,5,2,3,1,1,5,0,0],["MS","F","U","yes",0,0,4,2,3,3,1,4,2,18,18,18],["MS","F","R","yes",0,5,2,2,3,1,2,2,1,11,11,12],["MS","F","U","yes",0,2,2,1,3,1,2,1,1,8,10,11],["MS","F","U","no",0,0,2,2,1,1,1,1,2,11,11,12],["MS","F","R","no",3,0,2,2,4,1,4,1,1,8,0,0],["MS","F","R","yes",0,5,3,2,1,1,1,2,2,14,14,15],["MS","M","R","yes",1,4,2,2,5,1,3,4,3,10,11,11],["MS","F","U","yes",0,0,2,1,4,1,1,3,3,10,10,10],["MS","F","R","yes",0,2,2,2,3,1,2,4,4,12,12,12],["MS","F","U","yes",0,0,2,2,3,1,2,3,2,15,14,15],["MS","M","U","yes",0,2,1,2,2,1,2,1,1,14,13,14],["MS","F","U","yes",0,0,3,2,2,1,1,1,1,19,17,18],["MS","F","R","yes",0,0,2,3,4,1,4,1,2,16,15,15],["MS","F","U","yes",0,6,2,2,2,1,3,3,3,13,12,13],["MS","F","U","yes",0,4,2,1,4,1,1,4,4,15,14,15],["MS","F","R","yes",0,0,2,2,2,1,2,1,2,13,13,13],["MS","M","R","yes",0,0,2,2,4,2,4,1,3,8,10,9],["MS","M","U","yes",0,0,3,2,2,2,2,4,4,15,16,16],["MS","F","R","yes",1,0,1,3,1,1,2,1,1,8,8,9],["MS","F","U","yes",0,0,1,2,3,1,2,2,3,10,10,10],["MS","F","R","yes",0,0,2,3,2,4,2,4,4,7,5,0],["MS","M","R","no",0,3,1,3,3,2,3,1,2,9,10,10],["MS","F","U","yes",0,8,3,1,3,1,1,2,2,10,11,12],["MS","F","R","yes",0,4,1,1,5,1,3,1,2,7,8,9],["MS","F","R","yes",0,0,3,2,4,1,1,4,4,15,17,17],["MS","F","R","yes",0,4,3,4,2,1,2,1,1,10,11,12],["MS","F","R","yes",1,4,2,2,3,1,1,1,1,7,8,9],["MS","F","R","yes",0,1,2,1,3,3,4,4,4,13,14,14],["MS","F","U","yes",0,1,2,1,3,1,2,3,3,16,16,16],["MS","F","R","yes",0,10,2,1,4,2,3,3,1,8,9,9],["MS","M","U","yes",0,4,2,1,4,1,4,4,4,17,18,19],["MS","M","R","yes",0,0,1,2,3,1,3,2,1,7,7,0],["MS","M","U","yes",0,4,2,2,3,1,1,2,3,14,15,16],["MS","M","R","yes",1,0,1,2,2,1,3,1,1,5,8,0],["MS","M","R","yes",1,0,1,2,3,4,3,4,2,7,7,0],["MS","F","R","yes",0,0,3,2,3,1,3,2,2,14,17,15],["MS","F","U","yes",0,0,2,2,4,1,1,4,3,6,9,11],["MS","F","R","yes",0,4,1,3,3,2,2,4,4,7,9,10],["MS","F","R","yes",1,4,3,1,2,1,2,2,3,10,11,10],["MS","F","U","yes",0,4,2,1,4,1,1,3,1,15,15,16],["MS","F","U","yes",0,6,2,2,1,1,1,1,1,11,12,9],["MS","M","U","yes",0,6,1,2,5,3,4,3,1,10,10,10],["MS","M","R","yes",0,4,1,3,1,3,4,3,2,10,11,11]]};
+const RM = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+const FR = d3.formatLocale({decimal:",", thousands:"\u202f", grouping:[3], currency:["", "\u00a0€"]});
+const f1 = v => FR.format(".1f")(v).replace(/,0$/, "");
+const pct = v => isFinite(v) ? Math.round(v * 100) + "\u00a0%" : "–";
+const MAT_NAME = {mat:"maths", por:"portugais"};
+
+/* ---------- Données et attributs dérivés (étape 2) ---------- */
+const ALC = ["faible", "modérée", "élevée"];
+const PEDU = ["primaire ou moins", "collège", "secondaire", "supérieur"];
+function derive(r){
+  r.nonEval = r.G3 === 0 && r.absences === 0;
+  r.alc = ALC[Math.min(3, Math.round((5 * r.Dalc + 2 * r.Walc) / 7)) - 1];
+  r.pedu = PEDU[Math.max(1, Math.max(r.Medu, r.Fedu)) - 1];
+  r.absCat = r.nonEval ? "non renseigné" : r.absences === 0 ? "0" : r.absences <= 4 ? "1 à 4" : r.absences <= 10 ? "5 à 10" : "plus de 10";
+  const k = (r.failures >= 1) + (r.absences > 10) + (r.traveltime >= 3) + (r.higher === "no");
+  r.risque = k === 0 ? "0" : k === 1 ? "1" : "2 et plus";
+  r.reussite = r.G3 >= 10 ? "réussite" : "échec";
+  r.prog = r.nonEval ? null : r.G3 - r.G1;
+  r.tendance = r.nonEval ? "non évalué" : r.prog <= -2 ? "baisse" : r.prog >= 2 ? "hausse" : "stable";
+  r.alcI = ALC.indexOf(r.alc);
+  r.peduI = PEDU.indexOf(r.pedu);
+  r.absI = r.absences === 0 ? 0 : r.absences <= 4 ? 1 : r.absences <= 10 ? 2 : 3;
+  return r;
+}
+function load(key){
+  return RAW[key].map((a, i) => {
+    const r = {id: i + 1, mat: key};
+    RAW.cols.forEach((c, j) => { r[c] = a[j]; });
+    return derive(r);
+  });
+}
+const ALL = {mat: load("mat"), por: load("por")};
+
+const DIMS = {
+  school:{label:"École", order:["GP","MS"], name:{GP:"Gabriel Pereira", MS:"Mousinho da Silveira"}, short:{GP:"GP", MS:"MS"}},
+  sex:{label:"Sexe", order:["F","M"], name:{F:"Filles", M:"Garçons"}},
+  address:{label:"Milieu", order:["U","R"], name:{U:"Urbain", R:"Rural"}},
+  higher:{label:"Projet d'études sup.", order:["yes","no"], name:{yes:"Vise le supérieur", no:"Ne vise pas le supérieur"}, short:{yes:"Oui", no:"Non"}},
+  risque:{label:"Facteurs de risque", order:["0","1","2 et plus"], name:{"0":"Aucun facteur", "1":"Un facteur", "2 et plus":"Deux ou plus"}, short:{"0":"0 facteur", "1":"1 facteur", "2 et plus":"2 ou +"}},
+  tendance:{label:"Évolution de G1 à G3", order:["hausse","stable","baisse","non évalué"], name:{hausse:"En hausse", stable:"Stable", baisse:"En baisse", "non évalué":"Non évalué"}},
+  reussite:{label:"Note finale", order:["réussite","échec"], name:{"réussite":"10 ou plus", "échec":"Moins de 10"}},
+  goout:{label:"Sorties", order:[1,2,3,4,5], name:{1:"Très rares", 2:"Rares", 3:"Moyennes", 4:"Fréquentes", 5:"Très fréquentes"}},
+  alc:{label:"Alcool", order:ALC, name:{"faible":"Faible", "modérée":"Modérée", "élevée":"Élevée"}},
+  absCat:{label:"Absences", order:["0","1 à 4","5 à 10","plus de 10","non renseigné"], name:{"0":"Aucune", "1 à 4":"1 à 4", "5 à 10":"5 à 10", "plus de 10":"Plus de 10", "non renseigné":"Non renseigné"}},
+  studytime:{label:"Temps d'étude", order:[1,2,3,4], name:{1:"Moins de 2 h", 2:"2 à 5 h", 3:"5 à 10 h", 4:"Plus de 10 h"}},
+  traveltime:{label:"Trajet", order:[1,2,3,4], name:{1:"Moins de 15 min", 2:"15 à 30 min", 3:"30 min à 1 h", 4:"Plus d'1 h"}},
+  pedu:{label:"Éducation des parents", order:PEDU, name:{"primaire ou moins":"Primaire ou moins", "collège":"Collège", "secondaire":"Secondaire", "supérieur":"Supérieur"}},
+  failures:{label:"Échecs passés", order:[0,1,2,3], name:{0:"Aucun", 1:"Un", 2:"Deux", 3:"Trois ou plus"}}
+};
+const nm = (dim, v) => { const n = DIMS[dim].name[v]; return n === undefined ? String(v) : n; };
+const sn = (dim, v) => (DIMS[dim].short && DIMS[dim].short[v]) || nm(dim, v);
+const SEX1 = {F:"fille", M:"garçon"};
+
+/* ---------- État partagé et sélection ---------- */
+const S = {mat:"mat", inclNE:false, filters:[], preset:"risque", extra:[], student:null, group:null, pair:null,
+           sb:["school","risque",""], gColor:"reussite", showG:false, fake:null};
+const base = () => ALL[S.mat].filter(r => S.inclNE || !r.nonEval);
+const pass = r => S.filters.every(f => String(r[f.dim]) === String(f.value));
+const sel = () => base().filter(pass);
+const okCount = rows => rows.reduce((s, r) => s + (r.reussite === "réussite"), 0);
+const rate = rows => rows.length ? okCount(rows) / rows.length : NaN;
+
+function setFilter(dim, value, src){
+  const ex = S.filters.find(f => f.dim === dim);
+  if (ex && String(ex.value) === String(value) && src !== "P") S.filters = S.filters.filter(f => f.dim !== dim);
+  else S.filters = S.filters.filter(f => f.dim !== dim).concat([{dim, value, src}]);
+  render();
+}
+function setFilters(list, src){
+  list.forEach(({dim, value}) => { S.filters = S.filters.filter(f => f.dim !== dim).concat([{dim, value, src}]); });
+  render();
+}
+function dropFilter(dim){ S.filters = S.filters.filter(f => f.dim !== dim); render(); }
+
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const C = () => ({ok: css("--ok") || "#1F4FA3", ko: css("--ko") || "#D9822B", mid: css("--mid") || "#E4E8EF"});
+function rateScale(){
+  const g = rate(base()), c = C();
+  return d3.scaleLinear().domain([Math.max(0, g - 0.35), g, Math.min(1, g + 0.2)]).range([c.ko, c.mid, c.ok]).interpolate(d3.interpolateLab).clamp(true);
+}
+const width = el => Math.max(300, Math.floor(el.getBoundingClientRect().width) || 860);
+
+/* ---------- Info-bulle et accessibilité ---------- */
+const tip = d3.select("body").append("div").attr("class", "tip").attr("role", "status");
+function moveTip(ev){
+  const n = tip.node(), pad = 14;
+  let x = ev.clientX + pad, y = ev.clientY + pad;
+  if (x + n.offsetWidth > window.innerWidth - 8) x = ev.clientX - n.offsetWidth - pad;
+  if (y + n.offsetHeight > window.innerHeight - 8) y = ev.clientY - n.offsetHeight - pad;
+  tip.style("transform", `translate(${Math.max(4, x)}px,${Math.max(4, y)}px)`);
+}
+function showTip(ev, html){ tip.html(html).style("opacity", 1); moveTip(ev); }
+function hideTip(){ tip.style("opacity", 0); }
+function act(selection, fn, label){
+  selection.attr("tabindex", 0).attr("role", "button").attr("aria-label", label)
+    .on("click", (e, d) => fn(d, e))
+    .on("keydown", (e, d) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(d, e); } });
+}
+
+/* ---------- A. Ensembles parallèles ---------- */
+const PRESETS = {
+  risque:{btn:"Risque et décrochage", q:"Le cumul de facteurs de risque mène-t-il à l'échec et au décrochage ?", axes:["risque","tendance","reussite"]},
+  vie:{btn:"Sorties et alcool", q:"Les sorties et l'alcool vont-ils avec de moins bonnes notes ?", axes:["goout","alc","reussite"]},
+  qui:{btn:"Qui sont les élèves ?", q:"Qui sont les élèves, et lesquels réussissent ?", axes:["school","sex","address","reussite"]}
+};
+const ADDABLE = ["absCat","studytime","traveltime","pedu","higher","failures","alc","goout","risque","tendance","school","sex","address"];
+function axesA(){
+  const p = PRESETS[S.preset].axes;
+  const head = p.slice(0, -1).concat(S.extra.filter(a => !p.includes(a)));
+  return head.slice(0, 4).concat(["reussite"]);
+}
+function renderA(){
+  d3.select("#a-q").text(PRESETS[S.preset].q);
+  d3.select("#presetSeg").selectAll("button").data(Object.keys(PRESETS)).join("button")
+    .attr("type", "button").text(k => PRESETS[k].btn).attr("aria-pressed", k => String(k === S.preset))
+    .on("click", (e, k) => { S.preset = k; S.extra = []; render(); });
+  const axes = axesA();
+  const full = axes.length >= 5;
+  const opts = [""].concat(full ? [] : ADDABLE.filter(a => !axes.includes(a)));
+  const addSel = d3.select("#addAxis").property("disabled", full);
+  addSel.selectAll("option").data(opts).join("option").attr("value", d => d).text(d => d ? DIMS[d].label : (full ? "5 axes au maximum" : "Choisir"));
+  addSel.property("value", "");
+
+  const host = d3.select("#psets"); host.selectAll("*").remove();
+  const rows = sel();
+  if (!rows.length){ host.append("p").attr("class", "empty").text("Aucun élève ne correspond à cette sélection. Retirez un filtre dans le panneau Sélection."); return; }
+  const Wd = width(host.node());
+  const H = Math.round(Math.max(330, Math.min(470, Wd * 0.4)));
+  const m = {t:30, r:Math.min(170, Math.round(Wd * 0.17)), b:8, l:4};
+  const iw = Wd - m.l - m.r, ih = H - m.t - m.b, bw = 12, N = rows.length, gap = 10;
+  const x = d3.scalePoint().domain(axes).range([0, iw]);
+
+  const cnt = {};
+  axes.forEach(a => { cnt[a] = d3.rollup(rows, v => ({n:v.length, ok:okCount(v)}), r => String(r[a])); });
+  const catsOf = a => DIMS[a].order.map(String).filter(c => cnt[a].has(c));
+  const kk = d3.min(axes, a => (ih - gap * (catsOf(a).length - 1)) / N);
+  const blocks = {};
+  axes.forEach(a => {
+    const cats = catsOf(a), tot = N * kk + gap * (cats.length - 1);
+    let y = (ih - tot) / 2; const mp = new Map();
+    cats.forEach(c => { const o = cnt[a].get(c); mp.set(c, {y0:y, y1:y + o.n * kk, n:o.n, ok:o.ok}); y += o.n * kk + gap; });
+    blocks[a] = {cats, map:mp};
+  });
+
+  const ORDR = ["réussite", "échec"], ribbons = [];
+  for (let i = 0; i < axes.length - 1; i++){
+    const a = axes[i], b = axes[i + 1], oA = blocks[a].cats, oB = blocks[b].cats;
+    const g = d3.rollup(rows, v => v.length, r => String(r[a]), r => String(r[b]), r => r.reussite);
+    const list = [];
+    for (const [va, mb] of g) for (const [vb, mr] of mb) for (const [res, n] of mr) list.push({a, b, va, vb, res, n});
+    const outOff = new Map(), inOff = new Map();
+    list.sort((p, q) => d3.ascending(oA.indexOf(p.va), oA.indexOf(q.va)) || d3.ascending(oB.indexOf(p.vb), oB.indexOf(q.vb)) || d3.ascending(ORDR.indexOf(p.res), ORDR.indexOf(q.res)))
+      .forEach(p => { const bl = blocks[a].map.get(p.va), o = outOff.get(p.va) || 0; p.sy0 = bl.y0 + o; p.sy1 = p.sy0 + p.n * kk; outOff.set(p.va, o + p.n * kk); });
+    list.slice().sort((p, q) => d3.ascending(oB.indexOf(p.vb), oB.indexOf(q.vb)) || d3.ascending(oA.indexOf(p.va), oA.indexOf(q.va)) || d3.ascending(ORDR.indexOf(p.res), ORDR.indexOf(q.res)))
+      .forEach(p => { const bl = blocks[b].map.get(p.vb), o = inOff.get(p.vb) || 0; p.ty0 = bl.y0 + o; p.ty1 = p.ty0 + p.n * kk; inOff.set(p.vb, o + p.n * kk); });
+    ribbons.push(...list);
+  }
+  const ribPath = p => {
+    const x0 = x(p.a) + bw, x1 = x(p.b), xm = (x0 + x1) / 2;
+    return `M${x0},${p.sy0}C${xm},${p.sy0} ${xm},${p.ty0} ${x1},${p.ty0}L${x1},${p.ty1}C${xm},${p.ty1} ${xm},${p.sy1} ${x0},${p.sy1}Z`;
+  };
+
+  const svg = host.append("svg").attr("viewBox", `0 0 ${Wd} ${H}`).attr("width", Wd).attr("height", H)
+    .attr("role", "img").attr("aria-label", "Ensembles parallèles, axes " + axes.map(a => DIMS[a].label).join(", "));
+  const g = svg.append("g").attr("transform", `translate(${m.l},${m.t})`);
+  const rp = g.append("g").selectAll("path").data(ribbons).join("path")
+    .attr("class", d => "rib " + (d.res === "réussite" ? "ok" : "ko")).attr("d", ribPath)
+    .on("mouseenter", (e, d) => showTip(e, `<b>${d.n} élève${d.n > 1 ? "s" : ""}</b><br>${DIMS[d.a].label}, ${nm(d.a, d.va)}<br>${DIMS[d.b].label}, ${nm(d.b, d.vb)}<br>Note finale ${d.res === "réussite" ? "de 10 ou plus" : "sous 10"}`))
+    .on("mousemove", moveTip).on("mouseleave", hideTip);
+  rp.on("mouseenter.hl", (e, d) => rp.style("opacity", r => r === d ? 0.95 : 0.12)).on("mouseleave.hl", () => rp.style("opacity", null));
+  const axKey = axes.join("|") + S.mat;
+  if (!RM && axKey !== renderA.last) rp.style("opacity", 0).transition().duration(350).style("opacity", 0.5).on("end", function(){ this.style.opacity = ""; });
+  renderA.last = axKey;
+
+  axes.forEach(a => {
+    const B = blocks[a], ag = g.append("g").attr("transform", `translate(${x(a)},0)`);
+    ag.append("text").attr("class", "axt").attr("y", -12).text(DIMS[a].label);
+    if (!PRESETS[S.preset].axes.includes(a)){
+      const rm = ag.append("text").attr("class", "axrm").attr("x", DIMS[a].label.length * 7.6 + 8).attr("y", -12).text("×");
+      act(rm, () => { S.extra = S.extra.filter(z => z !== a); render(); }, `Retirer l'axe ${DIMS[a].label}`);
+    }
+    const data = B.cats.map(c => Object.assign({c}, B.map.get(c)));
+    const bl = ag.selectAll("rect").data(data).join("rect").attr("class", "blk")
+      .attr("y", d => d.y0).attr("width", bw).attr("height", d => Math.max(1.5, d.y1 - d.y0)).attr("rx", 2);
+    act(bl, d => setFilter(a, d.c, "A"), d => `${DIMS[a].label}, ${nm(a, d.c)}, ${d.n} élèves. Zoomer`);
+    bl.on("mouseenter", (e, d) => { rp.style("opacity", r => (r.a === a && r.va === d.c) || (r.b === a && r.vb === d.c) ? 0.9 : 0.12); showTip(e, `<b>${nm(a, d.c)}</b><br>${d.n} élèves, ${pct(d.ok / d.n)} de réussite<br>Cliquez pour zoomer`); })
+      .on("mousemove", moveTip).on("mouseleave", () => { rp.style("opacity", null); hideTip(); });
+    ag.selectAll("text.lbl").data(data.filter(d => d.y1 - d.y0 >= 11)).join("text").attr("class", "lbl")
+      .attr("x", bw + 6).attr("y", d => (d.y0 + d.y1) / 2).attr("dy", "0.35em").text(d => `${nm(a, d.c)} (${d.n})`);
+  });
+
+  const st = S.student && rows.find(r => r.id === S.student);
+  if (st){
+    const pts = axes.map(a => { const b = blocks[a].map.get(String(st[a])); return b ? [x(a) + bw / 2, (b.y0 + b.y1) / 2] : null; }).filter(Boolean);
+    g.append("path").attr("d", d3.line().curve(d3.curveMonotoneX)(pts)).style("fill", "none").style("stroke", "var(--ink)").style("stroke-width", 2.5).style("stroke-dasharray", "5 3");
+    g.selectAll("circle.stp").data(pts).join("circle").attr("cx", d => d[0]).attr("cy", d => d[1]).attr("r", 5)
+      .style("fill", "var(--panel)").style("stroke", "var(--ink)").style("stroke-width", 2.5);
+  }
+}
+
+/* ---------- B. Matrice de corrélation ---------- */
+const MA = ["G3","G2","G1","failures","absences","studytime","traveltime","goout","Dalc","Walc","Medu","Fedu"];
+const ML = {G3:"Note finale (G3)", G2:"Note 2e période (G2)", G1:"Note 1re période (G1)", failures:"Échecs passés", absences:"Absences", studytime:"Temps d'étude", traveltime:"Trajet", goout:"Sorties", Dalc:"Alcool en semaine", Walc:"Alcool le week-end", Medu:"Études de la mère", Fedu:"Études du père"};
+const MS = {G3:"Note finale", G2:"Note G2", G1:"Note G1", failures:"Échecs passés", absences:"Absences", studytime:"Temps d'étude", traveltime:"Trajet", goout:"Sorties", Dalc:"Alcool semaine", Walc:"Alcool week-end", Medu:"Études mère", Fedu:"Études père"};
+const MP = {G3:"la note finale", G2:"la note de 2e période", G1:"la note de 1re période", failures:"le nombre d'échecs passés", absences:"le nombre d'absences", studytime:"le temps d'étude", traveltime:"le temps de trajet", goout:"la fréquence des sorties", Dalc:"l'alcool en semaine", Walc:"l'alcool le week-end", Medu:"le niveau d'études de la mère", Fedu:"le niveau d'études du père"};
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+function ranks(arr){
+  const idx = arr.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]), r = new Array(arr.length);
+  let i = 0;
+  while (i < idx.length){ let j = i; while (j + 1 < idx.length && idx[j + 1][0] === idx[i][0]) j++; const avg = (i + j) / 2 + 1; for (let k = i; k <= j; k++) r[idx[k][1]] = avg; i = j + 1; }
+  return r;
+}
+function pearson(x, y){
+  const n = x.length, mx = d3.mean(x), my = d3.mean(y); let sxy = 0, sxx = 0, syy = 0;
+  for (let i = 0; i < n; i++){ const a = x[i] - mx, b = y[i] - my; sxy += a * b; sxx += a * a; syy += b * b; }
+  return (sxx && syy) ? sxy / Math.sqrt(sxx * syy) : NaN;
+}
+const spearman = (rows, a, b) => pearson(ranks(rows.map(r => r[a])), ranks(rows.map(r => r[b])));
+const sigThr = n => n > 3 ? 1.96 / Math.sqrt(n - 1) : 1;
+const strength = (r, thr) => { const a = Math.abs(r); return !isFinite(r) || a < thr ? "pas de lien net" : a < 0.3 ? "lien faible" : a < 0.5 ? "lien modéré" : "lien fort"; };
+function sentence(a, b, r, thr){
+  if (!isFinite(r)) return "Calcul impossible, un des deux attributs ne varie pas dans cette sélection.";
+  if (Math.abs(r) < thr) return `${cap(MP[a])} et ${MP[b]} ne varient pas nettement ensemble pour cet effectif.`;
+  return `Quand ${MP[a]} augmente, ${MP[b]} a tendance à ${r > 0 ? "augmenter" : "baisser"}.`;
+}
+const rhoTxt = (r, dec) => (r >= 0 ? "+" : "\u2212") + FR.format(`.${dec}f`)(Math.abs(r));
+
+function renderB(){
+  const host = d3.select("#matrix"); host.selectAll("*").remove();
+  const rows = sel(), attrs = S.showG ? MA : MA.filter(a => a !== "G1" && a !== "G2");
+  d3.select("#showG").property("checked", S.showG);
+  d3.select("#bInfo").text(`Corrélation de Spearman sur ${rows.length} élèves de ${MAT_NAME[S.mat]}${S.filters.length ? ", sélection en cours" : ""}. Un lien n'est pas une cause.`);
+  const bar = d3.range(0, 1.01, 0.1).map(t => d3.interpolatePRGn(t)).join(",");
+  const thr = sigThr(rows.length);
+  d3.select("#bLegend").html(`<span>Négatif<i class="bar" style="background:linear-gradient(90deg,${bar})"></i>Positif</span><span><i class="sw" style="background:var(--soft);border:1px solid var(--line)"></i>Pas de lien net, moins de ±${FR.format(".2f")(thr)} pour ${rows.length} élèves</span>`);
+  if (rows.length < 30){ host.append("p").attr("class", "empty").text(`Seulement ${rows.length} élèves dans la sélection, trop peu pour une corrélation fiable. Élargissez la sélection.`); return; }
+  const R = {}; attrs.forEach(a => { R[a] = ranks(rows.map(r => r[a])); });
+  const n = attrs.length, Wd = width(host.node()), ml = 112, mb = 100, mt = 4;
+  const cs = Math.max(32, Math.min(48, Math.floor((Wd - ml - 8) / (n - 1))));
+  const dec = 2;
+  const w = ml + cs * (n - 1) + 8, h = mt + cs * (n - 1) + mb;
+  const svg = host.append("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("width", w).attr("height", h).attr("role", "img").attr("aria-label", "Matrice de corrélation, triangle inférieur");
+  const g = svg.append("g").attr("transform", `translate(${ml},${mt})`);
+  const cells = [];
+  for (let i = 1; i < n; i++) for (let j = 0; j < i; j++){ const a = attrs[i], b = attrs[j]; cells.push({a, b, i, j, r:pearson(R[a], R[b])}); }
+  const fillOf = d => (!isFinite(d.r) || Math.abs(d.r) < thr) ? null : d3.interpolatePRGn((d.r + 1) / 2);
+  const cg = g.selectAll("g.c").data(cells).join("g").attr("class", "c").attr("transform", d => `translate(${d.j * cs},${(d.i - 1) * cs})`);
+  const rc = cg.append("rect").attr("class", d => "cell" + (S.pair && S.pair[0] === d.a && S.pair[1] === d.b ? " sel" : ""))
+    .attr("width", cs - 2).attr("height", cs - 2).attr("rx", 3)
+    .each(function(d){ const f = fillOf(d); if (f) this.setAttribute("fill", f); else this.style.fill = "var(--soft)"; });
+  cg.append("text").attr("class", "ctxt").attr("x", (cs - 2) / 2).attr("y", (cs - 2) / 2).attr("dy", "0.35em")
+    .style("font-size", cs < 38 ? "10px" : "11.5px")
+    .text(d => !isFinite(d.r) ? "–" : Math.abs(d.r) < 0.05 ? "≈ 0" : rhoTxt(d.r, dec))
+    .each(function(d){ const f = fillOf(d); if (f) this.setAttribute("fill", d3.hsl(f).l > 0.55 ? "#1B2333" : "#FFFFFF"); else this.style.fill = "var(--muted)"; });
+  act(rc, d => { S.pair = (S.pair && S.pair[0] === d.a && S.pair[1] === d.b) ? null : [d.a, d.b]; render(); }, d => `${ML[d.a]} et ${ML[d.b]}, ${strength(d.r, thr)}`);
+  rc.on("mouseenter", (e, d) => showTip(e, `<b>${ML[d.a]} et ${ML[d.b]}</b><br>${sentence(d.a, d.b, d.r, thr)}<br>ρ = ${isFinite(d.r) ? rhoTxt(d.r, 2) : "–"}, ${strength(d.r, thr)}`))
+    .on("mousemove", moveTip).on("mouseleave", hideTip);
+  g.append("rect").attr("x", -3).attr("y", -3).attr("width", cs + 4).attr("height", (n - 1) * cs + 4).attr("rx", 5)
+    .style("fill", "none").style("stroke", "var(--ink)").style("stroke-width", 1.5).style("pointer-events", "none");
+  g.selectAll("text.rl").data(attrs.slice(1)).join("text").attr("class", d => "mlab" + (d === "G3" ? " g3" : ""))
+    .attr("x", -8).attr("y", (d, i) => i * cs + cs / 2).attr("dy", "0.35em").attr("text-anchor", "end").text(d => MS[d]);
+  g.selectAll("text.cl").data(attrs.slice(0, -1)).join("text").attr("class", d => "mlab" + (d === "G3" ? " g3" : ""))
+    .attr("text-anchor", "end").attr("transform", (d, j) => `translate(${j * cs + cs / 2},${(n - 1) * cs + 6}) rotate(-40)`).text(d => MS[d]);
+}
+
+/* ---------- C. Sunburst ---------- */
+const SBD = ["school","sex","address","risque","alc","higher","absCat","pedu"];
+function sbLevels(){
+  const fd = new Set(S.filters.map(f => f.dim)), lv = [];
+  S.sb.forEach(d => { if (d && !fd.has(d) && !lv.includes(d)) lv.push(d); });
+  const fb = ["sex","address","risque","alc","school","higher"].filter(d => !fd.has(d) && !lv.includes(d));
+  while (lv.length < 2 && fb.length) lv.push(fb.shift());
+  return lv.slice(0, 3);
+}
+function renderC(){
+  [0, 1, 2].forEach(i => {
+    const s = d3.select(`#sb${i}`);
+    s.selectAll("option").data(i === 2 ? [""].concat(SBD) : SBD).join("option").attr("value", d => d).text(d => d ? DIMS[d].label : "Aucun");
+    s.property("value", S.sb[i] || "");
+  });
+  const host = d3.select("#sunburst"); host.selectAll("*").remove();
+  const rows = sel(), g0 = rate(base());
+  const c = C();
+  d3.select("#cLegend").html(`<span>Moins de réussite<i class="bar" style="background:linear-gradient(90deg,${c.ko},${c.mid},${c.ok})"></i>Plus de réussite que la moyenne (${pct(g0)})</span><span><svg width="14" height="14" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect width="14" height="14" fill="url(#hatch)" style="stroke:var(--line)"/></svg>Moins de 10 élèves</span>`);
+  if (!rows.length){ host.append("p").attr("class", "empty").text("Aucun élève dans la sélection."); return; }
+  const lv = sbLevels(), sc = rateScale();
+  const nest = d3.group(rows, ...lv.map(d => r => String(r[d])));
+  const kids = d => d instanceof Map ? Array.from(d) : (d[1] instanceof Map ? Array.from(d[1]) : null);
+  const root = d3.hierarchy(nest, kids).sum(d => (!(d instanceof Map) && Array.isArray(d[1])) ? d[1].length : 0);
+  root.eachAfter(nd => {
+    nd.rows = nd.children ? nd.children.flatMap(ch => ch.rows) : nd.data[1];
+    nd.ok = okCount(nd.rows); nd.dim = nd.depth ? lv[nd.depth - 1] : null; nd.key = nd.depth ? nd.data[0] : null;
+  });
+  root.sort((p, q) => { if (!p.dim) return 0; const o = DIMS[p.dim].order.map(String); return o.indexOf(p.key) - o.indexOf(q.key); });
+  const size = Math.min(width(host.node()), 460), R = size / 2;
+  d3.partition().size([2 * Math.PI, R])(root);
+  const arc = d3.arc().startAngle(d => d.x0).endAngle(d => d.x1).padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.006)).padRadius(R / 2)
+    .innerRadius(d => d.y0).outerRadius(d => d.y1 - 1);
+  const svg = host.append("svg").attr("viewBox", `${-R} ${-R} ${size} ${size}`).attr("width", size).attr("height", size)
+    .attr("role", "img").attr("aria-label", "Sunburst, anneaux " + lv.map(d => DIMS[d].label).join(", ")).style("margin", "0 auto");
+  const nodes = root.descendants().filter(d => d.depth > 0);
+  const label = d => d.ancestors().reverse().slice(1).map(x => `${DIMS[x.dim].label}, ${nm(x.dim, x.key)}`).join(", ");
+  const arcs = svg.append("g").selectAll("path").data(nodes).join("path").attr("class", "arc").attr("d", arc).attr("fill", d => sc(d.ok / d.value));
+  svg.append("g").selectAll("path").data(nodes.filter(d => d.value < 10)).join("path").attr("d", arc).attr("fill", "url(#hatch)").style("pointer-events", "none");
+  act(arcs, d => setFilters(d.ancestors().filter(x => x.depth > 0).map(x => ({dim:x.dim, value:x.key})), "C"), d => `${label(d)}, ${d.value} élèves, ${pct(d.ok / d.value)} de réussite. Zoomer`);
+  arcs.on("mouseenter", (e, d) => showTip(e, `${d.ancestors().reverse().slice(1).map(x => `${DIMS[x.dim].label}, <b>${nm(x.dim, x.key)}</b>`).join("<br>")}<br>${d.value} élèves, ${pct(d.ok / d.value)} de réussite${d.value < 10 ? "<br>Moins de 10 élèves, à lire avec prudence" : ""}`))
+    .on("mousemove", moveTip).on("mouseleave", hideTip);
+  svg.append("g").selectAll("text").data(nodes.filter(d => (d.x1 - d.x0) * ((d.y0 + d.y1) / 2) > 42 && d.y1 - d.y0 > 16)).join("text").attr("class", "arclbl")
+    .attr("transform", d => `translate(${arc.centroid(d)})`)
+    .each(function(d){
+      const big = (d.x1 - d.x0) * ((d.y0 + d.y1) / 2) > 110 && d.y1 - d.y0 > 70 && Math.abs(Math.sin((d.x0 + d.x1) / 2)) < 0.75, t = d3.select(this).attr("dy", big ? "-0.75em" : "-0.2em");
+      t.append("tspan").attr("x", 0).style("font-weight", 700).text(sn(d.dim, d.key));
+      t.append("tspan").attr("x", 0).attr("dy", "1.2em").text(`${d.value} élèves`);
+      if (big) t.append("tspan").attr("x", 0).attr("dy", "1.2em").text(`${pct(d.ok / d.value)} de réussite`);
+    });
+  const back = S.filters.some(f => f.src === "C");
+  const ctr = svg.append("circle").attr("class", "center").attr("r", Math.max(10, root.y1 - 3));
+  act(ctr, () => { if (back){ S.filters = S.filters.filter(f => f.src !== "C"); render(); } }, back ? "Revenir à l'ensemble" : "Ensemble de la sélection");
+  svg.append("text").attr("class", "ctr").attr("dy", back ? "-0.9em" : "-0.5em").style("font-size", "22px").style("font-weight", 700).text(rows.length);
+  svg.append("text").attr("class", "ctr").attr("dy", back ? "0.6em" : "1em").style("font-size", "12.5px").text("élèves");
+  svg.append("text").attr("class", "ctr").attr("dy", back ? "1.9em" : "2.3em").style("font-size", "12.5px").text(`${pct(rate(rows))} réussissent`);
+  if (back) svg.append("text").attr("class", "ctr").attr("dy", "3.4em").style("font-size", "12.5px").style("text-decoration", "underline").text("Revenir");
+}
+
+/* ---------- D. Graphe de similarité ---------- */
+const ABSN = ["Aucune", "1 à 4", "5 à 10", "Plus de 10"];
+const FAKE_FIELDS = [
+  ["failures", "Échecs passés", [0,1,2,3].map(v => [v, nm("failures", v)])],
+  ["absI", "Absences", ABSN.map((t, i) => [i, t])],
+  ["studytime", "Temps d'étude", [1,2,3,4].map(v => [v, nm("studytime", v)])],
+  ["traveltime", "Trajet", [1,2,3,4].map(v => [v, nm("traveltime", v)])],
+  ["goout", "Sorties", [1,2,3,4,5].map(v => [v, nm("goout", v)])],
+  ["alcI", "Alcool", ALC.map((a, i) => [i, nm("alc", a)])],
+  ["peduI", "Études des parents", PEDU.map((a, i) => [i, nm("pedu", a)])],
+  ["higher", "Études supérieures", [["yes", "Visées"], ["no", "Pas visées"]]]
+];
+const FAKE_DEFAULT = {failures:0, absI:1, studytime:2, traveltime:1, goout:3, alcI:0, peduI:2, higher:"yes"};
+function fakeNeighbours(G, f){
+  const v = G.NUM.map(c => (f[c] - G.rng[c][0]) / G.rng[c][1]), nf = G.NUM.length + G.CAT.length;
+  return G.nodes.map(n => {
+    let s = 0; for (let t = 0; t < v.length; t++) s += Math.abs(v[t] - n.vN[t]);
+    G.CAT.forEach((c, t) => { s += f[c] === n.vC[t] ? 0 : 1; });
+    return {n, d:s / nf};
+  }).sort((p, q) => p.d - q.d || q.n.n - p.n.n);
+}
+function fakeGroup(sorted){
+  const out = []; let acc = 0;
+  for (const o of sorted){ if (out.length >= 3 && acc >= 20) break; out.push(o); acc += o.n.n; }
+  return out;
+}
+const GC = {};
+function graphFor(){
+  const key = S.mat + (S.inclNE ? "+" : "");
+  if (GC[key]) return GC[key];
+  const rows = base(), NUM = ["failures","absI","studytime","traveltime","goout","alcI","peduI"], CAT = ["higher"];
+  const prof = new Map();
+  rows.forEach(r => { const k = NUM.concat(CAT).map(c => r[c]).join("|"); if (!prof.has(k)) prof.set(k, []); prof.get(k).push(r); });
+  const nodes = Array.from(prof.values()).map((rs, i) => ({i, rows:rs, n:rs.length, ok:okCount(rs), rep:rs[0]}));
+  const rng = {};
+  NUM.forEach(c => { const v = nodes.map(n => n.rep[c]); const lo = d3.min(v), hi = d3.max(v); rng[c] = [lo, (hi - lo) || 1]; });
+  const N = nodes.length, nf = NUM.length + CAT.length;
+  const vN = nodes.map(n => NUM.map(c => (n.rep[c] - rng[c][0]) / rng[c][1])), vC = nodes.map(n => CAT.map(c => n.rep[c]));
+  nodes.forEach((n, i) => { n.vN = vN[i]; n.vC = vC[i]; });
+  const K = 3, links = [], seen = new Set();
+  for (let i = 0; i < N; i++){
+    const best = [];
+    for (let j = 0; j < N; j++){
+      if (i === j) continue;
+      let s = 0; const a = vN[i], b = vN[j];
+      for (let t = 0; t < a.length; t++) s += Math.abs(a[t] - b[t]);
+      const ca = vC[i], cb = vC[j];
+      for (let t = 0; t < ca.length; t++) s += ca[t] === cb[t] ? 0 : 1;
+      const dd = s / nf;
+      if (best.length < K){ best.push([dd, j]); best.sort((p, q) => p[0] - q[0]); }
+      else if (dd < best[K - 1][0]){ best[K - 1] = [dd, j]; best.sort((p, q) => p[0] - q[0]); }
+    }
+    best.forEach(([dd, j]) => { const k = i < j ? i + "-" + j : j + "-" + i; if (!seen.has(k)){ seen.add(k); links.push({source:i, target:j, d:dd}); } });
+  }
+  nodes.forEach(n => { n.r = 3 + 1.8 * Math.sqrt(n.n); n.nb = new Set(); });
+  links.forEach(l => { nodes[l.source].nb.add(l.target); nodes[l.target].nb.add(l.source); });
+  const sim = d3.forceSimulation(nodes)
+    .force("link", d3.forceLink(links).distance(l => 10 + 40 * l.d).strength(0.7))
+    .force("charge", d3.forceManyBody().strength(-9).distanceMax(120))
+    .force("x", d3.forceX(0).strength(0.05)).force("y", d3.forceY(0).strength(0.07))
+    .force("collide", d3.forceCollide(n => n.r + 1)).stop();
+  for (let t = 0; t < 320; t++) sim.tick();
+  return (GC[key] = {nodes, links, NUM, CAT, rng});
+}
+function renderD(){
+  d3.selectAll("#gSeg button").attr("aria-pressed", function(){ return String(this.dataset.v === S.gColor); });
+  const host = d3.select("#graph"); host.selectAll("*").remove();
+  const G = graphFor(), Wd = width(host.node()), H = Math.round(Math.max(360, Math.min(520, Wd * 0.5)));
+  const x0 = d3.min(G.nodes, n => n.x) - 12, x1 = d3.max(G.nodes, n => n.x) + 12, y0 = d3.min(G.nodes, n => n.y) - 12, y1 = d3.max(G.nodes, n => n.y) + 12;
+  const k = Math.min(Wd / (x1 - x0), H / (y1 - y0)), ox = (Wd - (x1 - x0) * k) / 2, oy = (H - (y1 - y0) * k) / 2;
+  const px = n => ox + (n.x - x0) * k, py = n => oy + (n.y - y0) * k, rk = Math.max(0.85, Math.min(1.4, k));
+  const sc = rateScale(), c = C();
+  const riskC = {"0":c.mid, "1":d3.interpolateLab(c.mid, c.ko)(0.5), "2 et plus":c.ko};
+  const fillN = n => S.gColor === "reussite" ? sc(n.ok / n.n) : riskC[n.rep.risque];
+  const filtered = S.filters.length > 0;
+  G.nodes.forEach(n => { n.inSel = !filtered || n.rows.some(pass); n.me = !!S.student && n.rows.some(r => r.id === S.student); });
+  const svg = host.append("svg").attr("viewBox", `0 0 ${Wd} ${H}`).attr("width", Wd).attr("height", H).attr("role", "img").attr("aria-label", `Graphe de similarité, ${G.nodes.length} profils`);
+  const lk = svg.append("g").selectAll("line").data(G.links).join("line").attr("class", "link")
+    .attr("x1", l => px(l.source)).attr("y1", l => py(l.source)).attr("x2", l => px(l.target)).attr("y2", l => py(l.target))
+    .style("opacity", l => (l.source.inSel && l.target.inSel) ? null : 0.15);
+  const tipNode = n => {
+    const r = n.rep;
+    const nf = n.rows.filter(x => x.sex === "F").length, nh = n.n - nf;
+    const lines = [["Risque", nm("risque", r.risque)], ["Échecs passés", nm("failures", r.failures)], ["Absences", ABSN[r.absI]], ["Temps d'étude", nm("studytime", r.studytime)], ["Trajet", nm("traveltime", r.traveltime)], ["Sorties", nm("goout", r.goout)], ["Alcool", nm("alc", r.alc)], ["Parents", nm("pedu", r.pedu)], ["Études sup.", r.higher === "yes" ? "Visées" : "Pas visées"], ["Qui", [nf ? `${nf} fille${nf > 1 ? "s" : ""}` : "", nh ? `${nh} garçon${nh > 1 ? "s" : ""}` : ""].filter(Boolean).join(", ")]];
+    return `<b>${n.n > 1 ? `${n.n} élèves au même profil` : "1 élève"}</b><br>${pct(n.ok / n.n)} de réussite<table>${lines.map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join("")}</table>`;
+  };
+  const nd = svg.append("g").selectAll("circle").data(G.nodes).join("circle").attr("class", n => "node" + (n.me ? " me" : ""))
+    .attr("cx", px).attr("cy", py).attr("r", n => n.r * rk).attr("fill", fillN).style("opacity", n => n.inSel ? null : 0.12)
+    .on("mouseenter", (e, n) => {
+      lk.classed("hi", l => l.source === n || l.target === n);
+      nd.classed("hi", o => o === n || n.nb.has(o.i));
+      showTip(e, tipNode(n));
+    })
+    .on("mousemove", moveTip)
+    .on("mouseleave", () => { lk.classed("hi", false); nd.classed("hi", false); hideTip(); })
+    .on("click", (e, n) => { S.student = n.rep.id; S.group = n.rows.map(r => r.id); render(); });
+  nd.filter(n => n.me).raise();
+  const fk = d3.select("#dFake");
+  if (S.fake){
+    const nb = fakeGroup(fakeNeighbours(G, S.fake)), exact = nb[0].d === 0, near = nb.slice(0, 3);
+    const fx = d3.mean(near, o => px(o.n)), fy = d3.mean(near, o => py(o.n)) - (exact ? 0 : 14);
+    const gf = svg.append("g");
+    nb.slice(0, 6).forEach(o => gf.append("line").attr("x1", fx).attr("y1", fy).attr("x2", px(o.n)).attr("y2", py(o.n))
+      .style("stroke", "var(--ink)").style("stroke-width", 1.6).style("stroke-dasharray", "4 3"));
+    nd.classed("hi", o => nb.some(z => z.n === o));
+    gf.append("path").attr("transform", `translate(${fx},${fy})`).attr("d", d3.symbol(d3.symbolDiamond, 190)())
+      .style("fill", "var(--panel)").style("stroke", "var(--ink)").style("stroke-width", 2.5);
+    gf.append("text").attr("class", "lbl").attr("x", fx + 12).attr("y", fy).attr("dy", "0.35em").style("font-weight", 700).text("Profil testé");
+    const rs = nb.flatMap(o => o.n.rows), all = base();
+    fk.html(`${exact ? `Ce profil existe déjà, il correspond à ${nb[0].n.n} élève${nb[0].n.n > 1 ? "s" : ""}. ` : ""}Les ${nb.length} profils les plus proches regroupent <b>${rs.length} élèves</b>, dont <b>${pct(rate(rs))}</b> ont 10 ou plus, contre ${pct(rate(all))} pour l'ensemble des élèves de ${MAT_NAME[S.mat]}. ${rs.length < 10 ? "C'est trop peu d'élèves pour conclure. " : ""}C'est une comparaison avec des élèves réels, pas une prédiction.`);
+  } else fk.html("");
+  const mean = n => d3.mean(n.rows, r => r.G3), inN = G.nodes.filter(n => n.inSel);
+  const dl = d3.mean(G.links.filter(l => l.source.inSel && l.target.inSel), l => Math.abs(mean(l.source) - mean(l.target)));
+  const v = inN.map(mean).sort(d3.ascending), m2 = v.length;
+  const gmd = m2 > 1 ? 2 * d3.sum(v, (x, i) => (2 * i - m2 + 1) * x) / (m2 * (m2 - 1)) : NaN;
+  const ratio = dl / gmd;
+  d3.select("#dTake").html(isFinite(ratio)
+    ? `Entre profils voisins, la note finale diffère en moyenne de <b>${f1(dl)} points</b>, contre ${f1(gmd)} entre deux profils pris au hasard. ${ratio > 0.85 ? "Se ressembler par le profil ne suffit pas à réussir pareil." : ratio > 0.65 ? "Les profils proches réussissent un peu plus pareil, sans que ce soit net." : "Les profils proches ont des résultats assez semblables."}`
+    : "");
+  d3.select("#dLegend").html(S.gColor === "reussite"
+    ? `<span>Moins de réussite<i class="bar" style="background:linear-gradient(90deg,${c.ko},${c.mid},${c.ok})"></i>Plus de réussite</span><span>Taille du point, nombre d'élèves au même profil</span><span>${G.nodes.length} profils pour ${base().length} élèves</span>`
+    : `<span><i class="sw" style="background:${riskC["0"]}"></i>Aucun facteur</span><span><i class="sw" style="background:${riskC["1"]}"></i>Un facteur</span><span><i class="sw" style="background:${riskC["2 et plus"]}"></i>Deux ou plus</span><span>${G.nodes.length} profils pour ${base().length} élèves</span>`);
+}
+
+/* ---------- Panneau de détail ---------- */
+function boxSvg(parent, rows, all){
+  const w = 300, h = 124, m = {l:10, r:10}, x = d3.scaleLinear().domain([0, 20]).range([m.l, w - m.r]);
+  const svg = parent.append("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("width", "100%").attr("role", "img").attr("aria-label", "Distribution de la note finale, sélection comparée à l'ensemble");
+  const box = (vals, y, cls, lab) => {
+    const v = vals.slice().sort(d3.ascending), q1 = d3.quantile(v, .25), q2 = d3.quantile(v, .5), q3 = d3.quantile(v, .75);
+    svg.append("text").attr("class", "mini").attr("x", m.l).attr("y", y - 13).text(lab);
+    svg.append("line").attr("x1", x(v[0])).attr("x2", x(v[v.length - 1])).attr("y1", y).attr("y2", y).style("stroke", "var(--muted)");
+    svg.append("rect").attr("class", cls).attr("x", x(q1)).attr("width", Math.max(2, x(q3) - x(q1))).attr("y", y - 8).attr("height", 16).attr("rx", 3);
+    svg.append("line").attr("x1", x(q2)).attr("x2", x(q2)).attr("y1", y - 9).attr("y2", y + 9).style("stroke", "var(--ink)").style("stroke-width", 2.5);
+  };
+  const two = rows.length !== all.length;
+  [two ? 30 : null, 76].filter(v => v !== null).forEach(y => svg.append("line").attr("class", "seuil").attr("x1", x(10)).attr("x2", x(10)).attr("y1", y - 12).attr("y2", y + 12));
+  if (two) box(all.map(r => r.G3), 30, "bx-all", `Ensemble (${all.length} élèves)`);
+  box(rows.map(r => r.G3), 76, "bx-sel", two ? `Sélection (${rows.length} élèves)` : `Tous les élèves (${rows.length}), le pointillé marque 10/20`);
+  const jit = d3.randomUniform.source(d3.randomLcg(7))(-5, 5);
+  svg.append("g").selectAll("circle").data(rows.length <= 700 ? rows : []).join("circle").attr("class", "dot")
+    .attr("cx", r => x(r.G3) + jit() * 0.25).attr("cy", () => 76 + jit()).attr("r", 1.6);
+  svg.append("g").attr("class", "axis").attr("transform", "translate(0,104)").call(d3.axisBottom(x).tickValues([0, 5, 10, 15, 20]).tickSize(3));
+}
+function trajSvg(parent, st, grp){
+  const w = 300, h = 120, m = {l:28, r:44, t:10, b:22};
+  const x = d3.scalePoint().domain(["G1","G2","G3"]).range([m.l, w - m.r]), y = d3.scaleLinear().domain([0, 20]).range([h - m.b, m.t]);
+  const svg = parent.append("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("width", "100%").attr("role", "img").attr("aria-label", "Trajectoire des notes de l'élève comparée à son école");
+  svg.append("line").attr("class", "seuil").attr("x1", m.l).attr("x2", w - m.r).attr("y1", y(10)).attr("y2", y(10));
+  const med = ["G1","G2","G3"].map(p => [p, d3.median(grp, r => r[p])]), me = ["G1","G2","G3"].map(p => [p, st[p]]);
+  const line = d3.line().x(d => x(d[0])).y(d => y(d[1]));
+  svg.append("path").attr("class", "trajg").attr("d", line(med));
+  svg.append("path").attr("class", "traj").attr("d", line(me));
+  svg.selectAll("circle").data(me).join("circle").attr("cx", d => x(d[0])).attr("cy", d => y(d[1])).attr("r", 4).style("fill", "var(--ink)");
+  svg.append("text").attr("class", "mini").attr("x", w - m.r + 6).attr("y", y(me[2][1])).attr("dy", "0.35em").text("élève");
+  svg.append("text").attr("class", "mini").attr("x", w - m.r + 6).attr("y", y(med[2][1]) + (Math.abs(med[2][1] - me[2][1]) < 1.5 ? 12 : 0)).attr("dy", "0.35em").text("école");
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${h - m.b})`).call(d3.axisBottom(x).tickSize(0)).select(".domain").remove();
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).tickValues([10, 20]).tickSize(3));
+}
+function pairSvg(parent, rows, a, b){
+  const w = 300, h = 210, m = {l:34, r:10, t:24, b:30};
+  const ex = d3.extent(rows, r => r[a]), ey = d3.extent(rows, r => r[b]);
+  const x = d3.scaleLinear().domain([ex[0] - 0.5, ex[1] + 0.5]).range([m.l, w - m.r]), y = d3.scaleLinear().domain([ey[0] - 0.5, ey[1] + 0.5]).range([h - m.b, m.t]);
+  const rnd = d3.randomUniform.source(d3.randomLcg(3))(-0.28, 0.28);
+  const svg = parent.append("svg").attr("viewBox", `0 0 ${w} ${h}`).attr("width", "100%").attr("role", "img").attr("aria-label", `Nuage de points, ${ML[a]} et ${ML[b]}`);
+  svg.append("g").selectAll("circle").data(rows).join("circle").attr("class", "dot").attr("r", 2)
+    .attr("cx", r => x(r[a] + (ex[1] - ex[0] <= 10 ? rnd() : 0))).attr("cy", r => y(r[b] + (ey[1] - ey[0] <= 10 ? rnd() : 0)));
+  const distinct = Array.from(new Set(rows.map(r => r[a]))).sort(d3.ascending);
+  let pts;
+  if (distinct.length <= 8) pts = distinct.map(v => [v, d3.median(rows.filter(r => r[a] === v), r => r[b])]);
+  else { const bins = d3.bin().value(r => r[a]).thresholds(6)(rows).filter(bn => bn.length); pts = bins.map(bn => [d3.median(bn, r => r[a]), d3.median(bn, r => r[b])]); }
+  svg.append("path").attr("class", "trend").attr("d", d3.line().x(d => x(d[0])).y(d => y(d[1]))(pts));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(0,${h - m.b})`).call(d3.axisBottom(x).ticks(5).tickSize(3));
+  svg.append("g").attr("class", "axis").attr("transform", `translate(${m.l},0)`).call(d3.axisLeft(y).ticks(5).tickSize(3));
+  svg.append("text").attr("class", "mini").attr("x", w - m.r).attr("y", h - 2).attr("text-anchor", "end").text(ML[a]);
+  svg.append("text").attr("class", "mini").attr("x", m.l - 4).attr("y", 12).text(ML[b]);
+}
+function renderPanel(){
+  const P = d3.select("#panel"); P.selectAll("*").remove();
+  const all = base(), rows = sel(), g3 = rows.map(r => r.G3);
+
+  const s1 = P.append("section"); s1.append("h3").text("Sélection");
+  const chips = s1.append("div").attr("class", "chips");
+  if (!S.filters.length) chips.append("span").attr("class", "note").style("margin", "0").text(`Tous les élèves de ${MAT_NAME[S.mat]}. Cliquez dans une vue pour filtrer.`);
+  S.filters.forEach(f => chips.append("button").attr("type", "button").attr("class", "chip")
+    .attr("aria-label", `Retirer le filtre ${DIMS[f.dim].label}, ${nm(f.dim, f.value)}`)
+    .html(`${DIMS[f.dim].label}, ${nm(f.dim, f.value)} <span class="x" aria-hidden="true">×</span>`).on("click", () => dropFilter(f.dim)));
+  if (S.filters.length > 1) chips.append("button").attr("type", "button").attr("class", "chip").text("Tout effacer").on("click", () => { S.filters = []; render(); });
+  const st = s1.append("div").attr("class", "stats");
+  [[rows.length, "élèves"], [pct(rate(rows)), "ont 10 ou plus"], [rows.length ? f1(d3.median(g3)) : "–", "note médiane sur 20"], [rows.length ? f1(d3.mean(g3)) : "–", "note moyenne sur 20"]]
+    .forEach(([v, l]) => { const d = st.append("div"); d.append("b").text(v); d.append("small").text(l); });
+  if (S.filters.length) s1.append("p").attr("class", "note").text(`Ensemble de la matière, ${pct(rate(all))} de réussite et ${f1(d3.mean(all, r => r.G3))} de moyenne.`);
+  if (rows.length) boxSvg(s1, rows, all);
+  if (rows.length && rows.length < 10) s1.append("p").attr("class", "note").text("Moins de 10 élèves, ces chiffres sont fragiles.");
+
+  const s2 = P.append("section"); s2.append("h3").text("Faire varier un facteur");
+  s2.append("p").attr("class", "note").style("margin", "0 0 10px").text("Choisissez un niveau pour voir la note des élèves qui ont ce profil.");
+  [["studytime", "Temps d'étude par semaine", ["< 2 h", "2 à 5 h", "5 à 10 h", "> 10 h"]], ["goout", "Sorties avec les amis, de très rares à très fréquentes", ["1", "2", "3", "4", "5"]]].forEach(([dim, lab, txt]) => {
+    const cur = S.filters.find(f => f.dim === dim);
+    const wrap = s2.append("div").style("margin", "0 0 10px");
+    wrap.append("div").attr("class", "mini-lab").text(lab);
+    const seg = wrap.append("div").attr("class", "seg seg-sm").attr("role", "group").attr("aria-label", lab);
+    seg.append("button").attr("type", "button").text("Tous").attr("aria-pressed", String(!cur)).on("click", () => dropFilter(dim));
+    DIMS[dim].order.forEach((v, i) => seg.append("button").attr("type", "button").text(txt[i]).attr("title", nm(dim, v)).attr("aria-label", nm(dim, v))
+      .attr("aria-pressed", String(!!cur && String(cur.value) === String(v))).on("click", () => setFilter(dim, v, "P")));
+  });
+  if (S.filters.some(f => f.src === "P") && rows.length)
+    s2.append("p").attr("class", "note").html(`Les ${rows.length} élèves qui ont ce profil ont en moyenne <b>${f1(d3.mean(g3))}</b> sur 20, contre ${f1(d3.mean(all, r => r.G3))} pour l'ensemble. C'est une association, pas l'effet du facteur.`);
+
+  const stu = S.student && ALL[S.mat].find(r => r.id === S.student);
+  if (stu){
+    const s3 = P.append("section");
+    const head = s3.append("div").style("display", "flex").style("justify-content", "space-between").style("align-items", "baseline").style("gap", "8px");
+    head.append("h3").text(`Élève n° ${stu.id}`);
+    head.append("button").attr("type", "button").attr("class", "btn btn-sm").text("Fermer la fiche").on("click", () => { S.student = null; S.group = null; render(); });
+    if (S.group && S.group.length > 1){
+      const sw = s3.append("div").attr("class", "chips");
+      sw.append("span").attr("class", "note").style("margin", "0 4px 0 0").text("Même profil");
+      S.group.forEach(id => sw.append("button").attr("type", "button").attr("class", "chip").attr("aria-pressed", String(id === S.student)).text(`n° ${id}`).on("click", () => { S.student = id; render(); }));
+    }
+    const grp = all.filter(r => r.school === stu.school);
+    s3.append("p").attr("class", "note").style("margin", "0 0 6px").text(`${cap(SEX1[stu.sex])}, ${nm("school", stu.school)}, milieu ${nm("address", stu.address).toLowerCase()}. Comparaison avec les ${grp.length} élèves de son école en ${MAT_NAME[S.mat]}.`);
+    trajSvg(s3, stu, grp);
+    const typ = (dim) => {
+      if (["G1","G2","G3","absences"].includes(dim)) return f1(d3.median(grp, r => r[dim]));
+      if (["failures","studytime","traveltime","goout"].includes(dim)) return nm(dim, Math.round(d3.median(grp, r => r[dim])));
+      const top = d3.rollups(grp, v => v.length, r => r[dim]).sort((p, q) => q[1] - p[1])[0];
+      return top ? nm(dim, top[0]) : "–";
+    };
+    const val = dim => ["G1","G2","G3","absences"].includes(dim) ? String(stu[dim]) : nm(dim, stu[dim]);
+    const T = s3.append("table").attr("class", "attr");
+    T.append("thead").append("tr").selectAll("th").data(["", "Élève", "Typique de l'école"]).join("th").text(d => d);
+    T.append("tbody").selectAll("tr").data([["G3","Note finale"],["G2","Note 2e période"],["G1","Note 1re période"],["tendance","Évolution"],["risque","Facteurs de risque"],["failures","Échecs passés"],["absences","Absences"],["studytime","Temps d'étude"],["traveltime","Trajet"],["goout","Sorties"],["alc","Alcool"],["pedu","Éducation des parents"],["higher","Études supérieures"]])
+      .join("tr").each(function([dim, lab]){ const tr = d3.select(this); tr.append("th").text(lab); tr.append("td").text(val(dim)); tr.append("td").attr("class", "grp").text(typ(dim)); });
+  }
+
+  if (S.pair){
+    const [a, b] = S.pair, r = rows.length >= 3 ? spearman(rows, a, b) : NaN;
+    const s4 = P.append("section");
+    const head = s4.append("div").style("display", "flex").style("justify-content", "space-between").style("align-items", "baseline").style("gap", "8px");
+    head.append("h3").text(`${ML[a]} et ${ML[b]}`);
+    head.append("button").attr("type", "button").attr("class", "btn btn-sm").text("Fermer").on("click", () => { S.pair = null; render(); });
+    const thr = sigThr(rows.length);
+    s4.append("p").attr("class", "note").style("margin", "0 0 6px").text(`${sentence(a, b, r, thr)} ρ = ${isFinite(r) ? rhoTxt(r, 2) : "–"}, ${strength(r, thr)}, sur ${rows.length} élèves. La ligne bleue suit la note médiane.`);
+    if (rows.length) pairSvg(s4, rows, a, b);
+  }
+}
+
+/* ---------- Rendu global ---------- */
+function renderHeader(){
+  d3.selectAll("#matSeg button").attr("aria-pressed", function(){ return String(this.dataset.v === S.mat); });
+  d3.select("#neLbl").text(`Inclure les ${ALL[S.mat].filter(r => r.nonEval).length} élèves non évalués`);
+  d3.select("#ne").property("checked", S.inclNE);
+}
+function render(){ hideTip(); renderHeader(); renderA(); renderB(); renderC(); renderD(); renderPanel(); }
+function init(){
+  d3.selectAll("#matSeg button").on("click", function(){ S.mat = this.dataset.v; S.student = null; S.group = null; S.pair = null; render(); });
+  d3.select("#ne").on("change", function(){ S.inclNE = this.checked; S.student = null; S.group = null; render(); });
+  d3.select("#reset").on("click", () => { Object.assign(S, {filters:[], extra:[], student:null, group:null, pair:null, preset:"risque", sb:["school","risque",""], showG:false, gColor:"reussite", inclNE:false, fake:null}); render(); });
+  d3.select("#addAxis").on("change", function(){ if (this.value){ S.extra.push(this.value); render(); } });
+  d3.select("#showG").on("change", function(){ S.showG = this.checked; render(); });
+  [0, 1, 2].forEach(i => d3.select(`#sb${i}`).on("change", function(){ S.sb[i] = this.value; render(); }));
+  d3.selectAll("#gSeg button").on("click", function(){ S.gColor = this.dataset.v; render(); });
+  const ff = d3.select("#fakeFields").selectAll("label").data(FAKE_FIELDS).join("label");
+  ff.append("span").text(d => d[1]);
+  ff.append("select").attr("name", d => d[0]).each(function(d){
+    d3.select(this).selectAll("option").data(d[2]).join("option").attr("value", o => o[0]).text(o => o[1]);
+    this.value = String(FAKE_DEFAULT[d[0]]);
+  });
+  d3.select("#fakeBtn").on("click", function(){
+    const f = document.getElementById("fakeForm"), open = f.hidden;
+    f.hidden = !open; this.setAttribute("aria-expanded", String(open));
+  });
+  d3.select("#fakeForm").on("submit", e => {
+    e.preventDefault();
+    const o = {};
+    FAKE_FIELDS.forEach(([k]) => { const v = e.target.elements[k].value; o[k] = k === "higher" ? v : +v; });
+    S.fake = o; render();
+  });
+  d3.select("#fakeClear").on("click", () => { S.fake = null; render(); });
+  let to; window.addEventListener("resize", () => { clearTimeout(to); to = setTimeout(render, 150); });
+  if (window.matchMedia){ const mq = window.matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", render); }
+  if (window.MutationObserver) new MutationObserver(render).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+  render();
+}
+init();
+</script>
+</body>
+</html>
+
+</body></html>
