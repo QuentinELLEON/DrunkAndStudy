@@ -5,6 +5,7 @@ import { loadAll, derive } from "./data.js";
 import { state, on } from "./state.js";
 import { setStatus, hideTip } from "./utils.js";
 
+import * as theme from "./controls/theme.js";
 import * as header from "./controls/header.js";
 import * as selectionPanel from "./controls/selectionPanel.js";
 import * as studentCard from "./controls/studentCard.js";
@@ -51,6 +52,7 @@ function scheduleRender() {
 }
 
 async function start() {
+  theme.init();
   if (location.protocol === "file:") {
     setStatus("Cette page doit être servie en <code>http://</code> (les modules et <code>d3.csv()</code> sont bloqués en <code>file://</code>). Lancez par exemple <code>npx serve .</code> dans le dossier du projet, ou « Open with Live Server » dans VS Code.", "error");
     return;
