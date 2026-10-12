@@ -7,6 +7,7 @@ import { ranks, pearson, spearman, spearmanMatrix, quantile, median, boxStats, g
 import { typeRows, derive, rate, evaluated, okCount } from "../js/data.js";
 import { SIMILARITY_KEYS, SIMILARITY_NOMINAL, NEIGHBORS, MATRIX_KEYS, EXPECTED_COLUMNS } from "../js/meta.js";
 import { pct, f1, signed } from "../js/utils.js";
+import { describe } from "../js/views/correlationMatrix.js";
 
 let fails = 0, checks = 0;
 const ok = (cond, msg) => { checks++; if (!cond) { fails++; console.error("✗", msg); } };
@@ -73,6 +74,16 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   cells.sort((p, q) => Math.abs(q.rho) - Math.abs(p.rho));
   eq(cells[0].a, "failures", `${k} : premier facteur`);
   near(cells[0].rho, expected, 0.01, `${k} : ρ(failures, G3)`);
+}
+
+// Vue B : phrase décrivant une cellule (association, jamais cause)
+{
+  const thr = significanceThreshold(357);
+  ok(/plus d'échecs passés ont en général une note finale plus basse.*lien faible/.test(describe({ a: "failures", b: "G3", rho: -0.2, n: 357 }, thr)), "describe : lien négatif faible");
+  ok(/mère plus diplômée ont en général un père plus diplômé.*lien net/.test(describe({ a: "Medu", b: "Fedu", rho: 0.62, n: 357 }, thr)), "describe : lien positif net");
+  ok(/ne dit pas lequel agit/.test(describe({ a: "traveltime", b: "G3", rho: -0.3, n: 357 }, thr)), "describe : rappel de l'absence de sens causal");
+  ok(/Pas de lien net/.test(describe({ a: "Walc", b: "G3", rho: -0.02, n: 357 }, thr)), "describe : sous le seuil");
+  ok(/non calculable/.test(describe({ a: "Walc", b: "G3", rho: NaN, n: 357 }, thr)), "describe : attribut constant");
 }
 
 // Graphe de similarité : 5 voisins, distances dans [0, 1], pas de doublon
