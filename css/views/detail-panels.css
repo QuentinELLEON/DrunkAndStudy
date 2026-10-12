@@ -1,0 +1,7 @@
+/* Panneaux de détail : boxplot, trajectoire, nuage de points */
+.bx-all{fill:var(--soft);stroke:var(--line)}
+.bx-sel{fill:var(--ok);fill-opacity:.22;stroke:var(--ok)}
+.dot{fill:var(--ink);opacity:.3}
+.traj{fill:none;stroke:var(--ink);stroke-width:2.5}
+.trajg{fill:none;stroke:var(--muted);stroke-width:2;opacity:.8}
+.trend{fill:none;stroke:var(--ok);stroke-width:2.5}
