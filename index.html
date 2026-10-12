@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Qu'est-ce qui accompagne la réussite au lycée ?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#F4F6FA;--panel:#FFFFFF;--ink:#1B2333;--muted:#5B6476;--line:#D8DDE7;--soft:#EEF1F6;
+  --grid:rgba(31,79,163,.055);--ok:#1F4FA3;--ko:#D9822B;--mid:#E4E8EF;--focus:#1F4FA3;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#151A24;--panel:#1C2230;--ink:#E6E9F0;--muted:#9AA3B5;--line:#323A4C;--soft:#232A3A;
+    --grid:rgba(110,155,234,.06);--ok:#6E9BEA;--ko:#F0A65A;--mid:#3A4256;--focus:#8FB3F0;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#151A24;--panel:#1C2230;--ink:#E6E9F0;--muted:#9AA3B5;--line:#323A4C;--soft:#232A3A;
+  --grid:rgba(110,155,234,.06);--ok:#6E9BEA;--ko:#F0A65A;--mid:#3A4256;--focus:#8FB3F0;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{
+  margin:0;background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;color:var(--ink);
+  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%;
+}
+.page{max-width:1480px;margin:0 auto;padding:28px 20px 40px}
+.top{display:flex;flex-wrap:wrap;gap:18px 40px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+h1{font-size:clamp(25px,3.2vw,36px);line-height:1.1;margin:0 0 10px;font-weight:700;letter-spacing:-.01em;max-width:22ch}
+.lede{margin:0;color:var(--muted);max-width:70ch}
+.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-right:1px solid var(--line);background:transparent;padding:7px 13px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;min-height:36px}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.seg-sm button{padding:5px 9px;font-size:13px;min-height:32px}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:14px;cursor:pointer;min-height:36px}
+.btn-sm{padding:4px 10px;min-height:30px;font-size:13px}
+.btn:hover{border-color:var(--muted)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+.views{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;min-width:0}
+.view{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px 16px;min-width:0}
+.view.hero{grid-column:1/-1;border-top:4px solid var(--ink)}
+.view.wide{grid-column:1/-1}
+.view h2{font-size:19px;line-height:1.25;margin:0 0 6px}
+.view.hero h2{font-size:23px}
+.how{margin:0 0 12px;color:var(--muted);font-size:14px;max-width:78ch}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
+.toolbar label{font-size:13.5px;color:var(--muted)}
+select{font:inherit;font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-height:36px}
+.chart{width:100%;overflow-x:auto}
+svg{display:block;max-width:100%;height:auto;font-family:inherit}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px;color:var(--muted);margin-top:10px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.bar{display:inline-block;width:130px;height:12px;border-radius:3px;vertical-align:-1px;margin:0 6px}
+.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100vh - 24px - env(safe-area-inset-top,0px));overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
+.panel h3{font-size:16px;margin:0 0 8px}
+.panel section+section{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:4px 10px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.chip .x{font-size:15px;line-height:1;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 6px}
+.stats div{background:var(--soft);border-radius:8px;padding:8px 10px}
+.stats b{display:block;font-size:20px;line-height:1.15}
+.stats small{color:var(--muted);font-size:12.5px}
+.note{font-size:13px;color:var(--muted);margin:6px 0 0}
+.mini-lab{font-size:13px;color:var(--muted);margin:0 0 4px}
+.empty{color:var(--muted);padding:24px 0;margin:0}
+.tip{position:fixed;z-index:20;left:0;top:0;pointer-events:none;opacity:0;background:var(--ink);color:var(--panel);padding:8px 10px;border-radius:8px;font-size:13px;line-height:1.35;max-width:290px;transition:opacity .12s}
+.tip table{border-collapse:collapse;margin-top:4px}
+.tip td{padding:1px 10px 1px 0;vertical-align:top}
+.tip td+td{opacity:.85}
+.attr{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.attr th,.attr td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);font-weight:400}
+.attr thead th{color:var(--muted);font-size:12.5px}
+.attr td.grp{color:var(--muted)}
+.rib{opacity:.5;transition:opacity .15s}
+.rib.ok{fill:var(--ok)}
+.rib.ko{fill:var(--ko)}
+.rib:hover{opacity:.9}
+.blk{fill:var(--ink);cursor:pointer}
+.lbl{font-size:12.5px;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.axt{font-size:13px;font-weight:700;fill:var(--ink)}
+.axrm{font-size:15px;fill:var(--muted);cursor:pointer}
+.cell{cursor:pointer}
+.cell.sel{stroke:var(--ink);stroke-width:2.5}
+.ctxt{pointer-events:none;text-anchor:middle;font-size:11px}
+.mlab{font-size:12px;fill:var(--ink)}
+.mlab.g3{font-weight:700}
+.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5}
+.arc:hover{opacity:.85}
+.hatch line{stroke:var(--ink);stroke-width:1.2;opacity:.45}
+.arclbl{font-size:11.5px;fill:var(--ink);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
+.center{fill:var(--soft);cursor:pointer}
+.ctr{text-anchor:middle;fill:var(--ink);pointer-events:none}
+.link{stroke:var(--muted);stroke-opacity:.22;stroke-width:1}
+.link.hi{stroke:var(--ink);stroke-opacity:.9;stroke-width:1.6}
+.node{stroke:var(--panel);stroke-width:1;cursor:pointer}
+.node.hi{stroke:var(--ink);stroke-width:2}
+.node.me{stroke:var(--ink);stroke-width:3}
+.axis text{font-size:11px;fill:var(--muted)}
+.axis path,.axis line{stroke:var(--line)}
+.mini{font-size:11.5px;fill:var(--muted);paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
+.seuil{stroke:var(--ink);stroke-dasharray:3 3;stroke-width:1;opacity:.6}
+.bx-all{fill:var(--soft);stroke:var(--line)}
+.bx-sel{fill:var(--ok);fill-opacity:.22;stroke:var(--ok)}
+.dot{fill:var(--ink);opacity:.3}
+.traj{fill:none;stroke:var(--ink);stroke-width:2.5}
+.trajg{fill:none;stroke:var(--muted);stroke-width:2;opacity:.8}
+.trend{fill:none;stroke:var(--ok);stroke-width:2.5}
+.fake{margin:0 0 12px;padding:12px 14px;background:var(--soft);border-radius:10px}
+.fake[hidden]{display:none}
+.fake-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 12px}
+.fake-fields label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.fake-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.foot{margin-top:24px;color:var(--muted);font-size:13px;max-width:90ch}
+@media (max-width:1150px){.layout{grid-template-columns:1fr}.panel{position:static;max-height:none}}
+@media (max-width:780px){.views{grid-template-columns:1fr}.page{padding:20px 14px 32px}.view{padding:14px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- Placeholders de visualisation (scaffold) ---------- */
+.viz-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;min-height:240px;padding:20px;
+  border:2px dashed var(--line);border-radius:10px;background:var(--soft);color:var(--muted);font-size:14px;line-height:1.4}
+.viz-placeholder small{display:block;margin-top:4px;font-size:12.5px;opacity:.85}
+.viz-placeholder--hero{min-height:360px}
+.viz-placeholder--graph{min-height:420px}
+.viz-placeholder--sunburst{min-height:380px}
+.viz-placeholder--matrix{min-height:340px}
+.viz-placeholder--panel{min-height:130px;padding:12px;font-size:13px}
+</style>
+</head>
+<body>
+<!--
+  SCAFFOLD : cette page est le squelette de VisuMaquetteData.html sans aucune visualisation.
+  - Mise en page, navigation, commandes et styles sont conservés.
+  - Chaque visualisation est remplacée par un <div class="viz-placeholder" id="viz-…" data-viz="…">.
+  - Contrats de données et conventions : docs/visualisations.md, docs/architecture.md, docs/data-contracts.md.
+  - Le motif de hachures (<pattern id="hatch">) utilisé par le sunburst n'est plus défini ici : voir le placeholder C.
+-->
+<div class="page">
+  <header class="top">
+    <div>
+      <h1>Qu'est-ce qui accompagne la réussite au lycée ?</h1>
+      <p class="lede">Deux lycées portugais en 2005-2006, 395 élèves en maths et 649 en portugais (357 et 634 élèves évalués). Choisissez une matière, puis cliquez sur une catégorie, un secteur ou un point pour filtrer toutes les vues. Ce qui apparaît ici, ce sont des associations, jamais des causes.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Matière" id="matSeg">
+        <button type="button" data-v="mat" aria-pressed="true">Maths</button><button type="button" data-v="por" aria-pressed="false">Portugais</button>
+      </div>
+      <label class="check"><input type="checkbox" id="ne"> <span id="neLbl">Inclure les élèves non évalués</span></label>
+      <button type="button" class="btn" id="reset">Tout réinitialiser</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="views">
+
+      <!-- ===================== A. Ensembles parallèles ===================== -->
+      <section class="view hero" aria-labelledby="a-q">
+        <h2 id="a-q">Le cumul de facteurs de risque mène-t-il à l'échec et au décrochage ?</h2>
+        <p class="how">Chaque bande regroupe des élèves qui partagent les mêmes catégories, sa largeur suit leur nombre. Bleu pour une note finale de 10 ou plus, orange en dessous. Cliquez sur une catégorie pour zoomer dessus.</p>
+        <div class="toolbar">
+          <!-- Présélections de questions (chaque bouton fixe un jeu d'axes) : risque = [risque, tendance, reussite],
+               vie = [goout, alc, reussite], qui = [school, sex, address, reussite] -->
+          <div class="seg" role="group" aria-label="Question" id="presetSeg">
+            <button type="button" data-preset="risque" aria-pressed="true">Risque et décrochage</button><button type="button" data-preset="vie" aria-pressed="false">Sorties et alcool</button><button type="button" data-preset="qui" aria-pressed="false">Qui sont les élèves ?</button>
+          </div>
+          <!-- Options à remplir par le code : absCat, studytime, traveltime, pedu, higher, failures, alc, goout, risque, tendance, school, sex, address -->
+          <label for="addAxis">Ajouter un axe</label><select id="addAxis"></select>
+        </div>
+        <!--
+          VIZ A — Ensembles parallèles (Parallel Sets)         [Quentin ELLEON]
+          Chart  : parallel sets, un segment par catégorie (largeur = n), des bandes entre axes voisins (largeur = n),
+                   teinte de la bande = réussite (bleu) / échec (orange).
+          Data   : élèves de la sélection partagée. Axes catégoriels : school, sex, address, alc, absCat, risque,
+                   tendance, reussite (dernier axe fixe). Quantitatifs déjà découpés en classes (cf. docs/data-contracts.md).
+          Interact: clic sur un segment = zoom (state.drill) + fil d'Ariane ; survol = n et % de réussite ;
+                   axes déplaçables / ajout via #addAxis ; chemin de l'élève sélectionné surligné ; curseurs studytime/goout (panneau).
+          Docs   : docs/visualisations.md#a-ensembles-parallèles
+        -->
+        <div id="viz-parallel-sets" class="viz-placeholder viz-placeholder--hero" data-viz="parallel-sets" data-chart="parallel-sets" data-owner="Quentin ELLEON" data-source="selection">
+          <div>TODO : ensembles parallèles (A)<small>Parallel sets : école, sexe, milieu, alcool, absences, risque, tendance, réussite</small></div>
+        </div>
+        <div class="legend"><span><i class="sw" style="background:var(--ok)"></i>Note finale de 10 ou plus</span><span><i class="sw" style="background:var(--ko)"></i>Note finale sous 10</span></div>
+      </section>
+
+      <!-- ===================== B. Matrice de corrélation ===================== -->
+      <section class="view" aria-labelledby="b-t">
+        <h2 id="b-t">Quels attributs varient avec la note finale, et dans quel sens ?</h2>
+        <p class="how">Bleu quand deux attributs augmentent ensemble, rouge quand l'un baisse lorsque l'autre augmente, blanc ou gris quand il n'y a pas de lien net. Cliquez sur une case pour voir les élèves.</p>
+        <div class="toolbar"><label class="check"><input type="checkbox" id="showG"> Afficher aussi les notes G1 et G2</label></div>
+        <!--
+          VIZ B — Matrice de corrélation (heatmap, triangle inférieur)   [Jim LAINEL]
+          Chart  : heatmap carrée, échelle divergente centrée sur 0 (bleu +, rouge −, blanc ≈ 0), légende −1 … +1.
+          Data   : ρ de Spearman entre paires d'attributs quantitatifs / ordinaux, recalculé sur la sélection.
+                   Attributs : G3, G2, G1, failures, absences, studytime, traveltime, goout, Dalc, Walc, Medu, Fedu
+                   (G1 et G2 masqués sauf #showG). Lignes / colonnes triées par |ρ| avec G3.
+          Interact: valeur et signe écrits dans la cellule, cellules très faibles grisées (« pas de lien net »),
+                   info-bulle en phrase simple, clic = nuage de points de la paire (state.mxPair → viz-pair-scatter).
+          Docs   : docs/visualisations.md#b-matrice-de-corrélation
+          Remplir aussi #bLegend (légende) et #bInfo (effectif et rappel « un lien n'est pas une cause »).
+        -->
+        <div id="viz-correlation-matrix" class="viz-placeholder viz-placeholder--matrix" data-viz="correlation-matrix" data-chart="heatmap" data-owner="Jim LAINEL" data-source="selection">
+          <div>TODO : matrice de corrélation (B)<small>Heatmap de Spearman, échelle divergente −1 à +1</small></div>
+        </div>
+        <div class="legend" id="bLegend"></div>
+        <p class="note" id="bInfo"></p>
+      </section>
+
+      <!-- ===================== C. Sunburst ===================== -->
+      <section class="view" aria-labelledby="c-t">
+        <h2 id="c-t">Où se concentre l'échec dans la population ?</h2>
+        <p class="how">Chaque anneau découpe les élèves selon un attribut. La taille d'un secteur suit le nombre d'élèves, sa couleur leur réussite comparée à la moyenne. Cliquez sur un secteur pour zoomer, au centre pour revenir.</p>
+        <div class="toolbar">
+          <!-- Options à remplir par le code : school, sex, address, risque, alc, higher, absCat, pedu (anneau 3 : + « Aucun ») -->
+          <label for="sb0">Anneau 1</label><select id="sb0"></select>
+          <label for="sb1">Anneau 2</label><select id="sb1"></select>
+          <label for="sb2">Anneau 3</label><select id="sb2"></select>
+        </div>
+        <!--
+          VIZ C — Sunburst                                      [Alexandre LARGUECH]
+          Chart  : sunburst (d3.partition), 3 niveaux au plus ; défaut école, sexe, risque ; ordre modifiable.
+                   Angle = nombre d'élèves, couleur = taux de réussite (divergent, centré sur la moyenne de la matière).
+          Data   : hiérarchie dérivée de la sélection (hors ses propres zooms) ; chaque nœud porte n et nombre de réussites.
+          Interact: clic sur un secteur = zoom (state.drill), clic au centre = remonter, survol = n et % de réussite,
+                   secteurs de moins de 10 élèves hachurés (définir ici un <pattern id="hatch"> dans le SVG du module).
+          Docs   : docs/visualisations.md#c-sunburst
+          Remplir aussi #cLegend (échelle de couleur + légende des hachures).
+        -->
+        <div id="viz-sunburst" class="viz-placeholder viz-placeholder--sunburst" data-viz="sunburst" data-chart="sunburst" data-owner="Alexandre LARGUECH" data-source="selection">
+          <div>TODO : sunburst (C)<small>Angle = n élèves, couleur = taux de réussite, 3 niveaux max</small></div>
+        </div>
+        <div class="legend" id="cLegend"></div>
+      </section>
+
+      <!-- ===================== D. Graphe de similarité ===================== -->
+      <section class="view wide" aria-labelledby="d-t">
+        <h2 id="d-t">Les élèves qui se ressemblent réussissent-ils pareil ?</h2>
+        <p class="how">Chaque point est un élève, relié à ses 5 plus proches voisins sur le profil (échecs passés, absences, temps d'étude, trajet, sorties, alcool, études des parents, école, sexe, milieu, projet d'études), sans tenir compte des notes. Survolez un point pour voir ses voisins, cliquez pour ouvrir la fiche, ou testez un profil.</p>
+        <div class="toolbar">
+          <span class="mini-lab" style="margin:0">Couleur</span>
+          <div class="seg" role="group" aria-label="Couleur des points" id="gSeg">
+            <button type="button" data-v="reussite" aria-pressed="true">Réussite</button><button type="button" data-v="tendance" aria-pressed="false">Tendance</button>
+          </div>
+          <button type="button" class="btn" id="fakeBtn" aria-expanded="false" aria-controls="fakeForm">Tester un profil</button>
+        </div>
+        <!-- Formulaire du profil fictif (U2-2). Champs à générer : failures, absences, studytime, traveltime, goout, alc, pedu, school, sex, address, higher -->
+        <form class="fake" id="fakeForm" hidden>
+          <div class="fake-fields" id="fakeFields"></div>
+          <div class="fake-actions"><button type="submit" class="btn">Placer ce profil</button><button type="button" class="btn" id="fakeClear">Retirer</button></div>
+        </form>
+        <!--
+          VIZ D — Graphe de similarité d'élèves                 [Gabriel LOIRAT]
+          Chart  : graphe nœuds-liens, disposition par forces (d3.forceSimulation, résultat mis en cache).
+                   Un nœud par élève, un lien vers chacun de ses 5 plus proches voisins.
+                   Couleur = réussite ou tendance (#gSeg). Profil fictif = nœud supplémentaire relié à ses 5 voisins.
+          Data   : élèves de la matière active ; distance de Gower sur failures, absences, studytime, traveltime, goout,
+                   alc, pedu, school, sex, address, higher (sans les notes) ; liens = 5 plus proches voisins.
+          Interact: clic sur un nœud = fiche élève (state.selectedId) ; survol = voisins éclairés ; zoom / déplacement ;
+                   nœuds hors sélection estompés ; « Tester un profil » = state.ghost.
+          Docs   : docs/visualisations.md#d-graphe-de-similarité
+          Remplir aussi #dLegend, #dFake (lecture du profil testé) et #dTake (distance de G3 entre voisins vs hasard).
+          Attention : 357 / 634 nœuds → limiter les liens pour éviter la pelote.
+        -->
+        <div id="viz-similarity-graph" class="viz-placeholder viz-placeholder--graph" data-viz="similarity-graph" data-chart="force-directed-graph" data-owner="Gabriel LOIRAT" data-source="scoped+selection">
+          <div>TODO : graphe de similarité (D)<small>Un nœud par élève, 5 plus proches voisins (Gower), disposition par forces</small></div>
+        </div>
+        <div class="legend" id="dLegend"></div>
+        <p class="note" id="dFake" style="font-size:14px;color:var(--ink);max-width:80ch"></p>
+        <p class="note" id="dTake" style="font-size:14px;color:var(--ink);max-width:80ch"></p>
+      </section>
+    </main>
+
+    <!-- ===================== Panneaux de détail liés ===================== -->
+    <aside class="panel" id="panel" aria-live="polite">
+
+      <section id="panel-selection">
+        <h3>Sélection</h3>
+        <!-- Puces de filtres (state.drill, state.slide) : une <button class="chip"> par filtre + « Tout effacer » -->
+        <div class="chips" id="panel-chips"><span class="note" style="margin:0">Tous les élèves de la matière. Cliquez dans une vue pour filtrer.</span></div>
+        <div class="stats" id="panel-stats">
+          <div><b data-stat="n">–</b><small>élèves</small></div>
+          <div><b data-stat="rate">–</b><small>ont 10 ou plus</small></div>
+          <div><b data-stat="median">–</b><small>note médiane sur 20</small></div>
+          <div><b data-stat="mean">–</b><small>note moyenne sur 20</small></div>
+        </div>
+        <p class="note" id="panel-context"></p>
+        <!--
+          VIZ PANEL 1 — Distribution de G3 de la sélection (boxplot)
+          Chart  : boxplot horizontal, axe G3 de 0 à 20, seuil 10 en pointillés ; médiane et n écrits ;
+                   si une sélection est active, une 2e boîte « Ensemble » pour comparer.
+          Data   : G3 des élèves de la sélection et de la matière entière.
+          Docs   : docs/visualisations.md#panneaux-de-détail-liés
+        -->
+        <div id="viz-selection-boxplot" class="viz-placeholder viz-placeholder--panel" data-viz="selection-boxplot" data-chart="boxplot" data-source="selection+base">
+          <div>TODO : boxplot de G3<small>Médiane, quartiles, n, seuil 10/20</small></div>
+        </div>
+        <p class="note" id="panel-small-n" hidden>Moins de 10 élèves, ces chiffres sont fragiles.</p>
+      </section>
+
+      <section id="panel-whatif">
+        <h3>Faire varier un facteur</h3>
+        <p class="note" style="margin:0 0 10px">Choisissez un niveau pour voir la note des élèves qui ont ce profil.</p>
+        <!-- Ces boutons posent un filtre (state.slide) : un seul niveau actif par facteur, « Tous » le retire -->
+        <div style="margin:0 0 10px" data-slider="studytime">
+          <div class="mini-lab">Temps d'étude par semaine</div>
+          <div class="seg seg-sm" role="group" aria-label="Temps d'étude par semaine">
+            <button type="button" aria-pressed="true" data-value="">Tous</button><button type="button" aria-pressed="false" data-value="1" title="Moins de 2 h">&lt; 2 h</button><button type="button" aria-pressed="false" data-value="2" title="2 à 5 h">2 à 5 h</button><button type="button" aria-pressed="false" data-value="3" title="5 à 10 h">5 à 10 h</button><button type="button" aria-pressed="false" data-value="4" title="Plus de 10 h">&gt; 10 h</button>
+          </div>
+        </div>
+        <div style="margin:0 0 10px" data-slider="goout">
+          <div class="mini-lab">Sorties avec les amis, de très rares à très fréquentes</div>
+          <div class="seg seg-sm" role="group" aria-label="Sorties avec les amis">
+            <button type="button" aria-pressed="true" data-value="">Tous</button><button type="button" aria-pressed="false" data-value="1" title="Très rares">1</button><button type="button" aria-pressed="false" data-value="2" title="Rares">2</button><button type="button" aria-pressed="false" data-value="3" title="Moyennes">3</button><button type="button" aria-pressed="false" data-value="4" title="Fréquentes">4</button><button type="button" aria-pressed="false" data-value="5" title="Très fréquentes">5</button>
+          </div>
+        </div>
+        <!-- Tuile / phrase : « Les N élèves qui ont ce profil ont en moyenne X sur 20, contre Y pour l'ensemble. C'est une association, pas l'effet du facteur. » -->
+        <p class="note" id="panel-whatif-result"></p>
+      </section>
+
+      <section id="panel-student">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+          <h3 id="panel-student-title">Fiche élève</h3>
+          <button type="button" class="btn btn-sm" id="panel-student-close" hidden>Fermer la fiche</button>
+        </div>
+        <p class="note" id="panel-student-intro" style="margin:0 0 6px">Cliquez sur un nœud du graphe (D), un point du nuage ou une ligne pour ouvrir la fiche. Elle compare l'élève à la médiane de son école dans la même matière.</p>
+        <!-- « Même profil » : puces des élèves de même profil quand le nœud en regroupe plusieurs (optionnel) -->
+        <div class="chips" id="panel-student-same" hidden></div>
+        <!--
+          VIZ PANEL 2 — Trajectoire G1 → G2 → G3 de l'élève sélectionné
+          Chart  : courbe à 3 points (G1, G2, G3) sur axe 0–20, seuil 10 en pointillés,
+                   comparée à la courbe des médianes de l'école dans la même matière.
+          Data   : G1, G2, G3 de l'élève ; médianes de G1, G2, G3 des élèves évalués de son école et de sa matière.
+          Docs   : docs/visualisations.md#panneaux-de-détail-liés
+        -->
+        <div id="viz-student-trajectory" class="viz-placeholder viz-placeholder--panel" data-viz="student-trajectory" data-chart="line" data-source="selectedId+base">
+          <div>TODO : trajectoire G1, G2, G3<small>Élève contre médiane de son école</small></div>
+        </div>
+        <!-- Fiche : valeurs à renseigner par le code (colonne « Élève » et colonne « Typique de l'école ») -->
+        <table class="attr" id="panel-student-table">
+          <thead><tr><th></th><th>Élève</th><th>Typique de l'école</th></tr></thead>
+          <tbody>
+            <tr data-attr="G3"><th>Note finale</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="G2"><th>Note 2e période</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="G1"><th>Note 1re période</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="tendance"><th>Évolution</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="risque"><th>Facteurs de risque</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="failures"><th>Échecs passés</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="absences"><th>Absences</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="studytime"><th>Temps d'étude</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="traveltime"><th>Trajet</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="goout"><th>Sorties</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="alc"><th>Alcool</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="pedu"><th>Éducation des parents</th><td></td><td class="grp"></td></tr>
+            <tr data-attr="higher"><th>Études supérieures</th><td></td><td class="grp"></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="panel-pair">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+          <h3 id="panel-pair-title">Paire d'attributs</h3>
+          <button type="button" class="btn btn-sm" id="panel-pair-close" hidden>Fermer</button>
+        </div>
+        <p class="note" id="panel-pair-text" style="margin:0 0 6px">Cliquez sur une case de la matrice (B) pour voir le nuage de points de la paire.</p>
+        <!--
+          VIZ PANEL 3 — Nuage de points de la paire cliquée dans B
+          Chart  : scatterplot (jitter léger pour les ordinaux), courbe de médianes par valeur / classe, axes étiquetés.
+          Data   : valeurs des deux attributs (state.mxPair = [a, b]) pour les élèves de la sélection ; ρ et n dans le texte.
+          Docs   : docs/visualisations.md#b-matrice-de-corrélation
+        -->
+        <div id="viz-pair-scatter" class="viz-placeholder viz-placeholder--panel" data-viz="pair-scatter" data-chart="scatterplot" data-source="selection+mxPair">
+          <div>TODO : nuage de points de la paire<small>Spearman, jitter, courbe de médianes</small></div>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <p class="foot">Source, jeu Student Alcohol Consumption (Kaggle), miroir du jeu UCI Student Performance (Cortez et Silva, 2008). Les élèves notés 0 sans aucune absence sont des dossiers non évalués, exclus par défaut. Les deux matières ne sont jamais cumulées. Démonstrateur pédagogique, pas un outil de suivi d'élèves.</p>
+</div>
+
+<!--
+  Scripts : à brancher une fois les modules créés (voir docs/architecture.md).
+  D3 v7.9.0 figé, modules ES, données lues dans data/*.csv avec d3.csv() (page à servir en http://, pas en file://).
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+  <script type="module" src="js/main.js"></script>
+-->
+</body>
+</html>
