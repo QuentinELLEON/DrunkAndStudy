@@ -60,6 +60,28 @@ export const ATTR_LABELS = {
   alc: "Alcool", pedu: "Éducation des parents", risque: "Facteurs de risque", tendance: "Évolution", higher: "Études supérieures",
 };
 
+// Libellés des axes de la matrice B (plus courts que ATTR_LABELS)
+export const ATTR_SHORT = {
+  G3: "Note finale", G2: "Note G2", G1: "Note G1", failures: "Échecs passés", absences: "Absences", studytime: "Temps d'étude",
+  traveltime: "Trajet", goout: "Sorties", Dalc: "Alcool semaine", Walc: "Alcool week-end", Medu: "Études mère", Fedu: "Études père",
+};
+
+// Comment dire « plus » et « moins » de chaque attribut dans une phrase (info-bulles de la matrice B)
+export const ATTR_SENS = {
+  G3: { plus: "une note finale plus haute", moins: "une note finale plus basse" },
+  G2: { plus: "une note G2 plus haute", moins: "une note G2 plus basse" },
+  G1: { plus: "une note G1 plus haute", moins: "une note G1 plus basse" },
+  failures: { plus: "plus d'échecs passés", moins: "moins d'échecs passés" },
+  absences: { plus: "plus d'absences", moins: "moins d'absences" },
+  studytime: { plus: "plus de temps d'étude", moins: "moins de temps d'étude" },
+  traveltime: { plus: "un trajet plus long", moins: "un trajet plus court" },
+  goout: { plus: "plus de sorties", moins: "moins de sorties" },
+  Dalc: { plus: "plus d'alcool en semaine", moins: "moins d'alcool en semaine" },
+  Walc: { plus: "plus d'alcool le week-end", moins: "moins d'alcool le week-end" },
+  Medu: { plus: "une mère plus diplômée", moins: "une mère moins diplômée" },
+  Fedu: { plus: "un père plus diplômé", moins: "un père moins diplômé" },
+};
+
 // Réglages des vues
 export const PSET_DEFAULT = ["school", "sex", "address", "alc", "absCat", "risque", "tendance", "reussite"];
 export const PSET_PRESETS = {

@@ -1,6 +1,44 @@
-/* Vue B : matrice de corrélation */
-.cell{cursor:pointer}
-.cell.sel{stroke:var(--ink);stroke-width:2.5}
-.ctxt{pointer-events:none;text-anchor:middle;font-size:11px}
-.mlab{font-size:12px;fill:var(--ink)}
-.mlab.g3{font-weight:700}
+/* Vue B : matrice de corrélation. Préfixe mx- pour les classes propres à la vue.
+   Rouge (négatif) / vert (positif). Le signe et la valeur sont écrits dans chaque case, donc la couleur n'est jamais seule. */
+:root{--mx-pos:#1B7837;--mx-neg:#B2182B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--mx-pos:#3F9150;--mx-neg:#F0877A}}
+:root[data-theme="dark"]{--mx-pos:#3F9150;--mx-neg:#F0877A}
+
+.mx-cell{cursor:pointer}
+.mx-cell:hover{stroke:var(--muted);stroke-width:1.5}
+.mx-cell.mx-sel{stroke:var(--ink);stroke-width:2.5}
+.mx-cell:focus-visible{outline:none;stroke:var(--focus);stroke-width:3}
+.mx-txt{pointer-events:none;text-anchor:middle;dominant-baseline:central;font-size:11px;font-variant-numeric:tabular-nums}
+.mx-lab{font-size:12.5px;fill:var(--ink)}
+.mx-lab.mx-g3{font-weight:700}
+.mx-frame{fill:none;stroke:var(--ink);stroke-width:2;pointer-events:none}
+
+.mx-legend-bar{background:linear-gradient(90deg,var(--mx-neg),var(--panel),var(--mx-pos));border:1px solid var(--line)}
+.mx-legend-weak{background:var(--soft);border:1px solid var(--line)}
+.mx-msg{margin:0}
+.mx-line{display:block}
+.mx-line+.mx-line{margin-top:5px}
+
+/* Légende graduée */
+.mx-scale{display:inline-flex;flex-direction:column;gap:2px;vertical-align:middle}
+.mx-scale .bar{margin:0}
+.mx-ticks{display:flex;justify-content:space-between;font-size:11px;font-style:normal}
+.mx-ticks i{font-style:normal}
+
+/* Survol : la ligne et la colonne de la case restent nettes, le reste s'estompe */
+@media (prefers-reduced-motion:no-preference){.mx-c{transition:opacity .12s}}
+.mx-hover .mx-c{opacity:.35}
+.mx-hover .mx-c.mx-rel{opacity:1}
+.mx-lab.mx-rel{font-weight:700}
+
+/* Classement avec G3 */
+.mx-grid{stroke:var(--line);stroke-width:1}
+.mx-zero{stroke:var(--muted);stroke-width:1.5}
+.mx-tick{font-size:11px;fill:var(--muted)}
+.mx-hit{fill:var(--soft);opacity:0;cursor:pointer}
+.mx-hit:hover{opacity:.7}
+.mx-hit:focus-visible{outline:none;opacity:1;stroke:var(--focus);stroke-width:3}
+.mx-hit.mx-sel{opacity:1;stroke:var(--ink);stroke-width:2}
+.mx-bar{pointer-events:none}
+.mx-rkval{pointer-events:none;font-size:12.5px;font-variant-numeric:tabular-nums}
+.mx-rklab{pointer-events:none}

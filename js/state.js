@@ -15,6 +15,7 @@ const initial = () => ({
   psetAxes: PSET_PRESETS.risque.axes.slice(),
   sunLevels: SUN_DEFAULT.slice(),
   matrixShowG: false,       // afficher G1 et G2 dans B
+  matrixView: "matrix",     // B : "matrix" (triangle complet) ou "rank" (classement avec G3 seule)
 });
 
 export const state = initial();
