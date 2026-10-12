@@ -5,3 +5,8 @@ totes les tâches -> qui ça concerne, comme si on écrivait une SPEC
 en combinant les différentes techniques je peux pouvoir avoir toutes les tâches de visualisation
 implémenter avec D3
 tout regrouper, ne pas avoir plusieurs pages
+
+
+
+
+Polar area chart au lieu du sunburst
