@@ -1,0 +1,7 @@
+/* Vue C : sunburst */
+.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5}
+.arc:hover{opacity:.85}
+.hatch line{stroke:var(--ink);stroke-width:1.2;opacity:.45}
+.arclbl{font-size:11.5px;fill:var(--ink);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
+.center{fill:var(--soft);cursor:pointer}
+.ctr{text-anchor:middle;fill:var(--ink);pointer-events:none}

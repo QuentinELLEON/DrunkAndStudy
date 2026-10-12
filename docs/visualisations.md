@@ -82,11 +82,11 @@ Les données sont observationnelles et en partie auto-déclarées, donc ce que l
 
 ---
 
-## Placeholders de la page (`index.html`)
+## Conteneurs de la page (`index.html`)
 
-Chaque visualisation est un conteneur à remplir dans `index.html`. Les identifiants sont stables : on ne les renomme pas sans mettre à jour ce tableau, [`architecture.md`](architecture.md) et l'issue correspondante.
+Chaque visualisation a un conteneur vide dans `index.html`, dessiné par son module. Les identifiants sont stables : on ne les renomme pas sans mettre à jour ce tableau, [`architecture.md`](architecture.md) et l'issue correspondante.
 
-| Visu | Placeholder (`id`) | `data-viz` | Type de graphique | Module | Membre |
+| Visu | Conteneur (`id`) | `data-viz` | Type de graphique | Module | Membre |
 |---|---|---|---|---|---|
 | A | `viz-parallel-sets` | `parallel-sets` | ensembles parallèles | `js/views/parallelSets.js` | Quentin ELLEON |
 | B | `viz-correlation-matrix` | `correlation-matrix` | heatmap (triangle inférieur) | `js/views/correlationMatrix.js` | Jim LAINEL |
@@ -102,7 +102,7 @@ Formats de données : [`data-contracts.md`](data-contracts.md). Règles de trava
 
 ## A. Ensembles parallèles
 
-- **Placeholder** : `#viz-parallel-sets`.
+- **Conteneur** : `#viz-parallel-sets`.
 - **Données** : élèves de la sélection privée de ses propres zooms ; dimensions catégorielles `school`, `sex`, `address`, `alc`, `absCat`, `risque`, `tendance`, `reussite` (dernier axe fixe) ; quantitatifs déjà découpés en classes.
 - **Encodage** : segment = catégorie, hauteur proportionnelle à *n* ; ruban = croisement de deux catégories voisines, largeur proportionnelle à *n* ; teinte = réussite ou échec.
 - **Interactions** : zoom par clic avec fil d'Ariane, survol (*n*, % de réussite), axes ajoutables, retirables et déplaçables, chemin de l'élève sélectionné, curseurs `studytime` et `goout` du panneau.
@@ -111,7 +111,7 @@ Formats de données : [`data-contracts.md`](data-contracts.md). Règles de trava
 
 ## B. Matrice de corrélation
 
-- **Placeholder** : `#viz-correlation-matrix` (et `#viz-pair-scatter` pour le nuage de points).
+- **Conteneur** : `#viz-correlation-matrix` (et `#viz-pair-scatter` pour le nuage de points).
 - **Données** : ρ de Spearman entre 12 attributs ordonnables, recalculé sur la sélection ; G1 et G2 masqués par défaut.
 - **Encodage** : cellule colorée sur une échelle divergente centrée sur 0 (bleu positif, rouge négatif), valeur écrite, cellules très faibles grisées.
 - **Interactions** : clic sur une cellule → nuage de points de la paire ; info-bulle en phrase simple.
@@ -120,7 +120,7 @@ Formats de données : [`data-contracts.md`](data-contracts.md). Règles de trava
 
 ## C. Sunburst
 
-- **Placeholder** : `#viz-sunburst`.
+- **Conteneur** : `#viz-sunburst`.
 - **Données** : hiérarchie dérivée de 3 attributs au plus (défaut `school`, `sex`, `risque`, ordre modifiable), avec *n* et nombre de réussites par nœud.
 - **Encodage** : angle = *n*, couleur = taux de réussite centré sur la moyenne, hachures si *n* < 10.
 - **Interactions** : zoom par clic, retour par le centre, survol (chemin, *n*, % de réussite).
@@ -129,7 +129,7 @@ Formats de données : [`data-contracts.md`](data-contracts.md). Règles de trava
 
 ## D. Graphe de similarité
 
-- **Placeholder** : `#viz-similarity-graph`.
+- **Conteneur** : `#viz-similarity-graph`.
 - **Données** : un nœud par élève, relié à ses 5 plus proches voisins (distance de Gower) sur `failures`, `absences`, `studytime`, `traveltime`, `goout`, `alc`, `pedu`, `school`, `sex`, `address`, `higher`, sans les notes.
 - **Encodage** : couleur = réussite ou tendance au choix ; profil saisi = nœud fictif relié à ses 5 voisins.
 - **Interactions** : clic sur un nœud = fiche ; survol = voisins ; filtrage par la sélection des autres vues.
@@ -140,7 +140,7 @@ Formats de données : [`data-contracts.md`](data-contracts.md). Règles de trava
 
 Ils s'ouvrent quand on sélectionne quelque chose dans une des 4 vues. Ils ne comptent pas comme une technique.
 
-| Panneau | Placeholder | Contenu |
+| Panneau | Conteneur | Contenu |
 |---|---|---|
 | Distribution de G3 de la sélection | `#viz-selection-boxplot` | boxplot, médiane, *n* |
 | Trajectoire G1, G2, G3 | `#viz-student-trajectory` | courbe de l'élève sélectionné contre la médiane de son école |

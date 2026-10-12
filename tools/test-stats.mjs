@@ -1,66 +1,125 @@
-// Tests des fonctions pures de js/stats.js — lancer : node tools/test-stats.mjs
+// Tests sans navigateur : fonctions pures de js/stats.js, typage et dérivés de js/data.js, filtres, état.
+// Lancer : node tools/test-stats.mjs   (échoue avec un code non nul au premier écart)
+// Les chiffres de référence viennent de docs/visualisations.md (élèves évalués, maths puis portugais).
+
 import { readFileSync } from "node:fs";
-import { ranks, spearman, pearson, boxStats, percentBelow } from "../js/stats.js";
+import { ranks, pearson, spearman, spearmanMatrix, quantile, median, boxStats, gower, gowerRanges, knn, significanceThreshold } from "../js/stats.js";
+import { typeRows, derive, rate, evaluated, okCount } from "../js/data.js";
+import { SIMILARITY_KEYS, SIMILARITY_NOMINAL, NEIGHBORS, MATRIX_KEYS, EXPECTED_COLUMNS } from "../js/meta.js";
+import { pct, f1, signed } from "../js/utils.js";
 
-let fails = 0;
-const ok = (cond, msg) => { console.log((cond ? "✔ " : "✘ ") + msg); if (!cond) fails++; };
-const near = (a, b, eps = 1e-3) => Math.abs(a - b) < eps;
+let fails = 0, checks = 0;
+const ok = (cond, msg) => { checks++; if (!cond) { fails++; console.error("✗", msg); } };
+const eq = (a, b, msg) => ok(Object.is(a, b) || a === b, `${msg} : attendu ${b}, obtenu ${a}`);
+const near = (a, b, tol, msg) => ok(Math.abs(a - b) <= tol, `${msg} : attendu ${b} ± ${tol}, obtenu ${a}`);
 
-ok(JSON.stringify(ranks([10, 20, 20, 30])) === JSON.stringify([1, 2.5, 2.5, 4]), "rangs moyens des ex æquo");
-ok(near(spearman([1, 2, 3, 4], [10, 100, 1000, 10000]), 1), "Spearman = 1 pour une relation monotone non linéaire");
-ok(near(spearman([1, 2, 3, 4], [4, 3, 2, 1]), -1), "Spearman = −1 pour une relation décroissante");
-ok(isNaN(pearson([1, 1, 1], [1, 2, 3])), "variance nulle → NaN (non calculable)");
-const b = boxStats([1, 2, 3, 4, 5, 6, 7, 8, 100]);
-ok(b.med === 5 && b.q1 === 3 && b.q3 === 7 && b.hi === 8 && b.outliers === 1, "boxStats : quartiles type 7 et valeur atypique");
-ok(near(percentBelow([1, 2, 3, 4], 3), 0.5), "rang centile");
+// ---------- stats.js ----------
+eq(JSON.stringify(ranks([10, 20, 20, 30])), JSON.stringify([1, 2.5, 2.5, 4]), "rangs avec ex æquo");
+near(pearson([1, 2, 3, 4], [2, 4, 6, 8]), 1, 1e-12, "pearson parfait");
+near(spearman([{ a: 1, b: 1 }, { a: 2, b: 8 }, { a: 3, b: 27 }, { a: 4, b: 64 }], "a", "b"), 1, 1e-12, "spearman monotone non linéaire");
+ok(Number.isNaN(spearman([{ a: 1, b: 2 }, { a: 1, b: 3 }, { a: 1, b: 4 }], "a", "b")), "spearman NaN si attribut constant");
+eq(quantile([1, 2, 3, 4], 0.5), 2.5, "médiane paire");
+eq(median([3, 1, 2]), 2, "médiane impaire");
+eq(boxStats([1, 2, 3, 4, 5]).q1, 2, "q1");
+eq(spearmanMatrix([{ x: 1, y: 2 }, { x: 2, y: 1 }, { x: 3, y: 0 }], ["x", "y"]).length, 1, "matrice 2 attributs : 1 cellule");
+near(significanceThreshold(357), 0.1038, 1e-3, "seuil de signification n = 357");
+eq(pct(0.744), "74 %", "format pourcentage");
+eq(f1(11.5), "11,5", "format décimal français");
+eq(signed(-0.3), "−0,30", "signe typographique");
 
-// Contrôle sur les vraies données : effet du drapeau « non évalué » (spécification §1.6 a)
-const txt = readFileSync(new URL("../data/student-mat.csv", import.meta.url), "utf8").trim().split(/\r?\n/);
-const head = txt[0].split(","), rows = txt.slice(1).map(l => Object.fromEntries(l.split(",").map((v, i) => [head[i], v])));
-const all = rows.map(r => ({ a: +r.absences, g: +r.G3 }));
-const graded = all.filter(d => !(d.g === 0 && d.a === 0));
-ok(all.length === 395 && all.length - graded.length === 38, `395 élèves en maths, 38 non évalués (trouvé : ${all.length - graded.length})`);
-const rAll = pearson(all.map(d => d.a), all.map(d => d.g)), rGr = pearson(graded.map(d => d.a), graded.map(d => d.g));
-ok(rAll > 0 && rGr < 0, `absences × G3 change de signe : r = ${rAll.toFixed(3)} (tous) → ${rGr.toFixed(3)} (évalués)`);
-console.log(`ρ Spearman absences × G3 (évalués) = ${spearman(graded.map(d => d.a), graded.map(d => d.g)).toFixed(3)}`);
+// ---------- Données réelles ----------
+const read = (f) => {
+  const [head, ...lines] = readFileSync(new URL(`../data/student-${f}.csv`, import.meta.url), "utf8").trim().split(/\r?\n/);
+  const cols = head.split(",");
+  return lines.map((l) => Object.fromEntries(l.split(",").map((v, i) => [cols[i], v])));
+};
+const ds = { mat: typeRows(read("mat"), "mat"), por: typeRows(read("por"), "por") };
 
-// Attributs dérivés (docs/taches.md, étape 2) : calculés par data.js sur les vraies données
-const { typeRows, derivedKeysFor } = await import("../js/data.js");
-const { META, EXPECTED_COLUMNS } = await import("../js/meta.js");
-const med = a => { const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
-for (const [f, nDown, nRisk, medHi, medZero, passPct] of [["mat", 34, 42, 9, 12, 74], ["por", 20, 67, 10, 13, 87]]) {
-  const t = readFileSync(new URL(`../data/student-${f}.csv`, import.meta.url), "utf8").trim().split(/\r?\n/);
-  const h = t[0].split(","), raw = t.slice(1).map(l => Object.fromEntries(l.split(",").map((v, i) => [h[i], v])));
-  const dk = derivedKeysFor(EXPECTED_COLUMNS);
-  const R = typeRows(raw, META, EXPECTED_COLUMNS, dk), G = R.filter(d => !d.__nograde);
-  const count = (rows, k) => rows.reduce((m, d) => m.set(d[k], (m.get(d[k]) || 0) + 1), new Map());
-  ok(dk.length === 7, `${f} : 7 dérivés (${dk.join(", ")})`);
-  ok([...count(G, "alc").values()].every(n => n >= 10), `${f} : indice alcool sans groupe < 10 (${[...count(G, "alc")].sort().map(e => e.join("→")).join(", ")})`);
-  ok(!count(G, "pedu").has(0), `${f} : éducation parentale sans modalité 0`);
-  ok(R.filter(d => d.__nograde).every(d => isNaN(d.prog) && isNaN(d.risque) && d.absCat === 9 && d.reussite === ""), `${f} : non-évalués → prog, risque et réussite manquants, absCat « n. r. »`);
-  const hi = G.filter(d => d.risque >= 2), zero = G.filter(d => d.risque === 0);
-  ok(hi.length === nRisk, `${f} : ${nRisk} élèves à risque ≥ 2 (U1-3, trouvé ${hi.length})`);
-  ok(med(hi.map(d => d.G3)) === medHi && med(zero.map(d => d.G3)) === medZero, `${f} : médiane de G3 ${medHi} (risque ≥ 2) contre ${medZero} (risque 0) (U2-4)`);
-  ok(Math.round(100 * G.filter(d => d.reussite === "oui").length / G.length) === passPct, `${f} : ${passPct} % des élèves évalués ont G3 ≥ 10 (U2-1)`);
-  const tc = k => G.filter(d => d.tendance === k).length;
-  ok(tc("baisse") === nDown && tc("stable") === (f === "mat" ? 245 : 461) && tc("hausse") === (f === "mat" ? 78 : 153),
-    `${f} : tendance baisse / stable / hausse = ${tc("baisse")} / ${tc("stable")} / ${tc("hausse")}`);
-  ok(G.filter(d => d.__trend === "down").length === nDown, `${f} : ${nDown} trajectoires en baisse (G3 − G1 ≤ −2)`);
+eq(ds.mat.length, 395, "lignes maths"); eq(ds.por.length, 649, "lignes portugais");
+eq(EXPECTED_COLUMNS.length, 33, "33 colonnes attendues");
+try { typeRows([{ school: "GP" }]); ok(false, "colonnes manquantes : erreur attendue"); } catch { ok(true, ""); }
+
+const EXPECT = {
+  mat: { nograde: 38, evaluated: 357, risk2: 42, drop: 34, flat: 245, up: 78, passRate: 0.74, riskRate: [0.43, 0.81], riskMed: [9, 12] },
+  por: { nograde: 15, evaluated: 634, risk2: 67, drop: 20, flat: 461, up: 153, passRate: 0.87, riskRate: [0.58, 0.94], riskMed: [10, 13] },
+};
+for (const k of ["mat", "por"]) {
+  const rows = ds[k], E = EXPECT[k], ev = evaluated(rows);
+  eq(rows.filter((r) => r.__nograde).length, E.nograde, `${k} : non évalués`);
+  eq(ev.length, E.evaluated, `${k} : évalués`);
+  ok(rows.filter((r) => r.__nograde).every((r) => r.reussite === null && r.risque === null && r.tendance === null && r.absCat === null && r.prog === null), `${k} : dérivés nuls pour un non-évalué`);
+  const r2 = ev.filter((r) => r.risque === 2), r0 = ev.filter((r) => r.risque === 0);
+  eq(r2.length, E.risk2, `${k} : risque 2 ou plus`);
+  near(rate(r2), E.riskRate[0], 0.006, `${k} : réussite risque 2+`);
+  near(rate(r0), E.riskRate[1], 0.006, `${k} : réussite risque 0`);
+  eq(median(r2.map((r) => r.G3)), E.riskMed[0], `${k} : médiane G3 risque 2+`);
+  eq(median(r0.map((r) => r.G3)), E.riskMed[1], `${k} : médiane G3 risque 0`);
+  eq(ev.filter((r) => r.tendance === "baisse").length, E.drop, `${k} : tendance baisse`);
+  eq(ev.filter((r) => r.tendance === "stable").length, E.flat, `${k} : tendance stable`);
+  eq(ev.filter((r) => r.tendance === "hausse").length, E.up, `${k} : tendance hausse`);
+  near(rate(rows), E.passRate, 0.006, `${k} : part ≥ 10/20`);
+  ok(ev.every((r) => [1, 2, 3].includes(r.alc) && [1, 2, 3, 4].includes(r.pedu) && [0, 1, 2, 3].includes(r.absCat) && [0, 1, 2].includes(r.risque)), `${k} : domaines des dérivés`);
 }
 
-// Graphe de similarité : des profils proches ont des notes à peine plus proches qu'au hasard (U2-2)
-const { gower, knn } = await import("../js/stats.js");
-const { SIMILARITY_KEYS, NEIGHBORS } = await import("../js/meta.js");
-for (const [f, expNear, expRand] of [["mat", 3.3, 3.6], ["por", 2.5, 3.1]]) {
-  const t = readFileSync(new URL(`../data/student-${f}.csv`, import.meta.url), "utf8").trim().split(/\r?\n/);
-  const h = t[0].split(","), raw = t.slice(1).map(l => Object.fromEntries(l.split(",").map((v, i) => [h[i], v])));
-  const G = typeRows(raw, META, EXPECTED_COLUMNS, derivedKeysFor(EXPECTED_COLUMNS)).filter(d => !d.__nograde);
-  const types = Object.fromEntries(SIMILARITY_KEYS.map(k => [k, META[k].t]));
-  const nn = knn(G, NEIGHBORS, gower(G, SIMILARITY_KEYS, types));
-  let sN = 0, cN = 0; nn.forEach((l, i) => l.forEach(([, j]) => { sN += Math.abs(G[i].G3 - G[j].G3); cN++; }));
-  let sR = 0, cR = 0; for (let i = 0; i < G.length; i++) for (let j = i + 1; j < G.length; j++) { sR += Math.abs(G[i].G3 - G[j].G3); cR++; }
-  const near = sN / cN, rand = sR / cR;
-  ok(Math.abs(near - expNear) < 0.15 && Math.abs(rand - expRand) < 0.15, `${f} : écart de G3 entre voisins ${near.toFixed(2)} contre ${rand.toFixed(2)} au hasard`);
+// Le signe de absences × G3 change selon les non-évalués (maths) : +0,034 avec eux, −0,213 sans eux
+const withNE = pearson(ds.mat.map((r) => r.absences), ds.mat.map((r) => r.G3));
+const withoutNE = pearson(evaluated(ds.mat).map((r) => r.absences), evaluated(ds.mat).map((r) => r.G3));
+near(withNE, 0.034, 0.002, "r(absences, G3) avec non-évalués");
+near(withoutNE, -0.213, 0.002, "r(absences, G3) sans non-évalués");
+
+// Premier facteur lié à G3 hors G1 et G2 : failures (ρ −0,30 maths, −0,43 portugais)
+for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
+  const cells = spearmanMatrix(evaluated(ds[k]), MATRIX_KEYS).filter((c) => c.b === "G3" && !["G1", "G2"].includes(c.a));
+  cells.sort((p, q) => Math.abs(q.rho) - Math.abs(p.rho));
+  eq(cells[0].a, "failures", `${k} : premier facteur`);
+  near(cells[0].rho, expected, 0.01, `${k} : ρ(failures, G3)`);
 }
 
+// Graphe de similarité : 5 voisins, distances dans [0, 1], pas de doublon
+{
+  const ev = evaluated(ds.mat);
+  const links = knn(ev, SIMILARITY_KEYS, NEIGHBORS, SIMILARITY_NOMINAL);
+  const keys = new Set(links.map((l) => Math.min(l.source, l.target) + "-" + Math.max(l.source, l.target)));
+  eq(keys.size, links.length, "liens sans doublon");
+  ok(links.every((l) => l.d >= 0 && l.d <= 1 && l.source !== l.target), "distances de Gower dans [0, 1]");
+  const deg = new Array(ev.length).fill(0);
+  links.forEach((l) => { deg[l.source]++; deg[l.target]++; });
+  ok(deg.every((d) => d >= NEIGHBORS), "chaque élève a au moins 5 liens");
+  ok(links.length >= ev.length * NEIGHBORS / 2 && links.length <= ev.length * NEIGHBORS, "nombre de liens plausible");
+  const R = gowerRanges(ev, SIMILARITY_KEYS, SIMILARITY_NOMINAL);
+  eq(gower(ev[0], ev[0], SIMILARITY_KEYS, R, SIMILARITY_NOMINAL), 0, "distance d'un élève à lui-même");
+  ok(!SIMILARITY_KEYS.some((k) => ["G1", "G2", "G3"].includes(k)), "les notes n'entrent pas dans la distance");
+}
+
+// ---------- Filtres et état (derive) ----------
+{
+  const base = { ds: "mat", inclNE: false, drill: [], slide: {}, selectedId: null };
+  const d0 = derive(ds, base);
+  eq(d0.base.length, 357, "base maths sans non-évalués");
+  eq(derive(ds, { ...base, inclNE: true }).base.length, 395, "base maths avec non-évalués");
+  const d1 = derive(ds, { ...base, drill: [{ dim: "risque", value: 2, src: "pset" }] });
+  eq(d1.selection.length, 42, "drill risque 2+");
+  eq(d1.exceptSrc("pset").length, 357, "exceptSrc retire les contraintes de sa source");
+  eq(d1.exceptSrc("sun").length, 42, "exceptSrc garde les contraintes des autres sources");
+  const d2 = derive(ds, { ...base, slide: { studytime: 3 } });
+  eq(d2.selection.length, evaluated(ds.mat).filter((r) => r.studytime === 3).length, "curseur studytime");
+  eq(derive(ds, { ...base, selectedId: 5 }).selected.__i, 5, "élève sélectionné");
+  eq(okCount(d0.base) + d0.base.filter((r) => r.reussite === "non").length, 357, "réussites + échecs = évalués");
+}
+
+// ---------- state.js : changer de matière remet la sélection à zéro ----------
+{
+  const { state, setState, toggleDrill, setSlide } = await import("../js/state.js");
+  toggleDrill("risque", 2, "pset");
+  setSlide("goout", 4);
+  setState({ selectedId: 3, mxPair: ["G3", "G2"] });
+  eq(state.drill.length, 1, "toggleDrill pose une contrainte");
+  toggleDrill("risque", 2, "pset");
+  eq(state.drill.length, 0, "toggleDrill la retire au second appel");
+  toggleDrill("sex", "F", "sun");
+  setState({ ds: "por" });
+  ok(state.ds === "por" && state.drill.length === 0 && state.selectedId === null && state.mxPair === null && Object.keys(state.slide).length === 0, "changer de matière remet la sélection à zéro");
+}
+
+console.log(fails ? `\n${fails} échec(s) sur ${checks} vérifications` : `OK : ${checks} vérifications`);
 process.exit(fails ? 1 : 0);
