@@ -7,151 +7,21 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-<style>
-:root{
-  box-sizing:border-box;
-  padding-top:env(safe-area-inset-top,0px);
-  padding-bottom:env(safe-area-inset-bottom,0px);
-  --paper:#F4F6FA;--panel:#FFFFFF;--ink:#1B2333;--muted:#5B6476;--line:#D8DDE7;--soft:#EEF1F6;
-  --grid:rgba(31,79,163,.055);--ok:#1F4FA3;--ko:#D9822B;--mid:#E4E8EF;--focus:#1F4FA3;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --paper:#151A24;--panel:#1C2230;--ink:#E6E9F0;--muted:#9AA3B5;--line:#323A4C;--soft:#232A3A;
-    --grid:rgba(110,155,234,.06);--ok:#6E9BEA;--ko:#F0A65A;--mid:#3A4256;--focus:#8FB3F0;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#151A24;--panel:#1C2230;--ink:#E6E9F0;--muted:#9AA3B5;--line:#323A4C;--soft:#232A3A;
-  --grid:rgba(110,155,234,.06);--ok:#6E9BEA;--ko:#F0A65A;--mid:#3A4256;--focus:#8FB3F0;
-  color-scheme:dark;
-}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*,*::before,*::after{box-sizing:inherit}
-body{
-  margin:0;background-color:var(--paper);
-  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
-  background-size:24px 24px;color:var(--ink);
-  font-family:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-  font-size:15px;line-height:1.45;-webkit-text-size-adjust:100%;
-}
-.page{max-width:1480px;margin:0 auto;padding:28px 20px 40px}
-.top{display:flex;flex-wrap:wrap;gap:18px 40px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
-h1{font-size:clamp(25px,3.2vw,36px);line-height:1.1;margin:0 0 10px;font-weight:700;letter-spacing:-.01em;max-width:22ch}
-.lede{margin:0;color:var(--muted);max-width:70ch}
-.controls{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
-.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
-.seg button{border:0;border-right:1px solid var(--line);background:transparent;padding:7px 13px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;min-height:36px}
-.seg button:last-child{border-right:0}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
-.seg-sm button{padding:5px 9px;font-size:13px;min-height:32px}
-.check{display:inline-flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
-.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:14px;cursor:pointer;min-height:36px}
-.btn-sm{padding:4px 10px;min-height:30px;font-size:13px}
-.btn:hover{border-color:var(--muted)}
-:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
-.views{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;min-width:0}
-.view{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px 16px;min-width:0}
-.view.hero{grid-column:1/-1;border-top:4px solid var(--ink)}
-.view.wide{grid-column:1/-1}
-.view h2{font-size:19px;line-height:1.25;margin:0 0 6px}
-.view.hero h2{font-size:23px}
-.how{margin:0 0 12px;color:var(--muted);font-size:14px;max-width:78ch}
-.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
-.toolbar label{font-size:13.5px;color:var(--muted)}
-select{font:inherit;font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-height:36px}
-.chart{width:100%;overflow-x:auto}
-svg{display:block;max-width:100%;height:auto;font-family:inherit}
-.legend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px;color:var(--muted);margin-top:10px}
-.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
-.bar{display:inline-block;width:130px;height:12px;border-radius:3px;vertical-align:-1px;margin:0 6px}
-.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);max-height:calc(100vh - 24px - env(safe-area-inset-top,0px));overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px}
-.panel h3{font-size:16px;margin:0 0 8px}
-.panel section+section{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
-.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:4px 10px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
-.chip .x{font-size:15px;line-height:1;color:var(--muted)}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 6px}
-.stats div{background:var(--soft);border-radius:8px;padding:8px 10px}
-.stats b{display:block;font-size:20px;line-height:1.15}
-.stats small{color:var(--muted);font-size:12.5px}
-.note{font-size:13px;color:var(--muted);margin:6px 0 0}
-.mini-lab{font-size:13px;color:var(--muted);margin:0 0 4px}
-.empty{color:var(--muted);padding:24px 0;margin:0}
-.tip{position:fixed;z-index:20;left:0;top:0;pointer-events:none;opacity:0;background:var(--ink);color:var(--panel);padding:8px 10px;border-radius:8px;font-size:13px;line-height:1.35;max-width:290px;transition:opacity .12s}
-.tip table{border-collapse:collapse;margin-top:4px}
-.tip td{padding:1px 10px 1px 0;vertical-align:top}
-.tip td+td{opacity:.85}
-.attr{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
-.attr th,.attr td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);font-weight:400}
-.attr thead th{color:var(--muted);font-size:12.5px}
-.attr td.grp{color:var(--muted)}
-.rib{opacity:.5;transition:opacity .15s}
-.rib.ok{fill:var(--ok)}
-.rib.ko{fill:var(--ko)}
-.rib:hover{opacity:.9}
-.blk{fill:var(--ink);cursor:pointer}
-.lbl{font-size:12.5px;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
-.axt{font-size:13px;font-weight:700;fill:var(--ink)}
-.axrm{font-size:15px;fill:var(--muted);cursor:pointer}
-.cell{cursor:pointer}
-.cell.sel{stroke:var(--ink);stroke-width:2.5}
-.ctxt{pointer-events:none;text-anchor:middle;font-size:11px}
-.mlab{font-size:12px;fill:var(--ink)}
-.mlab.g3{font-weight:700}
-.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5}
-.arc:hover{opacity:.85}
-.hatch line{stroke:var(--ink);stroke-width:1.2;opacity:.45}
-.arclbl{font-size:11.5px;fill:var(--ink);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
-.center{fill:var(--soft);cursor:pointer}
-.ctr{text-anchor:middle;fill:var(--ink);pointer-events:none}
-.link{stroke:var(--muted);stroke-opacity:.22;stroke-width:1}
-.link.hi{stroke:var(--ink);stroke-opacity:.9;stroke-width:1.6}
-.node{stroke:var(--panel);stroke-width:1;cursor:pointer}
-.node.hi{stroke:var(--ink);stroke-width:2}
-.node.me{stroke:var(--ink);stroke-width:3}
-.axis text{font-size:11px;fill:var(--muted)}
-.axis path,.axis line{stroke:var(--line)}
-.mini{font-size:11.5px;fill:var(--muted);paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
-.seuil{stroke:var(--ink);stroke-dasharray:3 3;stroke-width:1;opacity:.6}
-.bx-all{fill:var(--soft);stroke:var(--line)}
-.bx-sel{fill:var(--ok);fill-opacity:.22;stroke:var(--ok)}
-.dot{fill:var(--ink);opacity:.3}
-.traj{fill:none;stroke:var(--ink);stroke-width:2.5}
-.trajg{fill:none;stroke:var(--muted);stroke-width:2;opacity:.8}
-.trend{fill:none;stroke:var(--ok);stroke-width:2.5}
-.fake{margin:0 0 12px;padding:12px 14px;background:var(--soft);border-radius:10px}
-.fake[hidden]{display:none}
-.fake-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 12px}
-.fake-fields label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
-.fake-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.foot{margin-top:24px;color:var(--muted);font-size:13px;max-width:90ch}
-@media (max-width:1150px){.layout{grid-template-columns:1fr}.panel{position:static;max-height:none}}
-@media (max-width:780px){.views{grid-template-columns:1fr}.page{padding:20px 14px 32px}.view{padding:14px}}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
-
-/* ---------- Placeholders de visualisation (scaffold) ---------- */
-.viz-placeholder{display:flex;align-items:center;justify-content:center;text-align:center;min-height:240px;padding:20px;
-  border:2px dashed var(--line);border-radius:10px;background:var(--soft);color:var(--muted);font-size:14px;line-height:1.4}
-.viz-placeholder small{display:block;margin-top:4px;font-size:12.5px;opacity:.85}
-.viz-placeholder--hero{min-height:360px}
-.viz-placeholder--graph{min-height:420px}
-.viz-placeholder--sunburst{min-height:380px}
-.viz-placeholder--matrix{min-height:340px}
-.viz-placeholder--panel{min-height:130px;padding:12px;font-size:13px}
-</style>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/views/parallel-sets.css">
+<link rel="stylesheet" href="css/views/correlation-matrix.css">
+<link rel="stylesheet" href="css/views/sunburst.css">
+<link rel="stylesheet" href="css/views/similarity-graph.css">
+<link rel="stylesheet" href="css/views/detail-panels.css">
 </head>
 <body>
 <!--
-  SCAFFOLD : cette page est le squelette de VisuMaquetteData.html sans aucune visualisation.
-  - Mise en page, navigation, commandes et styles sont conservés.
-  - Chaque visualisation est remplacée par un <div class="viz-placeholder" id="viz-…" data-viz="…">.
-  - Contrats de données et conventions : docs/visualisations.md, docs/architecture.md, docs/data-contracts.md.
-  - Le motif de hachures (<pattern id="hatch">) utilisé par le sunburst n'est plus défini ici : voir le placeholder C.
+  Page de l'application. Aucune donnée ni aucun code de visualisation ici :
+  - les données sont lues dans data/*.csv avec d3.csv() (js/data.js) ;
+  - chaque visualisation est dessinée dans son conteneur #viz-… par un module de js/views/ ;
+  - architecture : docs/architecture.md · contrats de données : docs/data-contracts.md · conventions : docs/conventions.md.
 -->
 <div class="page">
   <header class="top">
@@ -167,6 +37,8 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
       <button type="button" class="btn" id="reset">Tout réinitialiser</button>
     </div>
   </header>
+
+  <div id="status" class="status" role="status" aria-live="polite" hidden></div>
 
   <div class="layout">
     <main class="views">
@@ -188,15 +60,13 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
           VIZ A — Ensembles parallèles (Parallel Sets)         [Quentin ELLEON]
           Chart  : parallel sets, un segment par catégorie (largeur = n), des bandes entre axes voisins (largeur = n),
                    teinte de la bande = réussite (bleu) / échec (orange).
-          Data   : élèves de la sélection partagée. Axes catégoriels : school, sex, address, alc, absCat, risque,
+          Data   : derived.selection (zooms de A inclus : le diagramme se réétalonne). Axes catégoriels : school, sex, address, alc, absCat, risque,
                    tendance, reussite (dernier axe fixe). Quantitatifs déjà découpés en classes (cf. docs/data-contracts.md).
           Interact: clic sur un segment = zoom (state.drill) + fil d'Ariane ; survol = n et % de réussite ;
                    axes déplaçables / ajout via #addAxis ; chemin de l'élève sélectionné surligné ; curseurs studytime/goout (panneau).
           Docs   : docs/visualisations.md#a-ensembles-parallèles
         -->
-        <div id="viz-parallel-sets" class="viz-placeholder viz-placeholder--hero" data-viz="parallel-sets" data-chart="parallel-sets" data-owner="Quentin ELLEON" data-source="selection">
-          <div>TODO : ensembles parallèles (A)<small>Parallel sets : école, sexe, milieu, alcool, absences, risque, tendance, réussite</small></div>
-        </div>
+        <div id="viz-parallel-sets" class="chart" data-viz="parallel-sets" data-chart="parallel-sets" data-owner="Quentin ELLEON" data-source="selection"></div>
         <div class="legend"><span><i class="sw" style="background:var(--ok)"></i>Note finale de 10 ou plus</span><span><i class="sw" style="background:var(--ko)"></i>Note finale sous 10</span></div>
       </section>
 
@@ -216,9 +86,7 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
           Docs   : docs/visualisations.md#b-matrice-de-corrélation
           Remplir aussi #bLegend (légende) et #bInfo (effectif et rappel « un lien n'est pas une cause »).
         -->
-        <div id="viz-correlation-matrix" class="viz-placeholder viz-placeholder--matrix" data-viz="correlation-matrix" data-chart="heatmap" data-owner="Jim LAINEL" data-source="selection">
-          <div>TODO : matrice de corrélation (B)<small>Heatmap de Spearman, échelle divergente −1 à +1</small></div>
-        </div>
+        <div id="viz-correlation-matrix" class="chart" data-viz="correlation-matrix" data-chart="heatmap" data-owner="Jim LAINEL" data-source="selection"></div>
         <div class="legend" id="bLegend"></div>
         <p class="note" id="bInfo"></p>
       </section>
@@ -239,13 +107,11 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
                    Angle = nombre d'élèves, couleur = taux de réussite (divergent, centré sur la moyenne de la matière).
           Data   : hiérarchie dérivée de la sélection (hors ses propres zooms) ; chaque nœud porte n et nombre de réussites.
           Interact: clic sur un secteur = zoom (state.drill), clic au centre = remonter, survol = n et % de réussite,
-                   secteurs de moins de 10 élèves hachurés (définir ici un <pattern id="hatch"> dans le SVG du module).
+                   secteurs de moins de 10 élèves hachurés (définir un <pattern id="hatch"> dans le SVG du module).
           Docs   : docs/visualisations.md#c-sunburst
           Remplir aussi #cLegend (échelle de couleur + légende des hachures).
         -->
-        <div id="viz-sunburst" class="viz-placeholder viz-placeholder--sunburst" data-viz="sunburst" data-chart="sunburst" data-owner="Alexandre LARGUECH" data-source="selection">
-          <div>TODO : sunburst (C)<small>Angle = n élèves, couleur = taux de réussite, 3 niveaux max</small></div>
-        </div>
+        <div id="viz-sunburst" class="chart" data-viz="sunburst" data-chart="sunburst" data-owner="Alexandre LARGUECH" data-source="selection"></div>
         <div class="legend" id="cLegend"></div>
       </section>
 
@@ -278,9 +144,7 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
           Remplir aussi #dLegend, #dFake (lecture du profil testé) et #dTake (distance de G3 entre voisins vs hasard).
           Attention : 357 / 634 nœuds → limiter les liens pour éviter la pelote.
         -->
-        <div id="viz-similarity-graph" class="viz-placeholder viz-placeholder--graph" data-viz="similarity-graph" data-chart="force-directed-graph" data-owner="Gabriel LOIRAT" data-source="scoped+selection">
-          <div>TODO : graphe de similarité (D)<small>Un nœud par élève, 5 plus proches voisins (Gower), disposition par forces</small></div>
-        </div>
+        <div id="viz-similarity-graph" class="chart" data-viz="similarity-graph" data-chart="force-directed-graph" data-owner="Gabriel LOIRAT" data-source="base+selection"></div>
         <div class="legend" id="dLegend"></div>
         <p class="note" id="dFake" style="font-size:14px;color:var(--ink);max-width:80ch"></p>
         <p class="note" id="dTake" style="font-size:14px;color:var(--ink);max-width:80ch"></p>
@@ -308,9 +172,7 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
           Data   : G3 des élèves de la sélection et de la matière entière.
           Docs   : docs/visualisations.md#panneaux-de-détail-liés
         -->
-        <div id="viz-selection-boxplot" class="viz-placeholder viz-placeholder--panel" data-viz="selection-boxplot" data-chart="boxplot" data-source="selection+base">
-          <div>TODO : boxplot de G3<small>Médiane, quartiles, n, seuil 10/20</small></div>
-        </div>
+        <div id="viz-selection-boxplot" class="chart" data-viz="selection-boxplot" data-chart="boxplot" data-source="selection+base"></div>
         <p class="note" id="panel-small-n" hidden>Moins de 10 élèves, ces chiffres sont fragiles.</p>
       </section>
 
@@ -349,9 +211,7 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
           Data   : G1, G2, G3 de l'élève ; médianes de G1, G2, G3 des élèves évalués de son école et de sa matière.
           Docs   : docs/visualisations.md#panneaux-de-détail-liés
         -->
-        <div id="viz-student-trajectory" class="viz-placeholder viz-placeholder--panel" data-viz="student-trajectory" data-chart="line" data-source="selectedId+base">
-          <div>TODO : trajectoire G1, G2, G3<small>Élève contre médiane de son école</small></div>
-        </div>
+        <div id="viz-student-trajectory" class="chart" data-viz="student-trajectory" data-chart="line" data-source="selectedId+base"></div>
         <!-- Fiche : valeurs à renseigner par le code (colonne « Élève » et colonne « Typique de l'école ») -->
         <table class="attr" id="panel-student-table">
           <thead><tr><th></th><th>Élève</th><th>Typique de l'école</th></tr></thead>
@@ -385,9 +245,7 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
           Data   : valeurs des deux attributs (state.mxPair = [a, b]) pour les élèves de la sélection ; ρ et n dans le texte.
           Docs   : docs/visualisations.md#b-matrice-de-corrélation
         -->
-        <div id="viz-pair-scatter" class="viz-placeholder viz-placeholder--panel" data-viz="pair-scatter" data-chart="scatterplot" data-source="selection+mxPair">
-          <div>TODO : nuage de points de la paire<small>Spearman, jitter, courbe de médianes</small></div>
-        </div>
+        <div id="viz-pair-scatter" class="chart" data-viz="pair-scatter" data-chart="scatterplot" data-source="selection+mxPair"></div>
       </section>
     </aside>
   </div>
@@ -395,11 +253,8 @@ svg{display:block;max-width:100%;height:auto;font-family:inherit}
   <p class="foot">Source, jeu Student Alcohol Consumption (Kaggle), miroir du jeu UCI Student Performance (Cortez et Silva, 2008). Les élèves notés 0 sans aucune absence sont des dossiers non évalués, exclus par défaut. Les deux matières ne sont jamais cumulées. Démonstrateur pédagogique, pas un outil de suivi d'élèves.</p>
 </div>
 
-<!--
-  Scripts : à brancher une fois les modules créés (voir docs/architecture.md).
-  D3 v7.9.0 figé, modules ES, données lues dans data/*.csv avec d3.csv() (page à servir en http://, pas en file://).
-  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-  <script type="module" src="js/main.js"></script>
--->
+<script src="js/guard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
