@@ -1,0 +1,47 @@
+/* Composants partagés : segments, boutons, puces, tuiles, légendes, info-bulle, tableau, axes, statut */
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+.seg button{border:0;border-right:1px solid var(--line);background:transparent;padding:7px 13px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;min-height:36px}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.seg-sm button{padding:5px 9px;font-size:13px;min-height:32px}
+.check{display:inline-flex;gap:8px;align-items:center;font-size:14px;cursor:pointer}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:7px 12px;font:inherit;font-size:14px;cursor:pointer;min-height:36px}
+.btn-sm{padding:4px 10px;min-height:30px;font-size:13px}
+.btn:hover{border-color:var(--muted)}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:0 0 12px}
+.toolbar label{font-size:13.5px;color:var(--muted)}
+select{font:inherit;font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;min-height:36px}
+.chart{width:100%;overflow-x:auto}
+svg{display:block;max-width:100%;height:auto;font-family:inherit}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;font-size:13px;color:var(--muted);margin-top:10px}
+.sw{display:inline-block;width:14px;height:14px;border-radius:3px;vertical-align:-2px;margin-right:6px}
+.bar{display:inline-block;width:130px;height:12px;border-radius:3px;vertical-align:-1px;margin:0 6px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--soft);border-radius:999px;padding:4px 10px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.chip .x{font-size:15px;line-height:1;color:var(--muted)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 6px}
+.stats div{background:var(--soft);border-radius:8px;padding:8px 10px}
+.stats b{display:block;font-size:20px;line-height:1.15}
+.stats small{color:var(--muted);font-size:12.5px}
+.note{font-size:13px;color:var(--muted);margin:6px 0 0}
+.mini-lab{font-size:13px;color:var(--muted);margin:0 0 4px}
+.empty{color:var(--muted);padding:24px 0;margin:0}
+.tip{position:fixed;z-index:20;left:0;top:0;pointer-events:none;opacity:0;background:var(--ink);color:var(--panel);padding:8px 10px;border-radius:8px;font-size:13px;line-height:1.35;max-width:290px;transition:opacity .12s}
+.tip table{border-collapse:collapse;margin-top:4px}
+.tip td{padding:1px 10px 1px 0;vertical-align:top}
+.tip td+td{opacity:.85}
+.attr{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+.attr th,.attr td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);font-weight:400}
+.attr thead th{color:var(--muted);font-size:12.5px}
+.attr td.grp{color:var(--muted)}
+.axis text{font-size:11px;fill:var(--muted)}
+.axis path,.axis line{stroke:var(--line)}
+.mini{font-size:11.5px;fill:var(--muted);paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
+.seuil{stroke:var(--ink);stroke-dasharray:3 3;stroke-width:1;opacity:.6}
+
+.status{margin:0 0 16px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel);font-size:14px}
+.status.error{border-color:var(--ko);color:var(--ink)}
+.status[hidden]{display:none}
+.status code{background:var(--soft);padding:1px 5px;border-radius:4px}

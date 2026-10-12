@@ -1,0 +1,6 @@
+/* Vue B : matrice de corrélation */
+.cell{cursor:pointer}
+.cell.sel{stroke:var(--ink);stroke-width:2.5}
+.ctxt{pointer-events:none;text-anchor:middle;font-size:11px}
+.mlab{font-size:12px;fill:var(--ink)}
+.mlab.g3{font-weight:700}

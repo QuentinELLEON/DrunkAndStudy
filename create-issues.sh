@@ -31,33 +31,34 @@ issue() { # titre, label, fichier-corps (stdin)
 
 echo "== Issues =="
 
-issue "Setup : socle (données, état partagé, styles, panneaux)" setup <<EOF
+issue "Setup : socle (données, état partagé, styles, panneaux) : revue et finalisation" setup <<EOF
 ## Objectif
-Créer le socle que toutes les vues utilisent, pour que A, B, C, D et les panneaux puissent être branchés en parallèle.
+Valider et finaliser le socle que toutes les vues utilisent. Il est **déjà écrit** dans la branche \`$BRANCH\` ; cette issue sert à le relire, trancher les points ouverts et le fusionner pour que A, B, C, D et les panneaux soient développés en parallèle.
 
-**Placeholder** : tous les \`#viz-…\` de \`index.html\` (les modules de vue sont dans les autres issues).
+**Conteneurs** : tous les \`#viz-…\` de \`index.html\` (vides ; chaque module de vue est dans sa propre issue).
 
-## Périmètre
-- \`js/data.js\` : chargement \`d3.csv()\` de \`data/student-mat.csv\` et \`student-por.csv\`, typage, drapeau non-évalué, attributs dérivés (\`reussite\`, \`risque\`, \`pedu\`, \`alc\`, \`absCat\`, \`prog\`, \`tendance\`), \`derive()\` → \`base\`, \`selection\`, \`exceptSrc(src)\`, \`selected\`.
-- \`js/meta.js\` : libellés, domaines ordonnés, listes d'attributs par vue (\`PSET_DEFAULT\`, \`MATRIX_KEYS\`, \`SUN_DEFAULT\`, \`SIMILARITY_KEYS\`, \`NEIGHBORS = 5\`).
-- \`js/state.js\` : état unique + \`setState\` + événement \`change\`.
-- \`js/stats.js\` : rangs, Spearman, quartiles, Gower, k plus proches voisins (fonctions pures, testées).
-- \`js/utils.js\` : formats français, couleurs lues dans le CSS, info-bulle, aide d'accessibilité.
-- \`js/main.js\` : chargement asynchrone, rendu dans \`requestAnimationFrame\`, appel de \`init\` / \`update\` sur chaque module.
-- \`js/controls/\` : \`header.js\` (matière, non-évalués, réinitialiser), \`selectionPanel.js\` (puces, tuiles, curseurs studytime et goout), \`studentCard.js\` (fiche élève).
-- \`css/\` : extraire le CSS inline de \`index.html\` en \`tokens.css\`, \`layout.css\`, \`components.css\`, \`views/*.css\`.
-- \`tools/test-stats.mjs\` : rétablir les tests (le script importe \`js/stats.js\`, \`data.js\`, \`meta.js\`).
+## Déjà en place (à relire)
+- [x] \`js/data.js\` : chargement \`d3.csv()\` des deux CSV, typage, attributs dérivés (\`reussite\`, \`risque\`, \`pedu\`, \`alc\`, \`absCat\`, \`prog\`, \`tendance\`), \`derive()\` → \`base\`, \`selection\`, \`exceptSrc(src)\`, \`selected\`.
+- [x] \`js/meta.js\`, \`js/state.js\`, \`js/stats.js\` (Spearman, Gower, k plus proches voisins), \`js/utils.js\`, \`js/main.js\`.
+- [x] \`js/controls/\` : en-tête, panneau de sélection (puces, tuiles, curseurs), fiche élève.
+- [x] \`css/\` extrait de \`index.html\` (tokens, layout, components, un fichier par vue).
+- [x] \`tools/test-stats.mjs\` : 65 vérifications dont les chiffres de référence (\`npm test\`).
+- [x] Coquilles \`js/views/*.js\` branchées sur \`main.js\`.
 
-## Données
-Voir le contrat \`docs/data-contracts.md\` (élève, état partagé, sous-ensembles dérivés).
+## Reste à faire
+- [ ] Relecture par un autre membre de l'équipe, fusion dans \`main\`.
+- [ ] Trancher : codes stockés des dérivés (\`"oui"\` / \`"baisse"\` plutôt que les libellés du prototype), voir \`docs/data-contracts.md\`.
+- [ ] Trancher : seuil du « pas de lien net » dans B (|ρ| < 0,1 ou seuil de signification).
+- [ ] Recalculer les écarts de G3 voisins / hasard avec 5 voisins (3,3 / 3,6 et 2,5 / 3,1 dans la source) et corriger la doc si besoin.
+- [ ] Vérifier le rendu clair et sombre, le clavier et 390 px sur les contrôles existants.
+- [ ] Option : mode hors ligne (D3 en local), message si le CDN est inaccessible (déjà affiché).
 
 ## Critères d'acceptation
-- [ ] Les deux matières se chargent ; les non-évalués sont exclus par défaut (38 / 15) et réinclus par la case.
-- [ ] Élèves évalués : 357 en maths, 634 en portugais.
-- [ ] Risque 2 ou plus : 42 / 67 ; tendance baisse / stable / hausse : 34 / 245 / 78 et 20 / 461 / 153.
-- [ ] \`node tools/test-stats.mjs\` passe.
-- [ ] Un module de vue peut être branché avec \`init(container)\` / \`update(state, derived)\` sans toucher aux autres.
-- [ ] Mode clair et sombre fonctionnels, aucune erreur en console.
+- [ ] \`npm test\` passe.
+- [ ] Les deux matières se chargent ; non-évalués exclus par défaut (38 / 15), 357 / 634 élèves évalués.
+- [ ] Changer de matière ou de « non évalués » remet la sélection à zéro.
+- [ ] Un module de vue se branche avec \`init(container)\` / \`update(state, derived)\` sans toucher aux autres.
+- [ ] Aucune erreur en console ; message explicite en \`file://\`.
 
 ## Docs
 - $DOCS/architecture.md
@@ -66,7 +67,7 @@ Voir le contrat \`docs/data-contracts.md\` (élève, état partagé, sous-ensemb
 EOF
 
 issue "Visualisation A : ensembles parallèles (Parallel Sets)" visualization <<EOF
-**Placeholder** : \`#viz-parallel-sets\` (\`data-viz="parallel-sets"\`)
+**Conteneur** : \`#viz-parallel-sets\` (\`data-viz="parallel-sets"\`)
 **Module** : \`js/views/parallelSets.js\` · **Membre** : Quentin ELLEON
 **Type de graphique** : ensembles parallèles
 
@@ -100,7 +101,7 @@ Principale : U1-3, U1-5, U2-3, U2-4, U2-5. Secondaire : U1-1, U1-2, U1-4, U2-1.
 EOF
 
 issue "Visualisation B : matrice de corrélation de Spearman" visualization <<EOF
-**Placeholder** : \`#viz-correlation-matrix\` (\`data-viz="correlation-matrix"\`)
+**Conteneur** : \`#viz-correlation-matrix\` (\`data-viz="correlation-matrix"\`)
 **Module** : \`js/views/correlationMatrix.js\` · **Membre** : Jim LAINEL
 **Type de graphique** : heatmap (triangle inférieur)
 
@@ -133,7 +134,7 @@ Principale : U1-1. Secondaire : U2-3.
 EOF
 
 issue "Visualisation C : sunburst" visualization <<EOF
-**Placeholder** : \`#viz-sunburst\` (\`data-viz="sunburst"\`)
+**Conteneur** : \`#viz-sunburst\` (\`data-viz="sunburst"\`)
 **Module** : \`js/views/sunburst.js\` · **Membre** : Alexandre LARGUECH
 **Type de graphique** : sunburst
 
@@ -165,7 +166,7 @@ Principale : U1-2, U2-1. Secondaire : U1-3, U2-4, U2-5.
 EOF
 
 issue "Visualisation D : graphe de similarité d'élèves" visualization <<EOF
-**Placeholder** : \`#viz-similarity-graph\` (\`data-viz="similarity-graph"\`)
+**Conteneur** : \`#viz-similarity-graph\` (\`data-viz="similarity-graph"\`)
 **Module** : \`js/views/similarityGraph.js\` (+ \`stats.gower\`, \`stats.knn\`) · **Membre** : Gabriel LOIRAT
 **Type de graphique** : graphe nœuds-liens, disposition par forces
 
@@ -199,7 +200,7 @@ Principale : U1-4, U2-2. Secondaire : U1-3, U1-5.
 EOF
 
 issue "Panneau de détail : boxplot de G3 de la sélection" visualization <<EOF
-**Placeholder** : \`#viz-selection-boxplot\` (\`data-viz="selection-boxplot"\`)
+**Conteneur** : \`#viz-selection-boxplot\` (\`data-viz="selection-boxplot"\`)
 **Module** : \`js/views/selectionBox.js\` · **Type de graphique** : boxplot horizontal
 
 ## Données
@@ -223,7 +224,7 @@ U1-2, U2-1 (distribution de G3 du groupe, médiane).
 EOF
 
 issue "Panneau de détail : trajectoire G1, G2, G3 de l'élève" visualization <<EOF
-**Placeholder** : \`#viz-student-trajectory\` (\`data-viz="student-trajectory"\`)
+**Conteneur** : \`#viz-student-trajectory\` (\`data-viz="student-trajectory"\`)
 **Module** : \`js/views/studentTrajectory.js\` · **Type de graphique** : courbe à 3 points
 
 ## Données
@@ -247,7 +248,7 @@ U1-4, U1-5.
 EOF
 
 issue "Panneau de détail : nuage de points d'une paire (clic dans B)" visualization <<EOF
-**Placeholder** : \`#viz-pair-scatter\` (\`data-viz="pair-scatter"\`)
+**Conteneur** : \`#viz-pair-scatter\` (\`data-viz="pair-scatter"\`)
 **Module** : \`js/views/pairScatter.js\` · **Type de graphique** : nuage de points
 
 ## Données
