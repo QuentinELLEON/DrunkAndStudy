@@ -66,12 +66,12 @@ Une seule chaîne de filtres est calculée **une fois par rendu** :
 ```
 rows ─(matière, non-évalués exclus par défaut)→ base
      ─(state.drill, state.slide)→ selection
-     ─(selection sans les contraintes d'une source)→ exceptSrc("pset" | "sun")
+     ─(selection sans les contraintes d'une source)→ exceptSrc("sun")
 ```
 
 - `base` sert aux comparaisons (moyenne de la matière, médiane de l'école) et à la disposition du graphe D.
 - `selection` alimente B, les tuiles, les panneaux de détail et l'opacité dans D.
-- `exceptSrc(src)` alimente A et C : la vue qui pose un zoom continue à afficher la population qu'elle zoome, et non la sélection déjà réduite.
+- `exceptSrc(src)` alimente C : le sunburst reste entier quand on y zoome. A, elle, dessine `selection` : son zoom réduit le diagramme.
 
 Exclure les non-évalués change les conclusions : sur 395 élèves de mathématiques, r(absences, G3) = **+0,034** avec eux et **−0,213** sans eux (vérifié par `tools/test-stats.mjs`). L'exclusion est donc activée par défaut et **affichée** ; la case permet de les réinclure.
 
@@ -83,7 +83,7 @@ Tâches : U1-3, U1-5, U2-3, U2-4, U2-5 (principale) ; U1-1, U1-2, U1-4, U2-1 (se
 
 | Étape | Contenu |
 |---|---|
-| **Données utilisées** | `exceptSrc("pset")` |
+| **Données utilisées** | `selection` (zooms de A inclus) |
 | **Transformation** | catégorie de chaque élève pour chaque axe de `state.psetAxes` (`school`, `sex`, `address`, `alc`, `absCat`, `risque` réuni en 0 / 1 / 2 ou plus, `tendance`, `reussite`) ; effectif par catégorie ; effectif par passage entre deux axes voisins, séparé par `reussite` |
 | **Marques** | un segment par catégorie et par axe ; un ruban par croisement |
 | **Canaux** | *hauteur du segment* et *épaisseur du ruban* = nombre d'élèves ; *teinte* = réussite (bleu) ou échec (orange) ; *pointillés* = chemin de l'élève sélectionné |

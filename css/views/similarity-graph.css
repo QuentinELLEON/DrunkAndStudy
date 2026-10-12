@@ -1,0 +1,11 @@
+/* Vue D : graphe de similarité et formulaire de profil fictif */
+.link{stroke:var(--muted);stroke-opacity:.22;stroke-width:1}
+.link.hi{stroke:var(--ink);stroke-opacity:.9;stroke-width:1.6}
+.node{stroke:var(--panel);stroke-width:1;cursor:pointer}
+.node.hi{stroke:var(--ink);stroke-width:2}
+.node.me{stroke:var(--ink);stroke-width:3}
+.fake{margin:0 0 12px;padding:12px 14px;background:var(--soft);border-radius:10px}
+.fake[hidden]{display:none}
+.fake-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px 12px}
+.fake-fields label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.fake-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
