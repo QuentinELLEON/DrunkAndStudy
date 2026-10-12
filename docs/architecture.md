@@ -5,7 +5,7 @@ Ce document décrit comment le code est organisé pour que chaque visualisation 
 ## Principes
 
 1. **Une page, aucune donnée dans le HTML.** `index.html` ne contient que la structure, les styles et des conteneurs. Les CSV sont lus dans `data/` avec `d3.csv()`.
-2. **Une visualisation = un module = un conteneur.** Chaque placeholder `#viz-…` de `index.html` est rempli par un seul fichier de `js/views/`.
+2. **Une visualisation = un module = un conteneur.** Chaque conteneur `#viz-…` de `index.html` (vide au départ) est rempli par un seul fichier de `js/views/`.
 3. **Un état unique.** Les vues ne s'appellent jamais entre elles. Elles écrivent dans l'état (`setState`) et `main.js` redessine tout à partir de cet état.
 4. **Des fonctions pures pour les calculs.** Tout ce qui se calcule sans navigateur (Spearman, Gower, k plus proches voisins, découpage en classes) vit dans `js/stats.js` et `js/data.js` et se teste avec Node.
 5. **D3 v7.9.0 en module ES**, chargé depuis le CDN avec version figée, sans bundler.
@@ -14,8 +14,9 @@ Ce document décrit comment le code est organisé pour que chaque visualisation 
 
 ```
 DrunkAndStudy/
-├── index.html                   squelette de la page : mise en page, commandes, placeholders #viz-…
+├── index.html                   page : mise en page, commandes, conteneurs vides #viz-…
 ├── README.md                    présentation, lancement, structure
+├── package.json                 scripts start et test, "type": "module"
 ├── css/
 │   ├── tokens.css               variables (couleurs, thème clair / sombre), reset
 │   ├── layout.css               .page, .layout, .views, .view, .panel, responsive
@@ -38,7 +39,8 @@ DrunkAndStudy/
 │   ├── pipeline.md              données brutes → variables visuelles
 │   └── conception.md            choix de conception, conformité aux consignes
 ├── js/
-│   ├── main.js                  initialisation, chargement, boucle de rendu
+│   ├── main.js                  chargement D3, initialisation, boucle de rendu
+│   ├── guard.js                 script classique : message explicite en file://
 │   ├── state.js                 état global + setState + événement « change »
 │   ├── data.js                  chargement, typage, non-évalués, attributs dérivés, filtres (derive)
 │   ├── meta.js                  libellés, domaines ordonnés, listes d'attributs par vue
@@ -72,7 +74,7 @@ export function init(container) { /* crée le SVG / canvas dans container, branc
 export function update(state, derived) { /* redessine à partir de state et derived, sans effet de bord */ }
 ```
 
-- `container` est l'élément `#viz-…` correspondant. `init` doit **retirer la classe `viz-placeholder`** et vider le contenu TODO avant de dessiner.
+- `container` est l'élément `#viz-…` correspondant. `init` reçoit un conteneur vide (`prepareContainer` de `utils.js` le vide et pose `data-ready`) et dessine dedans.
 - `derived` contient les sous-ensembles calculés une seule fois par rendu (voir [`data-contracts.md`](data-contracts.md)).
 - Une vue modifie l'état uniquement avec `setState({...})`. Elle ne touche ni au DOM d'une autre vue ni à `derived`.
 - Une vue lit les couleurs dans les variables CSS (`getComputedStyle`) à chaque `update`, pour suivre le thème.
@@ -102,7 +104,7 @@ state.js (ds, inclNE, drill, slide, selectedId, mxPair, ghost, colorBy)
 | « Tester un profil » (D) | renseigne `state.ghost` : nœud fictif relié à ses 5 plus proches voisins |
 | Changement de matière ou de « non évalués » | recharge la base, remet à zéro `drill`, `selectedId`, `mxPair`, `ghost` |
 
-Les zooms de A et de C sont indépendants de leur propre rendu : chaque vue dessine `exceptSrc("pset")` ou `exceptSrc("sun")` (la sélection privée de ses propres contraintes) pour que le zoom ne vide pas la vue qui l'a posé.
+A dessine `selection` : son zoom réduit le diagramme aux élèves gardés et le réétalonne (fil d'Ariane pour revenir). C dessine `exceptSrc("sun")`, la sélection privée de ses propres contraintes, pour que le sunburst reste entier et que son zoom ne fasse que changer la racine affichée.
 
 ## Découpage du travail
 
@@ -114,4 +116,4 @@ Les zooms de A et de C sont indépendants de leur propre rendu : chaque vue dess
 | D, graphe de similarité | Gabriel LOIRAT | `js/views/similarityGraph.js`, `stats.gower` et `stats.knn`, `css/views/similarity-graph.css` |
 | Socle partagé | à répartir (voir issue « setup ») | `state.js`, `data.js`, `meta.js`, `stats.js`, `utils.js`, `main.js`, `css/tokens.css`, `css/layout.css`, `css/components.css`, `controls/*`, `selectionBox.js`, `studentTrajectory.js` |
 
-Le socle doit être fusionné avant que les vues puissent être branchées. Les vues peuvent en revanche être développées en parallèle sur des données de test.
+Le socle (`state`, `data`, `meta`, `stats`, `utils`, `main`, `controls/*`, CSS) est en place et testé (`npm test`). Les sept modules de `js/views/` sont des coquilles vides branchées sur `main.js` : chacun peut être développé en parallèle sans toucher aux autres. Restent à écrire pour le socle : `selectionBox.js` et `studentTrajectory.js` (panneaux graphiques).
