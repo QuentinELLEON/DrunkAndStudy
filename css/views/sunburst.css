@@ -1,7 +1,10 @@
 /* Vue C : sunburst */
-.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5}
+.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5;transition:opacity .15s}
 .arc:hover{opacity:.85}
+.arc:focus-visible{outline:none;stroke:var(--focus);stroke-width:2.5;stroke-linejoin:round}
 .hatch line{stroke:var(--ink);stroke-width:1.2;opacity:.45}
 .arclbl{font-size:11.5px;fill:var(--ink);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
-.center{fill:var(--soft);cursor:pointer}
+.center{fill:var(--soft);cursor:pointer;transition:fill .15s}
+.center:hover{fill:var(--mid)}
+.center:focus-visible{outline:none;stroke:var(--focus);stroke-width:2.5}
 .ctr{text-anchor:middle;fill:var(--ink);pointer-events:none}
