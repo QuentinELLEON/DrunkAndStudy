@@ -3,242 +3,196 @@
 //
 // Entrées : derived.exceptSrc("sun"), state.sunLevels (3 niveaux au plus, meta.SUN_DIMS) ; d3.group → d3.hierarchy → d3.partition
 // Interactions :
-//   - Clic sur un secteur : zoom (state.drill, src: "sun") pour chaque ancêtre jusqu'au secteur
+//   - Clic sur un secteur : zoom (state.drill, src: "sun") pour chaque ancêtre jusqu'au secteur ; second clic = remonter d'un cran
 //   - Clic au centre : retour (retire les filtres src "sun")
 //   - Survol : chemin complet, n, % de réussite, mention prudence si n < 10
 //   - Sélecteurs #sb0, #sb1, #sb2 pour changer les dimensions des anneaux
 //   - Légende divergente et hachures dans #cLegend
 //   - Hachures <pattern id="sun-hatch"> définies dans le SVG du module pour les secteurs n < meta.SMALL_N
+//
+// Règles de cohérence :
+//   - un anneau dont l'attribut est déjà fixé par une contrainte d'une autre vue (drill hors "sun") est retiré
+//     (un seul secteur par anneau n'apprend rien) ; on complète pour garder au moins 2 anneaux ;
+//   - les élèves sans valeur sur un anneau (ex. non-évalués pour « risque ») sont écartés partout, de sorte que
+//     la somme des enfants égale toujours le parent ; leur nombre est indiqué sous le graphique.
 
 import { SUN_DIMS, SUN_MAX_LEVELS, SMALL_N, DIMS, dimLabel, valueName, valueShort } from "../meta.js";
-import { setState } from "../state.js";
-import { rate, evaluated, okCount } from "../data.js";
-import { colors, pct, showTip, hideTip, moveTip, prepareContainer } from "../utils.js";
+import { state as appState, setState } from "../state.js";
+import { rate, okCount } from "../data.js";
+import { colors, pct, showTip, hideTip, moveTip, prepareContainer, makeActionable } from "../utils.js";
+
+const MIN_LEVELS = 2;
+const same = (a, b) => String(a) === String(b);
 
 let host = null;
 let controlsInitialized = false;
 
-/**
- * Filtre les niveaux d'anneaux valides :
- * - dimensions reconnues dans SUN_DIMS
- * - pas de doublons
- * - au plus 3 niveaux
- */
-function activeLevels(st) {
+export function activeLevels(st) {
   const lv = [];
-  const req = Array.isArray(st.sunLevels) ? st.sunLevels : [];
-  req.forEach((d) => {
+  (Array.isArray(st && st.sunLevels) ? st.sunLevels : []).forEach((d) => {
     if (d && SUN_DIMS.includes(d) && !lv.includes(d)) lv.push(d);
   });
   return lv.slice(0, SUN_MAX_LEVELS);
 }
 
-/**
- * Initialisation unique du module : vide le placeholder et câble les sélecteurs #sb0, #sb1, #sb2.
- */
-export function init(container) {
-  host = prepareContainer(container);
-
-  if (!controlsInitialized) {
-    [0, 1, 2].forEach((i) => {
-      const sel = document.getElementById(`sb${i}`);
-      if (!sel) return;
-      sel.addEventListener("change", (e) => {
-        const val = e.target.value;
-        const current = activeLevels(window.__appState || { sunLevels: [] });
-        const next = [0, 1, 2].map((idx) => {
-          if (idx === i) return val;
-          return current[idx] || "";
-        }).filter(Boolean);
-        // Retirer les doublons si l'utilisateur a choisi la même dimension
-        const dedup = [];
-        next.forEach((d) => { if (!dedup.includes(d)) dedup.push(d); });
-        setState({ sunLevels: dedup });
-      });
-    });
-    controlsInitialized = true;
+export function effectiveLevels(requested, drill) {
+  const fixed = new Set((drill || []).filter((f) => f.src !== "sun").map((f) => f.dim));
+  const lv = requested.filter((d) => !fixed.has(d));
+  for (const d of SUN_DIMS) {
+    if (lv.length >= Math.min(MIN_LEVELS, requested.length || MIN_LEVELS)) break;
+    if (!fixed.has(d) && !lv.includes(d)) lv.push(d);
   }
+  return lv.slice(0, SUN_MAX_LEVELS);
 }
 
-/**
- * Met à jour les options et la sélection des menus déroulants #sb0, #sb1, #sb2.
- */
+export function computeSunburstTree(rows, levels) {
+  const usable = rows.filter((r) => levels.every((d) => r[d] !== null && r[d] !== undefined));
+  const build = (list, depth, path) => {
+    const node = { n: list.length, ok: okCount(list), rate: rate(list), path, children: null };
+    if (depth < levels.length) {
+      const dim = levels[depth];
+      const groups = new Map();
+      list.forEach((r) => {
+        if (!groups.has(r[dim])) groups.set(r[dim], []);
+        groups.get(r[dim]).push(r);
+      });
+      const order = (DIMS[dim] && DIMS[dim].order) || Array.from(groups.keys()).sort();
+      const kids = order.filter((v) => groups.has(v)).map((v) => {
+        const child = build(groups.get(v), depth + 1, path.concat([{ dim, value: v }]));
+        child.dim = dim;
+        child.value = v;
+        return child;
+      });
+      if (kids.length) node.children = kids;
+    }
+    return node;
+  };
+  return { tree: build(usable, 0, []), excluded: rows.length - usable.length };
+}
+
+// ---------- Contrôles ----------
+
+export function init(container) {
+  host = prepareContainer(container);
+  if (controlsInitialized) return;
+  [0, 1, 2].forEach((i) => {
+    const sel = document.getElementById(`sb${i}`);
+    if (!sel) return;
+    sel.addEventListener("change", (e) => {
+      const val = e.target.value;
+      const current = activeLevels(appState);
+      const prev = current[i] || "";
+      const next = [0, 1, 2].map((idx) => (idx === i ? val : current[idx] || ""));
+      // Choisir une dimension déjà utilisée ailleurs : on échange les deux anneaux
+      const dup = next.findIndex((d, idx) => idx !== i && d && d === val);
+      if (val && dup !== -1) next[dup] = prev;
+      const lv = [];
+      next.filter(Boolean).forEach((d) => { if (!lv.includes(d)) lv.push(d); });
+      // Les zooms posés par C portent sur les anciens anneaux : on les retire
+      setState({ sunLevels: lv, drill: appState.drill.filter((f) => f.src !== "sun") });
+    });
+  });
+  controlsInitialized = true;
+}
+
 function updateToolbar(levels) {
   [0, 1, 2].forEach((i) => {
     const sel = document.getElementById(`sb${i}`);
     if (!sel) return;
-
-    // Remplir les options si vide
     if (!sel.options.length) {
-      sel.replaceChildren();
-      const dims = i === 2 ? [""].concat(SUN_DIMS) : (i === 1 ? [""].concat(SUN_DIMS) : SUN_DIMS);
-      dims.forEach((d) => {
+      (i === 0 ? SUN_DIMS : [""].concat(SUN_DIMS)).forEach((d) => {
         const opt = document.createElement("option");
         opt.value = d;
         opt.textContent = d ? dimLabel(d) : "Aucun";
         sel.appendChild(opt);
       });
     }
-
     sel.value = levels[i] || "";
   });
 }
 
-/**
- * Construit l'arbre hiérarchique récursif :
- * { key, dim, value, n, ok, rate, path, children }
- */
-function buildTree(list, depth, levels, pathSoFar) {
-  const n = list.length;
-  const ok = okCount(list);
-  const nodeRate = n ? ok / n : NaN;
-  const node = {
-    n,
-    ok,
-    rate: nodeRate,
-    path: pathSoFar,
-    children: null,
-  };
+// ---------- Rendu ----------
 
-  if (depth < levels.length) {
-    const dim = levels[depth];
-    const grouped = new Map();
-    list.forEach((r) => {
-      const v = r[dim];
-      if (v !== null && v !== undefined) {
-        if (!grouped.has(v)) grouped.set(v, []);
-        grouped.get(v).push(r);
-      }
-    });
-
-    const dimMeta = DIMS[dim];
-    const order = (dimMeta && dimMeta.order) ? dimMeta.order : Array.from(grouped.keys());
-
-    // N'inclure que les valeurs effectivement présentes dans la sous-population
-    const childNodes = order
-      .filter((v) => grouped.has(v) && grouped.get(v).length > 0)
-      .map((v) => {
-        const subList = grouped.get(v);
-        const childPath = pathSoFar.concat([{ dim, value: v }]);
-        const child = buildTree(subList, depth + 1, levels, childPath);
-        child.dim = dim;
-        child.key = dim;
-        child.value = v;
-        child.v = v;
-        return child;
-      });
-
-    if (childNodes.length > 0) {
-      node.children = childNodes;
-    }
-  }
-
-  return node;
+function updateLegend(baseRate) {
+  const legendEl = document.getElementById("cLegend");
+  if (!legendEl) return;
+  const basePct = Number.isFinite(baseRate) ? pct(baseRate) : "–";
+  legendEl.innerHTML = `
+    <span>Moins de réussite que la moyenne
+      <i class="bar sun-bar" aria-hidden="true"></i>
+      Plus de réussite (moyenne de la matière : ${basePct})</span>
+    <span><i class="sun-hatch-swatch" aria-hidden="true"></i>Moins de ${SMALL_N} élèves : à lire avec prudence</span>
+  `;
 }
 
-/**
- * Rendu principal du sunburst.
- */
+function message(text) {
+  const p = document.createElement("p");
+  p.className = "empty";
+  p.textContent = text;
+  host.appendChild(p);
+}
+
 export function update(state, derived) {
   if (!host) return;
 
-  // Référence pour les handlers d'événements
-  window.__appState = state;
+  const requested = activeLevels(state);
+  updateToolbar(requested);
 
-  const levels = activeLevels(state);
-  updateToolbar(levels);
-
-  const legendEl = document.getElementById("cLegend");
-
-  // Données de C : exceptSrc("sun") (la sélection sans les filtres de zoom du sunburst lui-même)
   const rows = derived.exceptSrc ? derived.exceptSrc("sun") : [];
   const baseRate = rate(derived.base || []);
-  const themeColors = colors();
-
-  // Mise à jour de la légende dans #cLegend
-  if (legendEl) {
-    const basePct = Number.isFinite(baseRate) ? pct(baseRate) : "moyenne";
-    legendEl.innerHTML = `
-      <span>Moins de réussite<i class="bar" style="background:linear-gradient(90deg,${themeColors.ko},${themeColors.mid},${themeColors.ok})"></i>Plus de réussite que la moyenne (${basePct})</span>
-      <span><svg width="14" height="14" style="display:inline-block;vertical-align:-2px;margin-right:6px"><rect width="14" height="14" fill="url(#sun-hatch)" style="stroke:var(--line)"/></svg>Moins de 10 élèves</span>
-    `;
-  }
+  const th = colors();
+  updateLegend(baseRate);
 
   host.replaceChildren();
 
-  if (!rows.length) {
-    const emptyP = document.createElement("p");
-    emptyP.className = "empty";
-    emptyP.textContent = "Aucun élève dans la sélection.";
-    host.appendChild(emptyP);
-    return;
-  }
+  if (!requested.length) return message("Sélectionnez au moins un attribut dans les anneaux.");
+  if (!rows.length) return message("Aucun élève dans la sélection.");
 
-  if (!levels.length) {
-    const emptyP = document.createElement("p");
-    emptyP.className = "empty";
-    emptyP.textContent = "Sélectionnez au moins un attribut dans les anneaux.";
-    host.appendChild(emptyP);
-    return;
-  }
+  const levels = effectiveLevels(requested, state.drill);
+  const { tree, excluded } = computeSunburstTree(rows, levels);
+  if (!tree.n) return message("Aucun élève avec une valeur pour ces attributs.");
 
-  // Construction de l'arbre
-  const treeData = buildTree(rows, 0, levels, []);
+  const zoom = state.drill.filter((f) => f.src === "sun");
+  const hasZoom = zoom.length > 0;
+  const zs = zoom.filter((z) => levels.includes(z.dim));
+  const has = (node, z) => node.path.some((p) => p.dim === z.dim && same(z.value, p.value));
+  const isAncestorOrSelf = (node) => node.path.every((p) => zs.some((z) => z.dim === p.dim && same(z.value, p.value)));
+  const isDescendantOrSelf = (node) => zs.every((z) => has(node, z));
+  const isZoomTarget = (node) => zs.length > 0 && node.path.length === zs.length && isAncestorOrSelf(node);
 
-  // Échelle divergente centrée sur baseRate
   const g0 = Number.isFinite(baseRate) ? baseRate : (rate(rows) || 0.5);
   const colorScale = d3.scaleLinear()
     .domain([Math.max(0, g0 - 0.35), g0, Math.min(1, g0 + 0.2)])
-    .range([themeColors.ko, themeColors.mid, themeColors.ok])
+    .range([th.ko, th.mid, th.ok])
     .interpolate(d3.interpolateLab)
     .clamp(true);
 
-  // Hiérarchie D3 et partition
-  const rootHierarchy = d3.hierarchy(treeData, (d) => d.children)
-    .sum((d) => (d.children ? 0 : d.n));
+  const root = d3.hierarchy(tree, (d) => d.children).sum((d) => (d.children ? 0 : d.n));
 
-  // Tri des enfants selon l'ordre défini dans DIMS
-  rootHierarchy.sort((a, b) => {
-    if (!a.data.dim || !b.data.dim) return 0;
-    const order = (DIMS[a.data.dim] && DIMS[a.data.dim].order) || [];
-    return order.indexOf(a.data.value) - order.indexOf(b.data.value);
-  });
-
-  // Calcul des dimensions du SVG
-  const containerWidth = Math.max(300, Math.floor(host.getBoundingClientRect().width) || 460);
-  const size = Math.min(containerWidth, 460);
+  const size = Math.min(Math.max(300, Math.floor(host.getBoundingClientRect().width) || 460), 460);
   const radius = size / 2;
+  d3.partition().size([2 * Math.PI, radius])(root);
 
-  d3.partition().size([2 * Math.PI, radius])(rootHierarchy);
-
-  const svg = d3.select(host)
-    .append("svg")
+  const svg = d3.select(host).append("svg")
     .attr("viewBox", `${-radius} ${-radius} ${size} ${size}`)
     .attr("width", size)
     .attr("height", size)
-    .attr("role", "img")
-    .attr("aria-label", `Sunburst, découpage par : ${levels.map((l) => dimLabel(l)).join(" puis ")}`)
+    .attr("role", "group")
+    .attr("aria-label", `Sunburst, découpage par : ${levels.map(dimLabel).join(" puis ")}`)
+    .style("display", "block")
+    .style("max-width", "100%")
+    .style("height", "auto")
     .style("margin", "0 auto");
 
-  // Définition locale du motif de hachures <pattern id="sun-hatch">
-  const defs = svg.append("defs");
-  const hatchPattern = defs.append("pattern")
+  svg.append("defs").append("pattern")
     .attr("id", "sun-hatch")
+    .attr("class", "hatch")
     .attr("patternUnits", "userSpaceOnUse")
-    .attr("width", 6)
-    .attr("height", 6)
-    .attr("patternTransform", "rotate(45)");
+    .attr("width", 6).attr("height", 6)
+    .attr("patternTransform", "rotate(45)")
+    .append("line")
+    .attr("x1", 0).attr("y1", 0).attr("x2", 0).attr("y2", 6);
 
-  hatchPattern.append("line")
-    .attr("x1", 0)
-    .attr("y1", 0)
-    .attr("x2", 0)
-    .attr("y2", 6)
-    .attr("stroke", themeColors.ink)
-    .attr("stroke-width", 1.2)
-    .attr("opacity", 0.45);
-
-  // Générateur d'arc D3
   const arc = d3.arc()
     .startAngle((d) => d.x0)
     .endAngle((d) => d.x1)
@@ -247,187 +201,113 @@ export function update(state, derived) {
     .innerRadius((d) => d.y0)
     .outerRadius((d) => Math.max(d.y0, d.y1 - 1));
 
-  // Descendants de niveau > 0 (les secteurs des anneaux)
-  const arcNodes = rootHierarchy.descendants().filter((d) => d.depth > 0 && d.x1 > d.x0);
+  const nodes = root.descendants().filter((d) => d.depth > 0 && d.x1 > d.x0);
 
-  // Chemins et libellés complets
-  const formatNodeLabel = (d) => d.ancestors()
-    .reverse()
-    .slice(1)
-    .map((x) => `${dimLabel(x.data.dim)}, ${valueName(x.data.dim, x.data.value)}`)
-    .join(" › ");
+  const pathText = (d) => d.ancestors().reverse().slice(1)
+    .map((x) => `${dimLabel(x.data.dim)} : ${valueName(x.data.dim, x.data.value)}`).join(", ");
+  const rateText = (d) => (Number.isFinite(d.data.rate) ? `${pct(d.data.rate)} de réussite` : "taux non calculable");
 
-  // Groupe des secteurs
-  const arcsGroup = svg.append("g").attr("class", "arcs-layer");
-
-  // Secteurs colorés
-  const sectors = arcsGroup.selectAll("path.arc")
-    .data(arcNodes)
-    .join("path")
-    .attr("class", "arc")
-    .attr("d", arc)
-    .attr("fill", (d) => {
-      const r = d.data.rate;
-      return Number.isFinite(r) ? colorScale(r) : themeColors.mid;
-    })
-    .attr("tabindex", 0)
-    .attr("role", "button")
-    .attr("aria-label", (d) => {
-      const lbl = formatNodeLabel(d);
-      const rTxt = Number.isFinite(d.data.rate) ? `${pct(d.data.rate)} de réussite` : "pas de note";
-      return `${lbl}, ${d.data.n} élèves, ${rTxt}. Appuyer sur Entrée pour zoomer.`;
-    });
-
-  // Secteurs hachurés si n < SMALL_N (10)
-  arcsGroup.selectAll("path.arc-hatch")
-    .data(arcNodes.filter((d) => d.data.n < SMALL_N))
-    .join("path")
-    .attr("class", "arc-hatch")
-    .attr("d", arc)
-    .attr("fill", "url(#sun-hatch)")
-    .style("pointer-events", "none");
-
-  // Interaction : Clic ou Entrée sur un secteur = zoom (state.drill, src: "sun") pour chaque ancêtre
-  const onSectorClick = (ev, d) => {
-    ev.stopPropagation();
+  // Zoom : pose une contrainte par ancêtre ; un second clic sur le secteur déjà zoomé remonte d'un cran.
+  const zoomTo = (d) => {
     hideTip();
-
-    // Filtres non-sun conservés
-    const nonSunDrill = state.drill.filter((f) => f.src !== "sun");
-    // Nouveaux filtres sun pour chaque niveau depuis la racine jusqu'à ce secteur
-    const newSunDrill = d.ancestors()
-      .filter((x) => x.depth > 0)
-      .reverse()
-      .map((x) => ({
-        dim: x.data.dim,
-        value: x.data.value,
-        src: "sun",
-      }));
-
-    setState({ drill: nonSunDrill.concat(newSunDrill) });
+    const others = state.drill.filter((f) => f.src !== "sun");
+    const chain = d.ancestors().filter((x) => x.depth > 0).reverse()
+      .map((x) => ({ dim: x.data.dim, value: x.data.value, src: "sun" }));
+    const target = isZoomTarget(d.data);
+    setState({ drill: others.concat(target ? chain.slice(0, -1) : chain) });
   };
 
-  sectors
-    .on("click", onSectorClick)
-    .on("keydown", (ev, d) => {
-      if (ev.key === "Enter" || ev.key === " ") {
-        ev.preventDefault();
-        onSectorClick(ev, d);
-      }
+  const layer = svg.append("g").attr("class", "arcs-layer");
+
+  const sectors = layer.selectAll("path.arc").data(nodes).join("path")
+    .attr("class", (d) => {
+      let c = "arc";
+      if (zs.length && !isAncestorOrSelf(d.data) && !isDescendantOrSelf(d.data)) c += " off";
+      if (isZoomTarget(d.data)) c += " sel";
+      return c;
     })
+    .attr("d", arc)
+    .attr("fill", (d) => (Number.isFinite(d.data.rate) ? colorScale(d.data.rate) : th.mid));
+
+  makeActionable(
+    sectors,
+    (d) => zoomTo(d),
+    (d) => `${pathText(d)}, ${d.data.n} élèves, ${rateText(d)}${d.data.n < SMALL_N ? ", effectif faible" : ""}. Entrée pour zoomer.`,
+  );
+
+  sectors
     .on("mouseenter", (ev, d) => {
-      const ancestorsList = d.ancestors()
-        .reverse()
-        .slice(1)
-        .map((x) => `${dimLabel(x.data.dim)} : <b>${valueName(x.data.dim, x.data.value)}</b>`)
-        .join("<br>");
-      const rTxt = Number.isFinite(d.data.rate) ? `${pct(d.data.rate)} de réussite` : "–";
-      const warning = d.data.n < SMALL_N ? "<br><span style='color:var(--ko)'>⚠ Moins de 10 élèves, à lire avec prudence</span>" : "";
-      const hint = "<div style='margin-top:6px;font-size:12px;opacity:0.8'>Clic : zoomer sur ce groupe</div>";
-      showTip(ev, `${ancestorsList}<br><b>${d.data.n} élèves</b>, ${rTxt}${warning}${hint}`);
+      const chain = d.ancestors().reverse().slice(1)
+        .map((x) => `${dimLabel(x.data.dim)} : <b>${valueName(x.data.dim, x.data.value)}</b>`).join("<br>");
+      const warn = d.data.n < SMALL_N ? `<br><span class="tip-warn">⚠ Moins de ${SMALL_N} élèves, à lire avec prudence</span>` : "";
+      const hint = isZoomTarget(d.data) ? "Clic : remonter d'un cran" : "Clic : zoomer sur ce groupe";
+      showTip(ev, `${chain}<br><b>${d.data.n} élèves</b>, ${rateText(d)}${warn}<div class="tip-hint">${hint}</div>`);
     })
     .on("mousemove", moveTip)
-    .on("mouseleave", hideTip);
+    .on("mouseleave", hideTip)
+    .on("blur", hideTip);
 
-  // Étiquettes textuelles dans les secteurs suffisamment spacieux
-  const labelsGroup = svg.append("g").attr("class", "labels-layer");
+  // Hachures sur les groupes trop petits
+  layer.selectAll("path.arc-hatch").data(nodes.filter((d) => d.data.n < SMALL_N)).join("path")
+    .attr("class", "arc-hatch")
+    .attr("d", arc)
+    .attr("fill", "url(#sun-hatch)");
 
-  labelsGroup.selectAll("text.arclbl")
-    .data(arcNodes.filter((d) => (d.x1 - d.x0) * ((d.y0 + d.y1) / 2) > 42 && d.y1 - d.y0 > 16))
+  svg.append("g").attr("class", "labels-layer")
+    .selectAll("text.arclbl")
+    .data(nodes.filter((d) => (d.x1 - d.x0) * ((d.y0 + d.y1) / 2) > 42 && d.y1 - d.y0 > 16))
     .join("text")
     .attr("class", "arclbl")
     .attr("transform", (d) => `translate(${arc.centroid(d)})`)
-    .each(function(d) {
-      const textEl = d3.select(this);
-      const spanVal = valueShort(d.data.dim, d.data.value);
-      const isBig = (d.x1 - d.x0) * ((d.y0 + d.y1) / 2) > 110 && d.y1 - d.y0 > 65;
-
-      textEl.attr("dy", isBig ? "-0.75em" : "-0.2em");
-      textEl.append("tspan")
-        .attr("x", 0)
-        .style("font-weight", 700)
-        .text(spanVal);
-
-      textEl.append("tspan")
-        .attr("x", 0)
-        .attr("dy", "1.2em")
-        .text(`${d.data.n} él.`);
-
-      if (isBig && Number.isFinite(d.data.rate)) {
-        textEl.append("tspan")
-          .attr("x", 0)
-          .attr("dy", "1.2em")
-          .text(pct(d.data.rate));
-      }
+    .each(function (d) {
+      const t = d3.select(this);
+      const big = (d.x1 - d.x0) * ((d.y0 + d.y1) / 2) > 110 && d.y1 - d.y0 > 65;
+      const showRate = big && Number.isFinite(d.data.rate);
+      t.attr("dy", showRate ? "-0.75em" : "-0.2em");
+      t.append("tspan").attr("x", 0).style("font-weight", 700).text(valueShort(d.data.dim, d.data.value));
+      t.append("tspan").attr("x", 0).attr("dy", "1.2em").text(`${d.data.n} él.`);
+      if (showRate) t.append("tspan").attr("x", 0).attr("dy", "1.2em").text(pct(d.data.rate));
     });
 
-  // Disque central : effectif, % de réussite, clic = remonter / réinitialiser le zoom de C
-  const hasSunDrill = state.drill.some((f) => f.src === "sun");
-  const centerRadius = Math.max(12, (rootHierarchy.y1 || radius / (levels.length + 1)) - 4);
+  const shown = hasZoom ? (derived.selection || rows) : rows;
+  const shownRate = rate(shown);
+  const centerR = Math.max(12, (root.y1 || radius / (levels.length + 1)) - 4);
+  const center = svg.append("g").attr("class", "center-group");
 
-  const centerGroup = svg.append("g").attr("class", "center-group");
-
-  const centerCircle = centerGroup.append("circle")
-    .attr("class", "center")
-    .attr("r", centerRadius)
-    .attr("tabindex", 0)
-    .attr("role", "button")
-    .attr("aria-label", hasSunDrill ? "Retour : retirer le zoom du sunburst" : "Ensemble de la population du sunburst");
-
-  const onCenterClick = (ev) => {
-    ev.stopPropagation();
-    hideTip();
-    if (hasSunDrill) {
-      const remainingDrill = state.drill.filter((f) => f.src !== "sun");
-      setState({ drill: remainingDrill });
-    }
-  };
-
-  centerCircle
-    .on("click", onCenterClick)
-    .on("keydown", (ev) => {
-      if (ev.key === "Enter" || ev.key === " ") {
-        ev.preventDefault();
-        onCenterClick(ev);
-      }
-    })
-    .on("mouseenter", (ev) => {
-      if (hasSunDrill) {
-        showTip(ev, "<b>Centre</b><br>Clic : remonter et annuler le zoom");
-      }
-    })
+  const disc = center.append("circle").attr("class", "center").attr("r", centerR);
+  makeActionable(
+    disc,
+    () => { if (hasZoom) { hideTip(); setState({ drill: state.drill.filter((f) => f.src !== "sun") }); } },
+    hasZoom
+      ? `Retour : retirer le zoom du sunburst. Sélection : ${shown.length} élèves, ${pct(shownRate)} de réussite.`
+      : `Ensemble : ${shown.length} élèves, ${pct(shownRate)} de réussite.`,
+  );
+  disc.classed("inert", !hasZoom)
+    .on("mouseenter", (ev) => { if (hasZoom) showTip(ev, "<b>Centre</b><br>Clic : annuler le zoom"); })
     .on("mousemove", moveTip)
     .on("mouseleave", hideTip);
 
-  const totalEvaluatedRate = rate(rows);
-  const totalRateText = Number.isFinite(totalEvaluatedRate) ? pct(totalEvaluatedRate) : "–";
+  const line = (dy, size2, txt, extra) => {
+    const el = center.append("text").attr("class", "ctr").attr("dy", dy).style("font-size", size2).text(txt);
+    if (extra) el.attr("class", `ctr ${extra}`);
+  };
+  line(hasZoom ? "-0.9em" : "-0.5em", "22px", shown.length);
+  center.select("text").style("font-weight", 700);
+  line(hasZoom ? "0.6em" : "1.0em", "12.5px", shown.length > 1 ? "élèves" : "élève");
+  line(hasZoom ? "1.9em" : "2.3em", "12.5px", `${pct(shownRate)} réussissent`);
+  if (hasZoom) line("3.4em", "12px", "← Retour", "ctr-back");
 
-  centerGroup.append("text")
-    .attr("class", "ctr")
-    .attr("dy", hasSunDrill ? "-0.9em" : "-0.5em")
-    .style("font-size", "22px")
-    .style("font-weight", 700)
-    .text(rows.length);
-
-  centerGroup.append("text")
-    .attr("class", "ctr")
-    .attr("dy", hasSunDrill ? "0.6em" : "1.0em")
-    .style("font-size", "12.5px")
-    .text("élèves");
-
-  centerGroup.append("text")
-    .attr("class", "ctr")
-    .attr("dy", hasSunDrill ? "1.9em" : "2.3em")
-    .style("font-size", "12.5px")
-    .text(`${totalRateText} réussissent`);
-
-  if (hasSunDrill) {
-    centerGroup.append("text")
-      .attr("class", "ctr")
-      .attr("dy", "3.4em")
-      .style("font-size", "12px")
-      .style("text-decoration", "underline")
-      .style("fill", "var(--ok)")
-      .text("← Retour");
+  const notes = [];
+  if (levels.join() !== requested.join()) {
+    notes.push(`Anneaux ajustés : ${levels.map(dimLabel).join(", ")} (les attributs déjà filtrés ailleurs sont retirés).`);
+  }
+  if (excluded > 0) {
+    notes.push(`${excluded} élève${excluded > 1 ? "s" : ""} sans valeur sur ces attributs (dossier non évalué) ne figure${excluded > 1 ? "nt" : ""} pas dans le graphique.`);
+  }
+  if (notes.length) {
+    const p = document.createElement("p");
+    p.className = "viz-note";
+    p.textContent = notes.join(" ");
+    host.appendChild(p);
   }
 }
