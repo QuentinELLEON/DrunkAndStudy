@@ -7,8 +7,6 @@
 .lbl{font-size:12.5px;fill:var(--ink);paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round;pointer-events:none}
 .axt{font-size:13px;font-weight:700;fill:var(--ink)}
 .axrm{font-size:15px;fill:var(--muted);cursor:pointer}
-<<<<<<< HEAD
-=======
 .axbtn{font-size:15px;fill:var(--muted);cursor:pointer}
 .axbtn:hover,.axbtn:focus-visible{fill:var(--ink)}
 .blk.small{stroke:var(--ink);stroke-width:1;stroke-dasharray:2 2;fill:var(--panel)}
@@ -23,4 +21,3 @@
 .pset-table{margin:10px 0 0;font-size:13.5px}
 .pset-table summary{cursor:pointer;color:var(--muted)}
 .pset-table table{max-width:520px}
->>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9

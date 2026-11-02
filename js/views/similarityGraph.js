@@ -1,27 +1,6 @@
 // D. Graphe de similarité   [Gabriel LOIRAT]
 // Conteneur : #viz-similarity-graph   ·   Doc : docs/visualisations.md#d-graphe-de-similarité
 //
-<<<<<<< HEAD
-// COQUILLE À IMPLÉMENTER : cette vue ne dessine rien pour l'instant.
-// Entrées : derived.base (graphe, disposition à mettre en cache par matière et inclNE), derived.selection (opacité) ; stats.knn(rows, meta.SIMILARITY_KEYS, meta.NEIGHBORS, meta.SIMILARITY_NOMINAL) ; state.colorBy, state.ghost
-// Interactions : clic sur un nœud → setState({ selectedId: row.__i }) ; couleur via #gSeg → setState({ colorBy }) ; profil fictif via #fakeForm → setState({ ghost }) ; légende #dLegend, lecture du profil #dFake, comparaison voisins / hasard #dTake
-// Contrat de données : docs/data-contracts.md · conventions : docs/conventions.md
-
-import { prepareContainer } from "../utils.js";
-
-let host = null;
-
-// Appelée une fois après le chargement des données. Crée le SVG / canvas dans `container`.
-export function init(container) {
-  host = prepareContainer(container);
-}
-
-// Appelée à chaque changement d'état. Doit pouvoir être appelée à tout moment, sans effet de bord hors de `host`.
-// Les écritures dans l'état passent uniquement par setState / toggleDrill (js/state.js).
-export function update(state, derived) {
-  if (!host) return;
-  // TODO : redessiner à partir de state et derived
-=======
 // Un nœud par élève, relié à ses 5 plus proches voisins sur son profil (11 facteurs de SIMILARITY_KEYS, sans les notes).
 // Disposition par forces calculée une seule fois et mise en cache par (matière, inclNE).
 // Couleur par réussite ou tendance, opacité pilotée par la sélection active.
@@ -580,5 +559,4 @@ function draw(state, derived, ghostNeighbors) {
     dLegend.innerHTML = items.join(" ") +
       `<span class="note" style="margin-left:auto">${nSel} élèves en clair sur ${nodes.length} · <em>La position à l'écran n'a pas de valeur métrique</em></span>`;
   }
->>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9
 }
