@@ -7,6 +7,10 @@ import { ranks, pearson, spearman, spearmanMatrix, quantile, median, boxStats, g
 import { typeRows, derive, rate, evaluated, okCount } from "../js/data.js";
 import { SIMILARITY_KEYS, SIMILARITY_NOMINAL, NEIGHBORS, MATRIX_KEYS, EXPECTED_COLUMNS } from "../js/meta.js";
 import { pct, f1, signed } from "../js/utils.js";
+<<<<<<< HEAD
+=======
+import { computeParallelSets, normalizeAxes } from "../js/views/parallelSets.js";
+>>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9
 
 let fails = 0, checks = 0;
 const ok = (cond, msg) => { checks++; if (!cond) { fails++; console.error("✗", msg); } };
@@ -107,6 +111,32 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   eq(okCount(d0.base) + d0.base.filter((r) => r.reussite === "non").length, 357, "réussites + échecs = évalués");
 }
 
+<<<<<<< HEAD
+=======
+// ---------- Vue A : ensembles parallèles (calcul pur) ----------
+{
+  const ev = evaluated(ds.mat);
+  const m = computeParallelSets(ev, ["risque", "tendance", "reussite"]);
+  eq(m.N, 357, "A : élèves placés (maths)");
+  eq(m.dropped, 0, "A : aucun élève écarté parmi les évalués");
+  for (const a of m.axes) eq(m.segments[a].reduce((t, s) => t + s.n, 0), 357, `A : somme des segments de ${a}`);
+  eq(m.segments.risque.find((s) => s.value === "2").n, 42, "A : segment risque 2 ou plus");
+  eq(m.segments.tendance.map((s) => s.n).join("/"), "78/245/34", "A : tendance hausse/stable/baisse (ordre d'affichage)");
+  for (let i = 0; i < 2; i++) eq(m.bands.filter((b) => b.a === m.axes[i]).reduce((t, b) => t + b.n, 0), 357, `A : rubans entre axes ${i} et ${i + 1}`);
+  // les rubans qui quittent un segment totalisent ce segment
+  const risk2Out = m.bands.filter((b) => b.a === "risque" && b.va === "2").reduce((t, b) => t + b.n, 0);
+  eq(risk2Out, 42, "A : rubans sortant de risque 2+");
+  const okSeg = m.segments.reussite.find((s) => s.value === "oui");
+  eq(okSeg.ok, okSeg.n, "A : le segment « oui » ne contient que des réussites");
+  const withNE = computeParallelSets(ds.mat, ["risque", "tendance", "reussite"]);
+  eq(withNE.dropped, 38, "A : les non-évalués sont écartés et comptés");
+  const zoom = computeParallelSets(ev.filter((r) => r.risque === 2), ["school", "sex", "reussite"]);
+  eq(zoom.N, 42, "A : zoom sur risque 2+ réétalonne sur 42 élèves");
+  near(zoom.segments.reussite.find((s) => s.value === "oui").n / 42, 0.43, 0.006, "A : 43 % de réussite après zoom");
+  eq(normalizeAxes(["reussite", "sex", "sex", "school", "alc", "absCat", "risque"]).join(","), "sex,school,alc,absCat,reussite", "A : axes normalisés (reussite en dernier, sans doublon, 5 max)");
+}
+
+>>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9
 // ---------- state.js : changer de matière remet la sélection à zéro ----------
 {
   const { state, setState, toggleDrill, setSlide } = await import("../js/state.js");
@@ -121,6 +151,7 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   ok(state.ds === "por" && state.drill.length === 0 && state.selectedId === null && state.mxPair === null && Object.keys(state.slide).length === 0, "changer de matière remet la sélection à zéro");
 }
 
+<<<<<<< HEAD
 // ---------- Critères d'acceptation Sunburst (C) ----------
 {
   const evMat = evaluated(ds.mat);
@@ -151,6 +182,8 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   eq(Math.min(...Array.from(groups.values())), 3, "Sunburst : groupe le plus petit en compte 3");
 }
 
+=======
+>>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9
 console.log(fails ? `\n${fails} échec(s) sur ${checks} vérifications` : `OK : ${checks} vérifications`);
 process.exit(fails ? 1 : 0);
 
