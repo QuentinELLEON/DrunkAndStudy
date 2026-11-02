@@ -73,11 +73,17 @@
       <!-- ===================== B. Matrice de corrélation ===================== -->
       <section class="view" aria-labelledby="b-t">
         <h2 id="b-t">Quels attributs varient avec la note finale, et dans quel sens ?</h2>
-        <p class="how">Bleu quand deux attributs augmentent ensemble, rouge quand l'un baisse lorsque l'autre augmente, blanc ou gris quand il n'y a pas de lien net. Cliquez sur une case pour voir les élèves.</p>
-        <div class="toolbar"><label class="check"><input type="checkbox" id="showG"> Afficher aussi les notes G1 et G2</label></div>
+        <p class="how">Chaque case compare deux attributs. Vert : quand l'un monte, l'autre a tendance à monter aussi. Rouge : quand l'un monte, l'autre a tendance à baisser. Gris : pas de lien net. Cliquez sur une case pour voir les élèves.</p>
+        <div class="toolbar">
+          <div class="seg seg-sm" role="group" aria-label="Affichage de la matrice" id="mxView">
+            <button type="button" data-v="matrix" aria-pressed="true">Matrice</button>
+            <button type="button" data-v="rank" aria-pressed="false">Classement avec la note finale</button>
+          </div>
+          <label class="check"><input type="checkbox" id="showG"> Afficher aussi les notes G1 et G2</label>
+        </div>
         <!--
           VIZ B — Matrice de corrélation (heatmap, triangle inférieur)   [Jim LAINEL]
-          Chart  : heatmap carrée, échelle divergente centrée sur 0 (bleu +, rouge −, blanc ≈ 0), légende −1 … +1.
+          Chart  : heatmap carrée, échelle divergente centrée sur 0 (vert +, rouge −, blanc ≈ 0), légende −1 … +1.
           Data   : ρ de Spearman entre paires d'attributs quantitatifs / ordinaux, recalculé sur la sélection.
                    Attributs : G3, G2, G1, failures, absences, studytime, traveltime, goout, Dalc, Walc, Medu, Fedu
                    (G1 et G2 masqués sauf #showG). Lignes / colonnes triées par |ρ| avec G3.
