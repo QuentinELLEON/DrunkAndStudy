@@ -91,7 +91,9 @@ export const PSET_PRESETS = {
 };
 export const PSET_ADDABLE = ["absCat", "studytime", "traveltime", "pedu", "higher", "failures", "alc", "goout", "risque", "tendance", "school", "sex", "address"];
 export const PSET_MAX_AXES = 5;
-export const MATRIX_KEYS = ["G3", "G2", "G1", "failures", "absences", "studytime", "traveltime", "goout", "Dalc", "Walc", "Medu", "Fedu"];
+// Ordre d'affichage de la matrice B, fixe pour que les lignes ne bougent pas quand on change de matière ou de filtre :
+// du plus au moins lié à G3 en moyenne sur les deux matières (|ρ| de Spearman, élèves évalués).
+export const MATRIX_KEYS = ["G3", "G2", "G1", "failures", "Medu", "absences", "Fedu", "studytime", "Dalc", "Walc", "goout", "traveltime"];
 export const SUN_DEFAULT = ["school", "sex", "risque"];
 export const SUN_DIMS = ["school", "sex", "address", "risque", "alc", "higher", "absCat", "pedu"];
 export const SUN_MAX_LEVELS = 3;
