@@ -7,10 +7,7 @@ import { ranks, pearson, spearman, spearmanMatrix, quantile, median, boxStats, g
 import { typeRows, derive, rate, evaluated, okCount } from "../js/data.js";
 import { SIMILARITY_KEYS, SIMILARITY_NOMINAL, NEIGHBORS, MATRIX_KEYS, EXPECTED_COLUMNS } from "../js/meta.js";
 import { pct, f1, signed } from "../js/utils.js";
-<<<<<<< HEAD
-=======
 import { computeParallelSets, normalizeAxes } from "../js/views/parallelSets.js";
->>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9
 
 let fails = 0, checks = 0;
 const ok = (cond, msg) => { checks++; if (!cond) { fails++; console.error("✗", msg); } };
@@ -111,8 +108,6 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   eq(okCount(d0.base) + d0.base.filter((r) => r.reussite === "non").length, 357, "réussites + échecs = évalués");
 }
 
-<<<<<<< HEAD
-=======
 // ---------- Vue A : ensembles parallèles (calcul pur) ----------
 {
   const ev = evaluated(ds.mat);
@@ -136,7 +131,6 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   eq(normalizeAxes(["reussite", "sex", "sex", "school", "alc", "absCat", "risque"]).join(","), "sex,school,alc,absCat,reussite", "A : axes normalisés (reussite en dernier, sans doublon, 5 max)");
 }
 
->>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9
 // ---------- state.js : changer de matière remet la sélection à zéro ----------
 {
   const { state, setState, toggleDrill, setSlide } = await import("../js/state.js");
@@ -151,7 +145,6 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   ok(state.ds === "por" && state.drill.length === 0 && state.selectedId === null && state.mxPair === null && Object.keys(state.slide).length === 0, "changer de matière remet la sélection à zéro");
 }
 
-<<<<<<< HEAD
 // ---------- Critères d'acceptation Sunburst (C) ----------
 {
   const evMat = evaluated(ds.mat);
@@ -182,8 +175,6 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   eq(Math.min(...Array.from(groups.values())), 3, "Sunburst : groupe le plus petit en compte 3");
 }
 
-=======
->>>>>>> 7f31ffc932ba7fb2d48c385dc38b4048019484a9
 console.log(fails ? `\n${fails} échec(s) sur ${checks} vérifications` : `OK : ${checks} vérifications`);
 process.exit(fails ? 1 : 0);
 
