@@ -145,5 +145,36 @@ for (const [k, expected] of [["mat", -0.30], ["por", -0.43]]) {
   ok(state.ds === "por" && state.drill.length === 0 && state.selectedId === null && state.mxPair === null && Object.keys(state.slide).length === 0, "changer de matière remet la sélection à zéro");
 }
 
+// ---------- Critères d'acceptation Sunburst (C) ----------
+{
+  const evMat = evaluated(ds.mat);
+  const evPor = evaluated(ds.por);
+
+  // Taux de réussite école GP 75 % / 93 % et MS 69 % / 75 % (maths / portugais)
+  const gpMatRate = rate(evMat.filter((r) => r.school === "GP"));
+  const msMatRate = rate(evMat.filter((r) => r.school === "MS"));
+  const gpPorRate = rate(evPor.filter((r) => r.school === "GP"));
+  const msPorRate = rate(evPor.filter((r) => r.school === "MS"));
+
+  near(gpMatRate, 0.749, 0.005, "Sunburst : taux de réussite GP maths (~75 %)");
+  near(msMatRate, 0.690, 0.005, "Sunburst : taux de réussite MS maths (~69 %)");
+  near(gpPorRate, 0.927, 0.005, "Sunburst : taux de réussite GP portugais (~93 %)");
+  near(msPorRate, 0.745, 0.005, "Sunburst : taux de réussite MS portugais (~75 %)");
+
+  // 11 groupes en maths avec école, sexe, risque
+  const groups = new Map();
+  evMat.forEach((r) => {
+    const key = `${r.school}/${r.sex}/${r.risque}`;
+    groups.set(key, (groups.get(key) || 0) + 1);
+  });
+  eq(groups.size, 11, "Sunburst : 11 groupes en maths avec school, sex, risque");
+
+  // dont 3 sous 10 élèves, le plus petit en compte 3
+  const smallGroups = Array.from(groups.values()).filter((n) => n < 10);
+  eq(smallGroups.length, 3, "Sunburst : 3 groupes sous 10 élèves (hachurés)");
+  eq(Math.min(...Array.from(groups.values())), 3, "Sunburst : groupe le plus petit en compte 3");
+}
+
 console.log(fails ? `\n${fails} échec(s) sur ${checks} vérifications` : `OK : ${checks} vérifications`);
 process.exit(fails ? 1 : 0);
+

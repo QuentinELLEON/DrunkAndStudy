@@ -3,11 +3,11 @@
 Application de visualisation D3.js (v7) liée, en quatre techniques, du jeu de données **Student Performance / Student Alcohol Consumption**.
 Projet de visualisation de l'information de Quentin ELLEON, Jim LAINEL, Alexandre LARGUECH et Gabriel LOIRAT.
 
-> **État du dépôt : squelette.** `index.html` contient la page complète sans aucune visualisation : chaque visualisation est un placeholder identifié, à implémenter module par module. Le prototype d'origine reste dans `VisuMaquetteData.html` (non modifié).
+> **État du dépôt : socle fonctionnel, visualisations à coder.** La page charge les CSV avec D3, calcule les attributs dérivés et la sélection partagée, et alimente l'en-tête, le panneau de sélection et la fiche élève. Les 4 visualisations et les 3 panneaux graphiques sont des coquilles vides (`js/views/*.js`) à implémenter. Le prototype d'origine reste dans `VisuMaquetteData.html` (non modifié).
 
 ## Les 4 visualisations
 
-| Visu | Technique | Membre | Placeholder dans `index.html` | Module cible |
+| Visu | Technique | Membre | Conteneur dans `index.html` | Module cible |
 |---|---|---|---|---|
 | A | Ensembles parallèles (Parallel Sets) | Quentin ELLEON | `#viz-parallel-sets` | `js/views/parallelSets.js` |
 | B | Matrice de corrélation de Spearman (heatmap) | Jim LAINEL | `#viz-correlation-matrix` | `js/views/correlationMatrix.js` |
@@ -22,7 +22,7 @@ Tout tient sur **une seule page**. Les utilisateurs (U1, équipe pédagogique ; 
 
 | Document | Contenu |
 |---|---|
-| [`docs/visualisations.md`](docs/visualisations.md) | source de vérité : tâches × visualisations, ce qu'on lit, placeholders |
+| [`docs/visualisations.md`](docs/visualisations.md) | source de vérité : tâches × visualisations, ce qu'on lit, conteneurs |
 | [`docs/architecture.md`](docs/architecture.md) | arborescence cible, interface d'un module de vue, flux de données, liaisons |
 | [`docs/data-contracts.md`](docs/data-contracts.md) | formats de données : élève, état partagé, sous-ensembles dérivés, contrat de chaque vue |
 | [`docs/conventions.md`](docs/conventions.md) | règles Git, code, vocabulaire, accessibilité, critères d'acceptation |
@@ -39,38 +39,54 @@ Les fichiers `rendu1.md`, `tasks.md` et `notes.md` sont des documents de travail
 
 ## Lancer la page
 
-Les données seront lues dans `data/*.csv` avec **`d3.csv()`**. La page doit être servie en **`http://`**, et non ouverte par double-clic en `file://` (les modules ES et la lecture de fichiers sont bloqués par les navigateurs). Pour l'instant `index.html` ne charge aucun script et s'ouvre directement.
+Les données sont lues dans `data/*.csv` avec **`d3.csv()`** au chargement de la page. La page doit être servie en **`http://`**, et non ouverte par double-clic en `file://` (les modules ES et la lecture de fichiers sont bloqués par les navigateurs) ; un message l'explique si c'est le cas.
 
 - **VS Code** : extension *Live Server*, clic droit sur `index.html` → **Open with Live Server**.
 - **Node** :
   ```bash
   cd DrunkAndStudy
-  npx serve .          # puis ouvrir l'URL affichée (http://localhost:3000)
+  npm start            # = npx serve . ; ouvrir l'URL affichée (http://localhost:3000)
   ```
 
-D3 v7.9.0 sera chargé depuis `https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js` (version figée). Pour une soutenance sans Internet, installer `d3@7.9.0` avec npm et pointer vers `node_modules/d3/dist/d3.min.js`.
+D3 v7.9.0 est chargé depuis `https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js` (version figée) ; un message s'affiche s'il n'a pas pu l'être. Pour une soutenance sans Internet : `npm install d3@7.9.0`, puis remplacer l'URL du CDN dans `index.html` par `node_modules/d3/dist/d3.min.js`.
+
+### Tests
+
+```bash
+npm test             # = node tools/test-stats.mjs
+```
+
+Le script vérifie les fonctions statistiques (rangs, Spearman, quantiles, Gower, plus proches voisins), le typage et les attributs dérivés sur les vrais CSV, les filtres et l'état, et les chiffres de référence de `docs/visualisations.md` : 357 / 634 élèves évalués, 42 / 67 à risque 2 ou plus, 34 / 20 en baisse, 74 % / 87 % de réussite, changement de signe de `absences × G3` selon les non-évalués.
 
 ## Structure
 
-Structure actuelle :
-
 ```
 DrunkAndStudy/
-├── index.html                 squelette de la page (placeholders, aucune donnée, aucun code D3)
+├── index.html                 page : conteneurs vides #viz-…, aucune donnée, aucun code de visualisation
 ├── VisuMaquetteData.html      prototype d'origine, non modifié
-├── README.md
-├── data/student-mat.csv       395 lignes (357 élèves évalués), séparateur ","
-├── data/student-por.csv       649 lignes (634 élèves évalués), séparateur ","
+├── package.json               scripts start et test (modules ES)
+├── css/                       tokens, layout, components + un fichier par vue (css/views/)
+├── data/                      student-mat.csv (395 lignes, 357 évalués), student-por.csv (649 lignes, 634 évalués)
 ├── docs/                      documentation (voir ci-dessus)
-├── tools/extract_csv.py       régénère data/*.csv à partir de l'ancien prototype mono-fichier
-└── tools/test-stats.mjs       tests Node des fonctions statistiques (importe js/stats.js, data.js et meta.js : à rétablir avec le socle)
+├── js/
+│   ├── main.js                chargement D3, initialisation, rendu à chaque changement d'état
+│   ├── guard.js               message explicite en file://
+│   ├── state.js               état unique + setState + toggleDrill / setSlide
+│   ├── data.js                d3.csv, typage, attributs dérivés, derive() : base, selection, exceptSrc, selected
+│   ├── meta.js                libellés, domaines ordonnés, seuils, listes d'attributs par vue
+│   ├── stats.js               fonctions pures : rangs, Spearman, quantiles, Gower, plus proches voisins
+│   ├── utils.js               formats français, couleurs du thème, info-bulle, accessibilité, message d'état
+│   ├── controls/              header, selectionPanel, studentCard (fonctionnels)
+│   └── views/                 parallelSets, correlationMatrix, sunburst, similarityGraph,
+│                              selectionBox, studentTrajectory, pairScatter (coquilles à implémenter)
+└── tools/                     extract_csv.py, test-stats.mjs
 ```
 
-Structure cible (modules `css/` et `js/` à créer) : voir [`docs/architecture.md`](docs/architecture.md).
+Détail et interface des modules : [`docs/architecture.md`](docs/architecture.md).
 
 ## Contribuer
 
-Une branche par issue, une pull request par issue, ids de placeholders stables, aucune donnée dans le HTML : voir [`docs/conventions.md`](docs/conventions.md).
+Une branche par issue, une pull request par issue, ids de conteneurs stables, aucune donnée dans le HTML : voir [`docs/conventions.md`](docs/conventions.md).
 
 ## Crédits du jeu de données
 

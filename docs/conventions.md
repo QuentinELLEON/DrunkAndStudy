@@ -7,10 +7,10 @@
 - Une pull request par issue, qui cite l'issue (`Closes #N`). Relecture par un autre membre avant la fusion.
 - On ne supprime et on n'écrase pas les fichiers d'origine (`VisuMaquetteData.html`, `rendu1.md`, `tasks.md`, `notes.md`).
 
-## Placeholders et identifiants
+## Conteneurs et identifiants
 
-- Chaque visualisation a un **id stable** `viz-<nom>` et un attribut `data-viz="<nom>"` dans `index.html`. On ne renomme pas un id sans mettre à jour `docs/visualisations.md`, `docs/architecture.md` et l'issue correspondante.
-- Un module de vue remplace le contenu du placeholder et retire la classe `viz-placeholder`. Il ne crée pas de conteneur concurrent.
+- Chaque visualisation a un conteneur vide à **id stable** `viz-<nom>` et un attribut `data-viz="<nom>"` dans `index.html`. On ne renomme pas un id sans mettre à jour `docs/visualisations.md`, `docs/architecture.md` et l'issue correspondante.
+- Un module de vue dessine dans son conteneur (`init(container)`) et ne crée pas de conteneur concurrent.
 - Les ids et classes d'un module commencent par le nom de la vue (`pset-`, `mx-`, `sun-`, `sim-`) pour éviter les collisions CSS.
 
 ## Code JavaScript
