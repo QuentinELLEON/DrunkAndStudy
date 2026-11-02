@@ -95,7 +95,7 @@ Chaque contrat donne l'entrée, la structure à calculer et la sortie visuelle a
 ### B. Matrice de corrélation · `#viz-correlation-matrix`
 
 - **Entrée** : `derived.selection`, `meta.MATRIX_KEYS`, `state.matrixShowG`.
-- **Structure** : `cells: [{ a, b, rho, n }]` pour le triangle inférieur, `rho` de Spearman (rangs moyens pour les ex æquo), `NaN` si un attribut est constant. Ordre des lignes : valeur absolue de `rho` avec G3 décroissante.
+- **Structure** : `cells: [{ a, b, rho, n }]` pour le triangle inférieur, `rho` de Spearman (rangs moyens pour les ex æquo), `NaN` si un attribut est constant. Ordre des lignes fixe (`MATRIX_KEYS`, du plus au moins lié à G3 en moyenne sur les deux matières) ; seul le classement avec G3 est trié par |`rho`| sur la sélection.
 - **Visuel** : échelle divergente centrée sur 0, vert positif, rouge négatif, blanc proche de 0 ; légende de −1 à +1 ; valeur et signe écrits dans la cellule ; cellules sous le seuil de signification grisées (« pas de lien net »).
 - **Seuil proposé** : `|ρ| < 1,96 / √(n − 1)` (celui du prototype) ; sous 30 élèves, la matrice n'est pas calculée et un message l'explique. *Décidé : ce seuil est retenu ; les cellules concernées sont grisées.*
 - **Interactions** : clic cellule → `setState({ mxPair: [a, b] })` ; info-bulle en phrase qui compare des groupes d'élèves et rappelle que le sens du lien est inconnu (« Les élèves avec un trajet plus long ont en général une note finale plus basse. Cela ne dit pas lequel agit sur l'autre. »).

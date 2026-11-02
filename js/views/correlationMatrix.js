@@ -1,11 +1,11 @@
 // Vue B : matrice de corrélation de Spearman (Jim LAINEL)
 // Conteneur #viz-correlation-matrix. La légende (#bLegend), la note (#bInfo), la case #showG et les boutons
 // #mxView sont dans index.html. Un clic sur une cellule écrit state.mxPair, que le nuage de points (#8) lira.
-// Deux affichages : la matrice complète, ou un classement des liens avec G3 seule (plus simple à lire).
+// Deux affichages : la matrice complète (ordre fixe), ou un classement des liens avec G3 seule (trié par force).
 
 import { prepareContainer, widthOf, colors, cssVar, f2, signed, plural, showTip, hideTip, makeActionable } from "../utils.js";
 import { setState } from "../state.js";
-import { spearman, spearmanMatrix, significanceThreshold } from "../stats.js";
+import { spearmanMatrix, significanceThreshold } from "../stats.js";
 import { MATRIX_KEYS, MIN_N_CORRELATION, ATTR_LABELS, ATTR_SHORT, ATTR_SENS, DATASETS } from "../meta.js";
 
 const MARGIN = { left: 104, top: 8, right: 4, bottom: 86 };
@@ -54,17 +54,6 @@ export function describe(c, thr) {
   return `${lien} (lien ${force}, ${detail}). Cela ne dit pas lequel agit sur l'autre.`;
 }
 const tipHtml = (c, thr) => `${describe(c, thr)}<br><small>Cliquez pour voir le nuage de points.</small>`;
-
-// G3 en premier, puis les autres du plus au moins lié à G3. Les ρ non calculables passent à la fin.
-function orderedKeys(rows, showG) {
-  const rest = MATRIX_KEYS.filter((k) => k !== "G3" && (showG || (k !== "G1" && k !== "G2")));
-  const strength = new Map(rest.map((k) => {
-    const r = Math.abs(spearman(rows, k, "G3"));
-    return [k, Number.isFinite(r) ? r : -1];
-  }));
-  rest.sort((p, q) => strength.get(q) - strength.get(p));
-  return ["G3", ...rest];
-}
 
 function ensureSvg() {
   if (svg) return svg;
@@ -134,9 +123,10 @@ export function update(state, derived) {
   host.querySelector(".mx-msg")?.remove();
   renderLegend(thr);
 
-  const keys = orderedKeys(rows, state.matrixShowG);
+  // Ordre fixe (meta.MATRIX_KEYS) : les lignes ne bougent pas d'une matière ou d'un filtre à l'autre
+  const keys = MATRIX_KEYS.filter((k) => state.matrixShowG || (k !== "G1" && k !== "G2"));
   const cells = spearmanMatrix(rows, keys);
-  const withG3 = cells.filter((c) => c.b === "G3");   // colonne G3 : une cellule par autre attribut, déjà triée
+  const withG3 = cells.filter((c) => c.b === "G3");
   const best = withG3
     .filter((c) => c.a !== "G1" && c.a !== "G2" && Number.isFinite(c.rho))
     .sort((p, q) => Math.abs(q.rho) - Math.abs(p.rho))[0];
@@ -161,7 +151,10 @@ export function update(state, derived) {
   const asRank = state.matrixView === "rank";
   s.select(".mx-matrix").attr("display", asRank ? "none" : null);
   s.select(".mx-rank").attr("display", asRank ? null : "none");
-  if (asRank) drawRank(s, withG3, { thr, isSel, pick, fillOf, ink, muted });
+  // Le classement, lui, est trié par force du lien (les ρ non calculables à la fin)
+  const strength = (c) => (Number.isFinite(c.rho) ? Math.abs(c.rho) : -1);
+  const ranked = withG3.slice().sort((p, q) => strength(q) - strength(p));
+  if (asRank) drawRank(s, ranked, { thr, isSel, pick, fillOf, ink, muted });
   else drawMatrix(s, keys, cells, { thr, isSel, pick, fillOf, ink, panel, muted });
 }
 

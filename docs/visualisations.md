@@ -30,7 +30,7 @@ Ce document relie les 10 tâches de la spécification aux 4 visualisations du pr
 
 | Tâche | A Ensembles parallèles | B Matrice de corrélation | C Sunburst | D Graphe de similarité | Comment les visus réalisent la tâche |
 |---|:-:|:-:|:-:|:-:|---|
-| U1-1 facteurs liés à G3 bas | ○ | ✔ | | | Matrice triée par valeur absolue de ρ avec G3 pour le classement, et bandes vers `reussite` dans A pour voir où se concentre l'échec |
+| U1-1 facteurs liés à G3 bas | ○ | ✔ | | | Matrice dont la colonne G3 est encadrée et, dans la vue « Classement », triée par valeur absolue de ρ avec G3, et bandes vers `reussite` dans A pour voir où se concentre l'échec |
 | U1-2 comparer G3 entre sous-groupes | ○ | | ✔ | | Secteurs par école, sexe et milieu avec taux de réussite et *n*, bascule maths et portugais. Le panneau de détail donne la distribution de G3 du groupe |
 | U1-3 élèves à facteurs de risque cumulés | ✔ | | ○ | ○ | Zoom sur la catégorie `risque` 2 et plus dans A avec l'effectif affiché. Les mêmes élèves sont surlignés dans C et dans D |
 | U1-4 profil d'un élève | ○ \* | | | ✔ | Clic sur un nœud de D ouvre la fiche, qui compare l'élève à son école et sa matière. Son chemin est surligné dans A |
@@ -113,7 +113,7 @@ Formats de données : [`data-contracts.md`](data-contracts.md). Règles de trava
 
 - **Conteneur** : `#viz-correlation-matrix` (et `#viz-pair-scatter` pour le nuage de points).
 - **Données** : ρ de Spearman entre 12 attributs ordonnables, recalculé sur la sélection ; G1 et G2 masqués par défaut.
-- **Encodage** : cellule colorée sur une échelle divergente centrée sur 0 (vert positif, rouge négatif, blanc proche de 0), valeur et signe écrits (« ≈ 0 » sous 0,05) ; les cellules sous le seuil de signification `|ρ| < 1,96 / √(n − 1)` (0,10 pour 357 élèves, 0,08 pour 634) sont grisées avec leur valeur en gris, la valeur écrite portant l'information. Lignes triées par |ρ| avec G3, colonne G3 encadrée.
+- **Encodage** : cellule colorée sur une échelle divergente centrée sur 0 (vert positif, rouge négatif, blanc proche de 0), valeur et signe écrits (« ≈ 0 » sous 0,05) ; les cellules sous le seuil de signification `|ρ| < 1,96 / √(n − 1)` (0,10 pour 357 élèves, 0,08 pour 634) sont grisées avec leur valeur en gris, la valeur écrite portant l'information. Ordre des lignes **fixe** (`MATRIX_KEYS`, du plus au moins lié à G3 en moyenne sur les deux matières), pour qu'elles ne sautent pas quand on change de matière ou de filtre ; colonne G3 encadrée. Le classement avec G3, lui, est trié par |ρ| sur la sélection.
 - **Interactions** : clic, Entrée ou Espace sur une cellule → `state.mxPair` (nuage de points de la paire) ; info-bulle en phrase simple qui compare des groupes sans orienter le lien (« Les élèves avec un trajet plus long ont en général une note finale plus basse. Cela ne dit pas lequel agit sur l'autre. ») ; case « Afficher aussi G1 et G2 » → `state.matrixShowG` ; bouton « Classement avec la note finale » → `state.matrixView = "rank"`, une vue simplifiée qui ne garde que la colonne G3 sous forme de barres, plus facile à lire pour U2 ; survol d'une case = mise en évidence de sa ligne et de sa colonne. Sous 30 élèves dans la sélection, un message remplace la matrice.
 - **Tâches** : ✔ U1-1 ; ○ U2-3.
 - **Points de vigilance** : une seule tâche principale, c'est la vue la plus fragile ; la renforcer en la recalculant sur la sélection de A.
