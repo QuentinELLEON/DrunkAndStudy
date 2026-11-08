@@ -53,10 +53,22 @@ D3 v7.9.0 est chargé depuis `https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.
 ### Tests
 
 ```bash
-npm test             # = node tools/test-stats.mjs
+npm test             # = node tools/test-stats.mjs && node tools/test-import.mjs
 ```
 
 Le script vérifie les fonctions statistiques (rangs, Spearman, quantiles, Gower, plus proches voisins), le typage et les attributs dérivés sur les vrais CSV, les filtres et l'état, et les chiffres de référence de `docs/visualisations.md` : 357 / 634 élèves évalués, 42 / 67 à risque 2 ou plus, 34 / 20 en baisse, 74 % / 87 % de réussite, changement de signe de `absences × G3` selon les non-évalués.
+
+## Importer ses propres données
+
+Le bouton **Importer un CSV** (en haut de la page) ouvre une fenêtre en trois étapes :
+
+1. **Télécharger le modèle vide** (`student-performance-modele.csv`) : une seule ligne d'en-tête avec les 33 colonnes attendues, séparées par des points-virgules (ouverture directe dans Excel en français).
+2. **Le remplir** : une ligne par élève. Le tableau « Colonnes et valeurs acceptées », dans la même fenêtre, donne pour chaque colonne sa signification et ses valeurs (codes du jeu d'origine, entiers dans une plage).
+3. **L'importer** (choix du fichier ou glisser-déposer). Le fichier est lu dans le navigateur, rien n'est envoyé.
+
+Si le fichier est valide, **toutes les vues sont recalculées avec ce seul jeu** (le sélecteur Maths / Portugais disparaît, les filtres sont remis à zéro). Sinon, un message liste les erreurs par colonne avec les numéros de ligne et les données affichées sont conservées. « Revenir aux jeux d'origine » rétablit Maths et Portugais.
+
+Le séparateur (`;`, `,` ou tabulation), le BOM, les fins de ligne et les guillemets sont reconnus automatiquement ; l'ordre et la casse des en-têtes n'ont pas d'importance, les colonnes en plus sont ignorées. Limites : 2 000 lignes, 5 Mo, au moins 6 élèves évalués (moins de 30 : la matrice de corrélation n'est pas calculée), école `GP` ou `MS`. Contrat détaillé : [`docs/data-contracts.md`](docs/data-contracts.md), section 6.
 
 ## Structure
 
@@ -65,7 +77,7 @@ DrunkAndStudy/
 ├── index.html                 page : conteneurs vides #viz-…, aucune donnée, aucun code de visualisation
 ├── VisuMaquetteData.html      prototype d'origine, non modifié
 ├── package.json               scripts start et test (modules ES)
-├── css/                       tokens, layout, components + un fichier par vue (css/views/)
+├── css/                       tokens, layout, components, import + un fichier par vue (css/views/)
 ├── data/                      student-mat.csv (395 lignes, 357 évalués), student-por.csv (649 lignes, 634 évalués)
 ├── docs/                      documentation (voir ci-dessus)
 ├── js/
@@ -76,10 +88,11 @@ DrunkAndStudy/
 │   ├── meta.js                libellés, domaines ordonnés, seuils, listes d'attributs par vue
 │   ├── stats.js               fonctions pures : rangs, Spearman, quantiles, Gower, plus proches voisins
 │   ├── utils.js               formats français, couleurs du thème, info-bulle, accessibilité, message d'état
-│   ├── controls/              header, selectionPanel, studentCard (fonctionnels)
+│   ├── importer.js            modèle CSV vide, lecture et validation d'un CSV importé (sans DOM)
+│   ├── controls/              header, selectionPanel, studentCard, importPanel (fonctionnels)
 │   └── views/                 parallelSets, correlationMatrix, sunburst, similarityGraph,
 │                              selectionBox, studentTrajectory, pairScatter (coquilles à implémenter)
-└── tools/                     extract_csv.py, test-stats.mjs
+└── tools/                     extract_csv.py, test-stats.mjs, test-import.mjs
 ```
 
 Détail et interface des modules : [`docs/architecture.md`](docs/architecture.md).

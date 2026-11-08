@@ -5,6 +5,6 @@
   "description": "Student Performance Explorer : visualisation D3 liée (squelette)",
   "scripts": {
     "start": "npx serve .",
-    "test": "node tools/test-stats.mjs"
+    "test": "node tools/test-stats.mjs && node tools/test-import.mjs"
   }
 }

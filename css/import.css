@@ -1,0 +1,36 @@
+/* Import d'un CSV : fenêtre, zone de dépôt, erreurs, tableau d'aide, bannière « fichier importé ». Préfixe imp-. */
+#matSeg[hidden],.check[hidden]{display:none}
+
+.imp-banner{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between;border-color:var(--ok)}
+.imp-banner[hidden]{display:none}
+.imp-banner #importBannerText{flex:1 1 320px}
+.imp-warn{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+
+dialog.imp{width:min(760px,calc(100% - 28px));max-height:calc(100vh - 32px);padding:0;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);overflow:auto}
+dialog.imp::backdrop{background:rgba(10,14,22,.55)}
+.imp-body{padding:20px 22px 22px}
+.imp-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0 0 8px}
+.imp-head h2{margin:0;font-size:20px}
+.imp-lead{margin:0 0 14px;color:var(--muted);max-width:68ch}
+.imp-steps{margin:0 0 14px;padding-left:20px;display:grid;grid-template-columns:minmax(0,1fr);gap:12px}
+.imp-steps li::marker{font-weight:700}
+.imp-steps .note{margin:4px 0 0}
+.imp-actions{margin:6px 0 0}
+.imp-drop{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-top:6px;padding:14px;border:2px dashed var(--line);border-radius:10px;background:var(--soft)}
+.imp-drop.over{border-color:var(--ok);background:var(--mid)}
+.imp-drop input[type="file"]{font:inherit;font-size:14px;color:var(--ink);max-width:100%;min-width:0}
+.imp-drop span{font-size:13px;color:var(--muted)}
+
+.imp-result{margin:0 0 14px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:var(--soft);font-size:14px}
+.imp-result[hidden]{display:none}
+.imp-result.imp-error{border-color:var(--ko)}
+.imp-result-title{margin:0 0 6px;font-weight:700}
+.imp-result ul{margin:0;padding-left:18px;display:grid;gap:4px}
+
+.imp-help{border-top:1px solid var(--line);padding-top:10px}
+.imp-help summary{cursor:pointer;font-weight:700}
+.imp-table-wrap{max-height:280px;overflow:auto;margin-top:8px}
+.imp-table th code,.imp-table td code{background:var(--soft);padding:1px 5px;border-radius:4px}
+.imp-table th{white-space:nowrap}
+
+@media (max-width:780px){.imp-body{padding:16px}}
