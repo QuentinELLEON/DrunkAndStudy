@@ -22,7 +22,7 @@ Les valeurs ci-dessous sont les **codes stockés**. Les libellés français vive
 | `prog` | quantitatif | entier / `null` | `G3 − G1` |
 | `tendance` | nominal | `"baisse"` / `"stable"` / `"hausse"` / `null` | `prog ≤ −2` baisse, `prog ≥ +2` hausse, sinon stable. Valeurs : 34 / 245 / 78 en maths, 20 / 461 / 153 en portugais |
 
-> **À valider avec l'équipe.** Le prototype `VisuMaquetteData.html` stockait des libellés français (`"réussite"`, `"2 et plus"`, `"non renseigné"`). Le contrat ci-dessus préfère des codes stables sans accent, avec les libellés dans `meta.js`. Si l'équipe préfère garder les libellés, il suffit de modifier ce tableau avant de commencer le code.
+> **À valider avec l'équipe.** Le prototype d'origine stockait des libellés français (`"réussite"`, `"2 et plus"`, `"non renseigné"`). Le contrat ci-dessus préfère des codes stables sans accent, avec les libellés dans `meta.js`. Si l'équipe préfère garder les libellés, il suffit de modifier ce tableau avant de commencer le code.
 
 ### Domaines ordonnés (`meta.js`)
 

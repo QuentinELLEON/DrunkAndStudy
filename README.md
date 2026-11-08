@@ -3,7 +3,7 @@
 Application de visualisation D3.js (v7) liée, en quatre techniques, du jeu de données **Student Performance / Student Alcohol Consumption**.
 Projet de visualisation de l'information de Quentin ELLEON, Jim LAINEL, Alexandre LARGUECH et Gabriel LOIRAT.
 
-> **Les quatre visualisations, les panneaux de détail, la fiche élève et l'import CSV sont fonctionnels.** Le prototype d'origine reste dans `VisuMaquetteData.html` (non modifié).
+> **Les quatre visualisations, les panneaux de détail, la fiche élève et l'import CSV sont fonctionnels.**
 
 ## Les 4 visualisations
 
@@ -75,7 +75,6 @@ Le séparateur (`;`, `,` ou tabulation), le BOM, les fins de ligne et les guille
 ```
 DrunkAndStudy/
 ├── index.html                 page : conteneurs vides #viz-…, aucune donnée, aucun code de visualisation
-├── VisuMaquetteData.html      prototype d'origine, non modifié
 ├── package.json               scripts start et test (modules ES)
 ├── css/                       tokens, layout, components, import + un fichier par vue (css/views/)
 ├── data/                      student-mat.csv (395 lignes, 357 évalués), student-por.csv (649 lignes, 634 évalués)

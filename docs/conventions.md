@@ -5,7 +5,7 @@
 - On ne travaille jamais sur `main`. Une branche par issue : `viz/<nom>` pour une visualisation (`viz/parallel-sets`), `setup/<sujet>` pour le socle.
 - Un commit = une idée. Message court à l'impératif, préfixé d'un type : `feat:`, `fix:`, `docs:`, `refactor:`, `test:`.
 - Une pull request par issue, qui cite l'issue (`Closes #N`). Relecture par un autre membre avant la fusion.
-- On ne supprime et on n'écrase pas les fichiers d'origine (`VisuMaquetteData.html`, `rendu1.md`, `tasks.md`, `notes.md`).
+- On ne supprime et on n'écrase pas les fichiers d'origine (`rendu1.md`, `tasks.md`, `notes.md`).
 
 ## Conteneurs et identifiants
 
