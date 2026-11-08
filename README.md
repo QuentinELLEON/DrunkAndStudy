@@ -3,7 +3,7 @@
 Application de visualisation D3.js (v7) liée, en quatre techniques, du jeu de données **Student Performance / Student Alcohol Consumption**.
 Projet de visualisation de l'information de Quentin ELLEON, Jim LAINEL, Alexandre LARGUECH et Gabriel LOIRAT.
 
-> **État du dépôt : socle fonctionnel, visualisations à coder.** La page charge les CSV avec D3, calcule les attributs dérivés et la sélection partagée, et alimente l'en-tête, le panneau de sélection et la fiche élève. Les 4 visualisations et les 3 panneaux graphiques sont des coquilles vides (`js/views/*.js`) à implémenter. Le prototype d'origine reste dans `VisuMaquetteData.html` (non modifié).
+> **Les quatre visualisations, le panneau de sélection, la fiche élève et l'import CSV sont fonctionnels.** Les panneaux `selectionBox`, `studentTrajectory` et `pairScatter` ne sont pas encore implémentés. Le prototype d'origine reste dans `VisuMaquetteData.html` (non modifié).
 
 ## Les 4 visualisations
 
@@ -90,8 +90,8 @@ DrunkAndStudy/
 │   ├── utils.js               formats français, couleurs du thème, info-bulle, accessibilité, message d'état
 │   ├── importer.js            modèle CSV vide, lecture et validation d'un CSV importé (sans DOM)
 │   ├── controls/              header, selectionPanel, studentCard, importPanel (fonctionnels)
-│   └── views/                 parallelSets, correlationMatrix, sunburst, similarityGraph,
-│                              selectionBox, studentTrajectory, pairScatter (coquilles à implémenter)
+│   └── views/                 parallelSets, correlationMatrix, sunburst, similarityGraph (fonctionnels),
+│                              selectionBox, studentTrajectory, pairScatter (à implémenter)
 └── tools/                     extract_csv.py, test-stats.mjs, test-import.mjs
 ```
 

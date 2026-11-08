@@ -59,4 +59,4 @@
 | Tendance baisse / stable / hausse | 34 / 245 / 78 et 20 / 461 / 153 |
 | Part des élèves à 10 ou plus | 74 % / 87 % |
 
-Ces valeurs se vérifient avec `node tools/test-stats.mjs` une fois `js/stats.js`, `js/data.js` et `js/meta.js` recréés (le script les importe).
+Ces valeurs se vérifient avec `npm test`.

@@ -118,6 +118,6 @@ A dessine `selection` : son zoom réduit le diagramme aux élèves gardés et le
 | B, matrice de corrélation et nuage de points | Jim LAINEL | `js/views/correlationMatrix.js`, `js/views/pairScatter.js`, `css/views/correlation-matrix.css` |
 | C, sunburst | Alexandre LARGUECH | `js/views/sunburst.js`, `css/views/sunburst.css` |
 | D, graphe de similarité | Gabriel LOIRAT | `js/views/similarityGraph.js`, `stats.gower` et `stats.knn`, `css/views/similarity-graph.css` |
-| Socle partagé | à répartir (voir issue « setup ») | `state.js`, `data.js`, `meta.js`, `stats.js`, `utils.js`, `main.js`, `css/tokens.css`, `css/layout.css`, `css/components.css`, `controls/*`, `selectionBox.js`, `studentTrajectory.js` |
+| Socle partagé | Quentin ELLEON, avec des ajouts de Jim LAINEL | `state.js`, `data.js`, `meta.js`, `stats.js`, `utils.js`, `main.js`, `css/tokens.css`, `css/layout.css`, `css/components.css`, `controls/*`, `selectionBox.js`, `studentTrajectory.js` |
 
-Le socle (`state`, `data`, `meta`, `stats`, `utils`, `main`, `controls/*`, CSS) est en place et testé (`npm test`). Les sept modules de `js/views/` sont des coquilles vides branchées sur `main.js` : chacun peut être développé en parallèle sans toucher aux autres. Restent à écrire pour le socle : `selectionBox.js` et `studentTrajectory.js` (panneaux graphiques).
+Le socle (`state`, `data`, `meta`, `stats`, `utils`, `main`, `controls/*`, CSS) est en place et testé (`npm test`). Les quatre vues A à D sont implémentées. Restent à écrire les panneaux `selectionBox.js`, `studentTrajectory.js` et `pairScatter.js`, déjà branchés sur `main.js`.
