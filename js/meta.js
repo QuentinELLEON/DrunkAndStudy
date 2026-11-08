@@ -60,6 +60,28 @@ export const ATTR_LABELS = {
   alc: "Alcool", pedu: "Éducation des parents", risque: "Facteurs de risque", tendance: "Évolution", higher: "Études supérieures",
 };
 
+// Libellés des axes de la matrice B (plus courts que ATTR_LABELS)
+export const ATTR_SHORT = {
+  G3: "Note finale", G2: "Note G2", G1: "Note G1", failures: "Échecs passés", absences: "Absences", studytime: "Temps d'étude",
+  traveltime: "Trajet", goout: "Sorties", Dalc: "Alcool semaine", Walc: "Alcool week-end", Medu: "Études mère", Fedu: "Études père",
+};
+
+// Comment dire « plus » et « moins » de chaque attribut dans une phrase (info-bulles de la matrice B)
+export const ATTR_SENS = {
+  G3: { plus: "une note finale plus haute", moins: "une note finale plus basse" },
+  G2: { plus: "une note G2 plus haute", moins: "une note G2 plus basse" },
+  G1: { plus: "une note G1 plus haute", moins: "une note G1 plus basse" },
+  failures: { plus: "plus d'échecs passés", moins: "moins d'échecs passés" },
+  absences: { plus: "plus d'absences", moins: "moins d'absences" },
+  studytime: { plus: "plus de temps d'étude", moins: "moins de temps d'étude" },
+  traveltime: { plus: "un trajet plus long", moins: "un trajet plus court" },
+  goout: { plus: "plus de sorties", moins: "moins de sorties" },
+  Dalc: { plus: "plus d'alcool en semaine", moins: "moins d'alcool en semaine" },
+  Walc: { plus: "plus d'alcool le week-end", moins: "moins d'alcool le week-end" },
+  Medu: { plus: "une mère plus diplômée", moins: "une mère moins diplômée" },
+  Fedu: { plus: "un père plus diplômé", moins: "un père moins diplômé" },
+};
+
 // Réglages des vues
 export const PSET_DEFAULT = ["school", "sex", "address", "alc", "absCat", "risque", "tendance", "reussite"];
 export const PSET_PRESETS = {
@@ -70,7 +92,9 @@ export const PSET_PRESETS = {
 export const PSET_MIN_AXES = 2;   // un axe au moins + « reussite »
 export const PSET_ADDABLE = ["absCat", "studytime", "traveltime", "pedu", "higher", "failures", "alc", "goout", "risque", "tendance", "school", "sex", "address"];
 export const PSET_MAX_AXES = 5;
-export const MATRIX_KEYS = ["G3", "G2", "G1", "failures", "absences", "studytime", "traveltime", "goout", "Dalc", "Walc", "Medu", "Fedu"];
+// Ordre d'affichage de la matrice B, fixe pour que les lignes ne bougent pas quand on change de matière ou de filtre :
+// du plus au moins lié à G3 en moyenne sur les deux matières (|ρ| de Spearman, élèves évalués).
+export const MATRIX_KEYS = ["G3", "G2", "G1", "failures", "Medu", "absences", "Fedu", "studytime", "Dalc", "Walc", "goout", "traveltime"];
 export const SUN_DEFAULT = ["school", "sex", "risque"];
 export const SUN_DIMS = ["school", "sex", "address", "risque", "alc", "higher", "absCat", "pedu"];
 export const SUN_MAX_LEVELS = 3;
