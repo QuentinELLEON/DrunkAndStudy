@@ -121,11 +121,13 @@ Formats de données : [`data-contracts.md`](data-contracts.md). Règles de trava
 ## C. Sunburst
 
 - **Conteneur** : `#viz-sunburst`.
-- **Données** : hiérarchie dérivée de 3 attributs au plus (défaut `school`, `sex`, `risque`, ordre modifiable), avec *n* et nombre de réussites par nœud.
-- **Encodage** : angle = *n*, couleur = taux de réussite centré sur la moyenne, hachures si *n* < 10.
-- **Interactions** : zoom par clic, retour par le centre, survol (chemin, *n*, % de réussite).
+- **Données** : hiérarchie dérivée de `derived.exceptSrc("sun")` sur 3 attributs au plus (`state.sunLevels`, défaut `school`, `sex`, `risque`, ordre modifiable via `#sb0`, `#sb1`, `#sb2` parmi `school`, `sex`, `address`, `risque`, `alc`, `higher`, `absCat`, `pedu`), avec *n* et nombre de réussites par nœud.
+- **Encodage** : angle = *n*, couleur = taux de réussite centré sur la moyenne de la matière (`derived.base`), motif de hachures `<pattern id="sun-hatch">` pour les secteurs *n* < 10.
+- **Interactions** : clic sur un secteur = zoom (`state.drill`, `src: "sun"`), clic au centre = retour / réinitialisation du zoom sunburst, survol = chemin complet, *n*, % de réussite, rappel de prudence si *n* < 10.
+- **Légende** : échelle divergente de couleur centrée sur la moyenne et indicateur des hachures dans `#cLegend`.
 - **Tâches** : ✔ U1-2, U2-1 ; ○ U1-3, U2-4, U2-5.
-- **Points de vigilance** : trois niveaux au maximum ; recoupe en partie A, la différence étant la hiérarchie emboîtée.
+- **Points de vigilance** : trois niveaux au maximum ; recoupe en partie A, la différence étant la hiérarchie emboîtée ; ne vide pas sa propre vue lors du zoom (`exceptSrc("sun")`).
+
 
 ## D. Graphe de similarité
 

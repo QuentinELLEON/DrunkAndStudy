@@ -1,7 +1,22 @@
 /* Vue C : sunburst */
-.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5}
+.arc{cursor:pointer;stroke:var(--panel);stroke-width:1.5;transition:opacity .15s}
 .arc:hover{opacity:.85}
+.arc.off{opacity:.3}
+.arc.off:hover{opacity:.6}
+.arc.sel{stroke:var(--ink);stroke-width:2.5;stroke-linejoin:round}
+.arc:focus-visible{outline:none;stroke:var(--focus);stroke-width:2.5;stroke-linejoin:round}
+.arc-hatch{pointer-events:none}
 .hatch line{stroke:var(--ink);stroke-width:1.2;opacity:.45}
 .arclbl{font-size:11.5px;fill:var(--ink);text-anchor:middle;pointer-events:none;paint-order:stroke;stroke:var(--panel);stroke-width:3px;stroke-linejoin:round}
-.center{fill:var(--soft);cursor:pointer}
+.center{fill:var(--soft);cursor:pointer;transition:fill .15s}
+.center:hover{fill:var(--mid)}
+.center.inert{cursor:default}
+.center.inert:hover{fill:var(--soft)}
+.center:focus-visible{outline:none;stroke:var(--focus);stroke-width:2.5}
 .ctr{text-anchor:middle;fill:var(--ink);pointer-events:none}
+.ctr-back{fill:var(--ok);text-decoration:underline}
+.sun-bar{background:linear-gradient(90deg,var(--ko),var(--mid),var(--ok))}
+.sun-hatch-swatch{display:inline-block;width:14px;height:14px;margin-right:6px;vertical-align:-2px;border:1px solid var(--line);border-radius:2px;background:repeating-linear-gradient(45deg,transparent 0 2.5px,color-mix(in srgb,var(--ink) 45%,transparent) 2.5px 3.7px)}
+.tip-warn{color:var(--ko)}
+.tip-hint{margin-top:6px;font-size:12px;opacity:.8}
+.viz-note{margin:8px 0 0;font-size:12.5px;color:var(--muted);text-align:center}
