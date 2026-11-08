@@ -63,10 +63,11 @@ export const ATTR_LABELS = {
 // Réglages des vues
 export const PSET_DEFAULT = ["school", "sex", "address", "alc", "absCat", "risque", "tendance", "reussite"];
 export const PSET_PRESETS = {
-  risque: { label: "Risque et décrochage", axes: ["risque", "tendance", "reussite"] },
-  vie: { label: "Sorties et alcool", axes: ["goout", "alc", "reussite"] },
-  qui: { label: "Qui sont les élèves ?", axes: ["school", "sex", "address", "reussite"] },
+  risque: { label: "Risque et décrochage", q: "Le cumul de facteurs de risque mène-t-il à l'échec et au décrochage ?", axes: ["risque", "tendance", "reussite"] },
+  vie: { label: "Sorties et alcool", q: "Les sorties et l'alcool vont-ils avec de moins bonnes notes ?", axes: ["goout", "alc", "reussite"] },
+  qui: { label: "Qui sont les élèves ?", q: "Qui sont les élèves, et lesquels réussissent ?", axes: ["school", "sex", "address", "reussite"] },
 };
+export const PSET_MIN_AXES = 2;   // un axe au moins + « reussite »
 export const PSET_ADDABLE = ["absCat", "studytime", "traveltime", "pedu", "higher", "failures", "alc", "goout", "risque", "tendance", "school", "sex", "address"];
 export const PSET_MAX_AXES = 5;
 export const MATRIX_KEYS = ["G3", "G2", "G1", "failures", "absences", "studytime", "traveltime", "goout", "Dalc", "Walc", "Medu", "Fedu"];
