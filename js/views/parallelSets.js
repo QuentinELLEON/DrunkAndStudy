@@ -281,10 +281,33 @@ function drawChart(model) {
 
     /* axes : titre, boutons ◂ ▸ ×, segments cliquables, étiquettes */
 
+    const probe = g.append('text').attr('class', 'axt').text(dimLabel(LAST))
+    const lastOverflow = Math.max(0, probe.node().getComputedTextLength() + 2 - margin.right) // débord du dernier titre
+    probe.remove()
+
+    // raccourcit un titre d'axe trop long, le libellé complet reste au survol
+    const fitText = (text, label, room) => {
+        let s = label
+        while (s.length > 3 && text.node().getComputedTextLength() > room) {
+            s = s.slice(0, -1).trimEnd()
+            text.text(s + '…')
+        }
+        if (s !== label) text.append('title').text(label)
+    }
+
     axes.forEach((a, ai) => {
         const axisGroup = g.append('g').attr('transform', `translate(${xScale(a)},0)`)
 
         const title = axisGroup.append('text').attr('class', 'axt').attr('y', -14).text(dimLabel(a))
+
+        // sur petit écran : le dernier titre s'aligne à droite, les autres sont raccourcis pour ne pas se chevaucher
+        if (a === LAST) {
+            if (lastOverflow > 0) title.attr('text-anchor', 'end').attr('x', margin.right - 2)
+        } else {
+            const buttons = (ai > 0 ? 1 : 0) + (ai < axes.length - 2 ? 1 : 0) + (axes.length > PSET_MIN_AXES ? 1 : 0)
+            const room = xScale.step() - 6 - buttons * 15 - (ai === axes.length - 2 ? lastOverflow : 0)
+            fitText(title, dimLabel(a), room)
+        }
 
         // boutons pour déplacer ou retirer l'axe (pas pour « reussite »)
         if (a !== LAST) {
