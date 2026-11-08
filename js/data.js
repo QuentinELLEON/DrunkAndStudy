@@ -22,7 +22,7 @@ export async function loadDataset(ds) {
   return rows;
 }
 
-export const loadAll = () => Promise.all(Object.keys(DATASETS).map(async (ds) => [ds, await loadDataset(ds)]))
+export const loadAll = () => Promise.all(Object.keys(DATASETS).filter((ds) => DATASETS[ds].file).map(async (ds) => [ds, await loadDataset(ds)]))
   .then((entries) => Object.fromEntries(entries));
 
 // ---------- Typage et dérivés ----------

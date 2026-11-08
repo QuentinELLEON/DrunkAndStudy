@@ -15,6 +15,7 @@
 <link rel="stylesheet" href="css/views/sunburst.css">
 <link rel="stylesheet" href="css/views/similarity-graph.css">
 <link rel="stylesheet" href="css/views/detail-panels.css">
+<link rel="stylesheet" href="css/import.css">
 </head>
 <body>
 <!--
@@ -27,19 +28,26 @@
   <header class="top">
     <div>
       <h1>Qu'est-ce qui accompagne la réussite au lycée ?</h1>
-      <p class="lede">Deux lycées portugais en 2005-2006, 395 élèves en maths et 649 en portugais (357 et 634 élèves évalués). Choisissez une matière, puis cliquez sur une catégorie, un secteur ou un point pour filtrer toutes les vues. Ce qui apparaît ici, ce sont des associations, jamais des causes.</p>
+      <p class="lede" id="lede">Deux lycées portugais en 2005-2006, 395 élèves en maths et 649 en portugais (357 et 634 élèves évalués). Choisissez une matière, puis cliquez sur une catégorie, un secteur ou un point pour filtrer toutes les vues. Ce qui apparaît ici, ce sont des associations, jamais des causes.</p>
     </div>
     <div class="controls">
       <div class="seg" role="group" aria-label="Matière" id="matSeg">
         <button type="button" data-v="mat" aria-pressed="true">Maths</button><button type="button" data-v="por" aria-pressed="false">Portugais</button>
       </div>
       <label class="check"><input type="checkbox" id="ne"> <span id="neLbl">Inclure les élèves non évalués</span></label>
+      <button type="button" class="btn" id="importOpen" aria-haspopup="dialog">Importer un CSV</button>
       <button type="button" class="btn" id="reset">Tout réinitialiser</button>
       <button type="button" class="btn" id="themeBtn">Mode sombre</button>
     </div>
   </header>
 
   <div id="status" class="status" role="status" aria-live="polite" hidden></div>
+
+  <!-- Fichier importé : remplace Maths et Portugais (js/controls/importPanel.js) -->
+  <div id="importBanner" class="status imp-banner" role="status" aria-live="polite" hidden>
+    <span id="importBannerText"></span>
+    <button type="button" class="btn btn-sm" id="importRestore">Revenir aux jeux d'origine</button>
+  </div>
 
   <div class="layout">
     <main class="views">
@@ -257,8 +265,48 @@
     </aside>
   </div>
 
-  <p class="foot">Source, jeu Student Alcohol Consumption (Kaggle), miroir du jeu UCI Student Performance (Cortez et Silva, 2008). Les élèves notés 0 sans aucune absence sont des dossiers non évalués, exclus par défaut. Les deux matières ne sont jamais cumulées. Démonstrateur pédagogique, pas un outil de suivi d'élèves.</p>
+  <p class="foot" id="foot">Source, jeu Student Alcohol Consumption (Kaggle), miroir du jeu UCI Student Performance (Cortez et Silva, 2008). Les élèves notés 0 sans aucune absence sont des dossiers non évalués, exclus par défaut. Les deux matières ne sont jamais cumulées. Démonstrateur pédagogique, pas un outil de suivi d'élèves.</p>
 </div>
+
+<!-- Import d'un CSV (js/controls/importPanel.js). Le tableau #impSchema est généré depuis meta.SCHEMA. -->
+<dialog id="importDialog" class="imp" aria-labelledby="imp-title">
+  <div class="imp-body">
+    <div class="imp-head">
+      <h2 id="imp-title">Importer vos propres données</h2>
+      <button type="button" class="btn btn-sm" id="impClose">Fermer</button>
+    </div>
+    <p class="imp-lead">Le fichier importé <b>remplace</b> les jeux Maths et Portugais : toutes les vues n'affichent plus que lui, jusqu'à ce que vous reveniez aux jeux d'origine. Le fichier est lu dans votre navigateur, rien n'est envoyé sur Internet.</p>
+    <ol class="imp-steps">
+      <li>
+        <b>Téléchargez le modèle vide.</b>
+        <p class="note">Une seule ligne : les 33 colonnes attendues, dans l'ordre, séparées par des points-virgules (il s'ouvre directement en colonnes dans Excel en français).</p>
+        <p class="imp-actions"><button type="button" class="btn" id="impTemplate">Télécharger le modèle vide (.csv)</button></p>
+      </li>
+      <li>
+        <b>Remplissez-le</b> dans un tableur, avec une ligne par élève, puis enregistrez-le au format CSV. Les valeurs acceptées pour chaque colonne sont listées plus bas.
+      </li>
+      <li>
+        <b>Importez-le.</b>
+        <div class="imp-drop" id="impDrop">
+          <input type="file" id="impFile" accept=".csv,text/csv,text/plain" aria-label="Choisir un fichier CSV">
+          <span>ou déposez le fichier ici</span>
+        </div>
+        <p class="note">Séparateur (point-virgule, virgule ou tabulation) reconnu automatiquement. Jusqu'à 2 000 élèves.</p>
+      </li>
+    </ol>
+    <div id="impResult" class="imp-result" role="alert" hidden></div>
+    <details class="imp-help">
+      <summary>Valeurs attendues pour chaque colonne</summary>
+      <div class="imp-table-wrap">
+        <table class="attr imp-table">
+          <thead><tr><th>Colonne</th><th>Signification</th><th>Valeurs acceptées</th></tr></thead>
+          <tbody id="impSchema"></tbody>
+        </table>
+      </div>
+      <p class="note">Un dossier avec une note finale (G3) de 0 et 0 absence est traité comme « non évalué » : exclu par défaut, réinclusible avec la case de l'en-tête.</p>
+    </details>
+  </div>
+</dialog>
 
 <script src="js/guard.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>

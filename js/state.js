@@ -3,7 +3,7 @@
 import { PSET_PRESETS, SUN_DEFAULT } from "./meta.js";
 
 const initial = () => ({
-  ds: "mat",                // matière active : "mat" | "por"
+  ds: "mat",                // jeu actif : "mat" | "por" | "import<N>" (fichier importé)
   inclNE: false,            // inclure les non-évalués
   drill: [],                // [{ dim, value, src }] contraintes posées par un clic ; src ∈ "pset" | "sun"
   slide: {},                // { studytime?: 1..4, goout?: 1..5 }
@@ -49,3 +49,5 @@ export const setSlide = (dim, value) => {
 };
 
 export const resetAll = () => setState({ ...initial(), ds: state.ds });
+// Charge un autre jeu de données (par exemple un fichier importé) : tout l'état revient à ses valeurs initiales.
+export const switchDataset = (ds) => setState({ ...initial(), ds });

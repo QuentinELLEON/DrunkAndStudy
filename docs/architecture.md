@@ -46,11 +46,13 @@ DrunkAndStudy/
 │   ├── meta.js                  libellés, domaines ordonnés, listes d'attributs par vue
 │   ├── stats.js                 fonctions pures : rangs, Spearman, médiane, Gower, knn
 │   ├── utils.js                 formats français, couleurs lues dans le CSS, info-bulle, accessibilité
+│   ├── importer.js              import d'un CSV : modèle vide, lecture, validation, typage (pur, sans DOM)
 │   ├── controls/
 │   │   ├── header.js            matière, non-évalués, réinitialiser
 │   │   ├── theme.js             bouton clair / sombre (data-theme, mémorisé dans le navigateur)
 │   │   ├── selectionPanel.js    puces de filtres, tuiles n / % / médiane / moyenne, curseurs studytime et goout
-│   │   └── studentCard.js       fiche élève (tableau élève contre médiane de l'école)
+│   │   ├── studentCard.js       fiche élève (tableau élève contre médiane de l'école)
+│   │   └── importPanel.js       fenêtre d'import, bannière « fichier importé », texte d'introduction et pied de page
 │   └── views/
 │       ├── parallelSets.js      VIZ A, #viz-parallel-sets
 │       ├── correlationMatrix.js VIZ B, #viz-correlation-matrix
@@ -61,7 +63,8 @@ DrunkAndStudy/
 │       └── pairScatter.js       panneau 3, #viz-pair-scatter
 └── tools/
     ├── extract_csv.py           existant
-    └── test-stats.mjs           tests Node de js/stats.js et des dérivés
+    ├── test-stats.mjs           tests Node de js/stats.js et des dérivés
+    └── test-import.mjs          tests Node de js/importer.js (modèle, validation, messages d'erreur)
 ```
 
 Les fichiers `rendu1.md`, `tasks.md` et `notes.md` à la racine sont des documents de travail antérieurs. Ils sont conservés tels quels et ne font plus référence.

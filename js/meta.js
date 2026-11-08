@@ -2,8 +2,8 @@
 // Aucune dépendance (importable depuis Node pour les tests). Contrat : docs/data-contracts.md.
 
 export const DATASETS = {
-  mat: { label: "Maths", file: "data/student-mat.csv", name: "maths" },
-  por: { label: "Portugais", file: "data/student-por.csv", name: "portugais" },
+  mat: { label: "Maths", file: "data/student-mat.csv", name: "maths", in: "en maths" },
+  por: { label: "Portugais", file: "data/student-por.csv", name: "portugais", in: "en portugais" },
 };
 
 export const EXPECTED_COLUMNS = [
@@ -17,6 +17,52 @@ export const NUMERIC_COLUMNS = [
   "age", "Medu", "Fedu", "traveltime", "studytime", "failures", "famrel", "freetime", "goout", "Dalc", "Walc",
   "health", "absences", "G1", "G2", "G3",
 ];
+
+// ---------- Import d'un CSV (docs/data-contracts.md, section 6) ----------
+// Schéma des 33 colonnes : type et domaine, utilisés pour valider un fichier importé et pour l'aide affichée à l'import.
+// Codes nominaux = ceux du jeu d'origine (jamais modifiés). Bornes ordinales = celles des domaines de DIMS ; notes sur 0 à 20.
+export const IMPORT_MAX_ROWS = 2000;              // au-delà, le graphe de similarité (O(n²)) devient trop lent
+export const IMPORT_MAX_BYTES = 5 * 1024 * 1024;  // taille maximale du fichier lu dans le navigateur
+
+const YN = ["yes", "no"];
+const JOBS = ["teacher", "health", "services", "at_home", "other"];
+const nom = (values, label) => ({ kind: "nominal", values, label });
+const num = (min, max, label, kind = "ordinal") => ({ kind, min, max, label });
+export const SCHEMA = {
+  school: nom(["GP", "MS"], "École : GP Gabriel Pereira, MS Mousinho da Silveira"),
+  sex: nom(["F", "M"], "Sexe"),
+  age: num(10, 30, "Âge (15 à 22 dans le jeu d'origine)", "quantitative"),
+  address: nom(["U", "R"], "Milieu : U urbain, R rural"),
+  famsize: nom(["LE3", "GT3"], "Taille de la famille : LE3 trois personnes ou moins, GT3 plus de trois"),
+  Pstatus: nom(["T", "A"], "Parents : T vivent ensemble, A séparés"),
+  Medu: num(0, 4, "Études de la mère : 0 aucune, 1 primaire, 2 collège, 3 secondaire, 4 supérieur"),
+  Fedu: num(0, 4, "Études du père : 0 aucune, 1 primaire, 2 collège, 3 secondaire, 4 supérieur"),
+  Mjob: nom(JOBS, "Métier de la mère"),
+  Fjob: nom(JOBS, "Métier du père"),
+  reason: nom(["home", "reputation", "course", "other"], "Raison du choix de l'école"),
+  guardian: nom(["mother", "father", "other"], "Tuteur légal"),
+  traveltime: num(1, 4, "Trajet : 1 moins de 15 min, 2 de 15 à 30 min, 3 de 30 min à 1 h, 4 plus d'1 h"),
+  studytime: num(1, 4, "Temps d'étude par semaine : 1 moins de 2 h, 2 de 2 à 5 h, 3 de 5 à 10 h, 4 plus de 10 h"),
+  failures: num(0, 3, "Échecs passés (3 = trois ou plus)", "quantitative"),
+  schoolsup: nom(YN, "Soutien scolaire de l'école"),
+  famsup: nom(YN, "Soutien scolaire de la famille"),
+  paid: nom(YN, "Cours payants dans la matière"),
+  activities: nom(YN, "Activités extra-scolaires"),
+  nursery: nom(YN, "A fréquenté l'école maternelle"),
+  higher: nom(YN, "Veut faire des études supérieures"),
+  internet: nom(YN, "Internet à la maison"),
+  romantic: nom(YN, "En couple"),
+  famrel: num(1, 5, "Relations familiales : 1 très mauvaises à 5 excellentes"),
+  freetime: num(1, 5, "Temps libre après l'école : 1 très peu à 5 beaucoup"),
+  goout: num(1, 5, "Sorties avec les amis : 1 très rares à 5 très fréquentes"),
+  Dalc: num(1, 5, "Alcool en semaine : 1 très faible à 5 très élevé"),
+  Walc: num(1, 5, "Alcool le week-end : 1 très faible à 5 très élevé"),
+  health: num(1, 5, "État de santé : 1 très mauvais à 5 très bon"),
+  absences: num(0, 200, "Nombre d'absences", "quantitative"),
+  G1: num(0, 20, "Note de la 1re période, sur 20", "quantitative"),
+  G2: num(0, 20, "Note de la 2e période, sur 20", "quantitative"),
+  G3: num(0, 20, "Note finale, sur 20", "quantitative"),
+};
 
 // Seuils
 export const PASS_MARK = 10;          // réussite : G3 >= 10
