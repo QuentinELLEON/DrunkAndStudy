@@ -19,6 +19,24 @@ export function boxStats(values) {
   return { n: v.length, min: v[0], q1: quantile(v, 0.25), med: quantile(v, 0.5), q3: quantile(v, 0.75), max: v[v.length - 1], mean: mean(v) };
 }
 
+// Médiane de b par valeur de a (au plus 8 valeurs distinctes) ou par classe de largeur égale de a.
+// Renvoie [{ x, y, n }] triés par x, pour la courbe du nuage de points.
+export function medianCurve(rows, a, b, classes = 6) {
+  const values = [...new Set(rows.map((r) => r[a]))].sort((p, q) => p - q);
+  if (!values.length) return [];
+  const lo = values[0], step = (values[values.length - 1] - lo) / classes;
+  const discrete = values.length <= 8;
+  const groups = new Map();
+  rows.forEach((r) => {
+    const key = discrete ? r[a] : Math.min(classes - 1, Math.floor((r[a] - lo) / step));
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r[b]);
+  });
+  return [...groups.entries()]
+    .sort((p, q) => p[0] - q[0])
+    .map(([key, ys]) => ({ x: discrete ? key : lo + (key + 0.5) * step, y: median(ys), n: ys.length }));
+}
+
 // Rangs moyens (les ex æquo reçoivent la moyenne de leurs rangs, à partir de 1).
 export function ranks(arr) {
   const idx = arr.map((v, i) => [v, i]).sort((p, q) => p[0] - q[0]);

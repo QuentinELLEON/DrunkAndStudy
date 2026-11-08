@@ -3,7 +3,7 @@
 // Les chiffres de référence viennent de docs/visualisations.md (élèves évalués, maths puis portugais).
 
 import { readFileSync } from "node:fs";
-import { ranks, pearson, spearman, spearmanMatrix, quantile, median, boxStats, gower, gowerRanges, knn, significanceThreshold } from "../js/stats.js";
+import { ranks, pearson, spearman, spearmanMatrix, quantile, median, boxStats, gower, gowerRanges, knn, significanceThreshold, medianCurve } from "../js/stats.js";
 import { typeRows, derive, rate, evaluated, okCount } from "../js/data.js";
 import { SIMILARITY_KEYS, SIMILARITY_NOMINAL, NEIGHBORS, MATRIX_KEYS, EXPECTED_COLUMNS } from "../js/meta.js";
 import { pct, f1, signed } from "../js/utils.js";
@@ -28,6 +28,15 @@ near(significanceThreshold(357), 0.1038, 1e-3, "seuil de signification n = 357")
 eq(pct(0.744), "74 %", "format pourcentage");
 eq(f1(11.5), "11,5", "format décimal français");
 eq(signed(-0.3), "−0,30", "signe typographique");
+
+// Courbe des médianes du nuage de points : par valeur, puis par classe quand il y a plus de 8 valeurs distinctes.
+const courbe = medianCurve([{ a: 1, b: 2 }, { a: 1, b: 4 }, { a: 2, b: 10 }], "a", "b");
+eq(courbe.length, 2, "medianCurve : une entrée par valeur");
+eq(courbe[0].y, 3, "medianCurve : médiane du groupe");
+eq(courbe[0].n, 2, "medianCurve : effectif du groupe");
+const continu = Array.from({ length: 13 }, (_, i) => ({ a: i, b: i }));
+eq(medianCurve(continu, "a", "b").length, 6, "medianCurve : 6 classes au-delà de 8 valeurs");
+eq(medianCurve([], "a", "b").length, 0, "medianCurve : sélection vide");
 
 // ---------- Données réelles ----------
 const read = (f) => {
