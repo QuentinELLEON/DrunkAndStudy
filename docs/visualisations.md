@@ -92,8 +92,8 @@ Chaque visualisation a un conteneur vide dans `index.html`, dessiné par son mod
 | B | `viz-correlation-matrix` | `correlation-matrix` | heatmap (triangle inférieur) | `js/views/correlationMatrix.js` | Jim LAINEL |
 | C | `viz-sunburst` | `sunburst` | sunburst | `js/views/sunburst.js` | Alexandre LARGUECH |
 | D | `viz-similarity-graph` | `similarity-graph` | graphe nœuds-liens | `js/views/similarityGraph.js` | Gabriel LOIRAT |
-| Panneau 1 | `viz-selection-boxplot` | `selection-boxplot` | boxplot | `js/views/selectionBox.js` | à répartir |
-| Panneau 2 | `viz-student-trajectory` | `student-trajectory` | courbe à 3 points | `js/views/studentTrajectory.js` | à répartir |
+| Panneau 1 | `viz-selection-boxplot` | `selection-boxplot` | boxplot | `js/views/selectionBox.js` | socle partagé |
+| Panneau 2 | `viz-student-trajectory` | `student-trajectory` | courbe à 3 points | `js/views/studentTrajectory.js` | socle partagé |
 | Panneau 3 | `viz-pair-scatter` | `pair-scatter` | nuage de points | `js/views/pairScatter.js` | Jim LAINEL (lié à B) |
 
 La fiche élève (tableau) n'est pas une visualisation : elle est dans `js/controls/studentCard.js`.

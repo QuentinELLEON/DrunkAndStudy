@@ -120,4 +120,4 @@ A dessine `selection` : son zoom réduit le diagramme aux élèves gardés et le
 | D, graphe de similarité | Gabriel LOIRAT | `js/views/similarityGraph.js`, `stats.gower` et `stats.knn`, `css/views/similarity-graph.css` |
 | Socle partagé | Quentin ELLEON, avec des ajouts de Jim LAINEL | `state.js`, `data.js`, `meta.js`, `stats.js`, `utils.js`, `main.js`, `css/tokens.css`, `css/layout.css`, `css/components.css`, `controls/*`, `selectionBox.js`, `studentTrajectory.js` |
 
-Le socle (`state`, `data`, `meta`, `stats`, `utils`, `main`, `controls/*`, CSS) est en place et testé (`npm test`). Les quatre vues A à D sont implémentées. Restent à écrire les panneaux `selectionBox.js`, `studentTrajectory.js` et `pairScatter.js`, déjà branchés sur `main.js`.
+Le socle (`state`, `data`, `meta`, `stats`, `utils`, `main`, `controls/*`, CSS) est en place et testé (`npm test`). Les quatre vues A à D et les trois panneaux de détail sont implémentés.
