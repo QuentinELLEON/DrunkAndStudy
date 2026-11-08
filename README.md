@@ -80,7 +80,8 @@ DrunkAndStudy/
 ├── css/                       tokens, layout, components, import + un fichier par vue (css/views/)
 ├── data/                      student-mat.csv (395 lignes, 357 évalués), student-por.csv (649 lignes, 634 évalués)
 ├── docs/                      documentation (voir ci-dessus)
-├── report/                    rapport (Markdown et PDF) et ses figures
+├── rendus/                    PDF rendus, datés (livrable du 28 septembre, rapport final du 9 novembre)
+├── report/                    version Markdown du rapport et ses figures
 ├── js/
 │   ├── main.js                chargement D3, initialisation, rendu à chaque changement d'état
 │   ├── guard.js               message explicite en file://
