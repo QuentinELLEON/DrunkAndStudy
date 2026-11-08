@@ -104,7 +104,7 @@ state.js (ds, inclNE, drill, slide, selectedId, mxPair, ghost, colorBy)
 | « Tester un profil » (D) | renseigne `state.ghost` : nœud fictif relié à ses 5 plus proches voisins |
 | Changement de matière ou de « non évalués » | recharge la base, remet à zéro `drill`, `selectedId`, `mxPair`, `ghost` |
 
-Les zooms de A et de C sont indépendants de leur propre rendu : chaque vue dessine `exceptSrc("pset")` ou `exceptSrc("sun")` (la sélection privée de ses propres contraintes) pour que le zoom ne vide pas la vue qui l'a posé.
+A dessine `selection` : son zoom réduit le diagramme aux élèves gardés et le réétalonne (fil d'Ariane pour revenir). C dessine `exceptSrc("sun")`, la sélection privée de ses propres contraintes, pour que le sunburst reste entier et que son zoom ne fasse que changer la racine affichée.
 
 ## Découpage du travail
 
