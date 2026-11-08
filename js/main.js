@@ -2,12 +2,14 @@
 // Chaque vue exporte init(container) et update(state, derived) (voir docs/architecture.md).
 
 import { loadAll, derive } from "./data.js";
-import { state, on } from "./state.js";
+import { state, on, switchDataset } from "./state.js";
+import { DATASETS } from "./meta.js";
 import { setStatus, hideTip } from "./utils.js";
 
 import * as header from "./controls/header.js";
 import * as selectionPanel from "./controls/selectionPanel.js";
 import * as studentCard from "./controls/studentCard.js";
+import * as importPanel from "./controls/importPanel.js";
 
 import * as parallelSets from "./views/parallelSets.js";
 import * as correlationMatrix from "./views/correlationMatrix.js";
@@ -29,6 +31,7 @@ const VIEWS = [
 ];
 
 let rowsByDs = null;
+let originalRows = null;   // Maths et Portugais, gardés pour « Revenir aux jeux d'origine »
 let queued = false;
 
 function render() {
@@ -38,6 +41,7 @@ function render() {
   header.update(state, derived, rowsByDs);
   selectionPanel.update(state, derived);
   studentCard.update(state, derived);
+  importPanel.update(state, derived, rowsByDs);
   VIEWS.forEach(([, mod]) => {
     try { mod.update(state, derived); } catch (e) { console.error(e); setStatus(`Erreur dans une vue : ${e.message}`, "error"); }
   });
@@ -48,6 +52,25 @@ function scheduleRender() {
   if (queued || !rowsByDs) return;
   queued = true;
   requestAnimationFrame(render);
+}
+
+// Remplace les jeux d'origine par le fichier importé : toutes les vues repartent de ce seul jeu, état remis à zéro.
+function applyImport({ key, rows, info, warnings, fileName }) {
+  forgetImports();
+  DATASETS[key] = { label: "Fichier importé", name: "ce fichier", in: "dans ce fichier", imported: true, fileName, info, warnings };
+  rowsByDs = { [key]: rows };
+  switchDataset(key);
+}
+
+// Revient à Maths et Portugais (déjà chargés) : l'import est oublié.
+function restoreOriginals() {
+  rowsByDs = originalRows;
+  forgetImports();
+  switchDataset("mat");
+}
+
+function forgetImports() {
+  Object.keys(DATASETS).forEach((k) => { if (DATASETS[k].imported) delete DATASETS[k]; });
 }
 
 async function start() {
@@ -61,7 +84,7 @@ async function start() {
   }
   setStatus("Chargement des données…");
   try {
-    rowsByDs = await loadAll();
+    rowsByDs = originalRows = await loadAll();
   } catch (e) {
     console.error(e);
     setStatus(`Impossible de charger les données (<code>data/student-*.csv</code>) : ${e.message}`, "error");
@@ -72,6 +95,7 @@ async function start() {
   header.init();
   selectionPanel.init();
   studentCard.init();
+  importPanel.init({ onImport: applyImport, onRestore: restoreOriginals });
   VIEWS.forEach(([id, mod]) => {
     const el = document.getElementById(id);
     if (el) mod.init(el); else console.warn(`Conteneur #${id} introuvable dans index.html`);

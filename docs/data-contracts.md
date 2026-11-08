@@ -148,3 +148,23 @@ Tableau `attribut | élève | typique de l'école` pour G3, G2, G1, tendance, ri
 - n est affiché partout où un agrégat apparaît ; tout groupe de moins de 10 élèves est signalé.
 - Les phrases parlent d'association, jamais de cause.
 - L'axe de G3 va toujours de 0 à 20 avec le seuil de 10.
+
+## 6. Import d'un fichier CSV (`js/importer.js`, `js/controls/importPanel.js`)
+
+**Format attendu.** Les 33 colonnes de `EXPECTED_COLUMNS` (`meta.js`), une ligne par élève. Le modèle vide téléchargeable est l'en-tête seul, séparé par `;`, avec BOM UTF-8. À la lecture : séparateur détecté (`;`, `,`, tabulation), BOM, CRLF / LF / CR et guillemets acceptés, en-têtes reconnus sans tenir compte de la casse ni de l'ordre, colonnes inconnues ignorées (avertissement), lignes entièrement vides sautées.
+
+**Schéma.** `SCHEMA` (`meta.js`) décrit chaque colonne : `kind` (`nominal`, `ordinal` ou `quantitative`), `values` (codes nominaux du jeu d'origine, ramenés à la casse d'origine), `min` / `max` pour les entiers, `label`. Entiers : `11` et `11,0` sont acceptés, `3,5` est refusé. Plages : `age` 10–30, `failures` 0–3, `absences` 0–200, `G1` `G2` `G3` 0–20, ordinales selon `DIMS`. `school` est limité à `GP` / `MS`.
+
+**Refus (rien n'est chargé, les données affichées sont conservées).** Colonne manquante ou en double ; valeur vide ou hors schéma (un message par colonne, avec effectif, trois exemples « ligne N, valeur » et la valeur attendue ; 8 colonnes au plus sont détaillées) ; fichier vide ou réduit à l'en-tête ; guillemet non refermé ; plus de `IMPORT_MAX_ROWS` (2 000) lignes ; fichier de plus de `IMPORT_MAX_BYTES` (5 Mo) ; moins de `NEIGHBORS + 1` (6) élèves évalués.
+
+**Avertissement (import accepté).** Moins de `MIN_N_CORRELATION` (30) élèves évalués : la matrice de corrélation n'est pas calculée. Colonnes ignorées.
+
+**Retour de `importCsv(text, key)`.** `{ ok: false, errors, warnings }`, ou `{ ok: true, key, rows, errors: [], warnings, info: { rows, evaluated, nograde, separator, ignored } }`. `rows` a exactement la forme de `typeRows` (section 1) : les mêmes dérivés et le même repérage des non-évalués, y compris pour un fichier importé. Ce point est testé : importer `student-mat.csv` redonne des lignes identiques à celles de `data.js`.
+
+**Effet sur l'application (`main.js`).**
+- Chaque import reçoit une clé unique `import<N>`. Elle devient `state.ds` : les caches des vues indexés par `state.ds` (disposition du graphe de similarité) ne peuvent donc jamais servir les données d'un import précédent.
+- `rowsByDs` est remplacé par `{ [clé]: rows }` : le jeu importé est le seul affiché. `DATASETS[clé]` porte `imported: true`, `fileName`, `warnings`, `name` et `in` (utilisés dans les phrases).
+- `switchDataset(clé)` remet tout l'état à zéro (filtres, sélection, tranche, élève) avant le rendu.
+- « Revenir aux jeux d'origine » restaure `originalRows`, supprime les entrées importées de `DATASETS` et revient à `mat`.
+- Si le fichier ne contient aucun non-évalué, la case « Inclure les non évalués » est masquée.
+- Les valeurs de l'utilisateur et le nom du fichier sont affichés avec `textContent`, jamais `innerHTML`.

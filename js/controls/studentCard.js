@@ -44,5 +44,5 @@ export function update(st, derived) {
   // Phrase de contexte
   const intro = document.getElementById("panel-student-intro");
   intro.hidden = false;
-  intro.textContent = `${sex[0].toUpperCase() + sex.slice(1)}, ${DIMS.school.name[stu.school]}, milieu ${DIMS.address.name[stu.address].toLowerCase()}. Comparaison avec les ${peers.length} élèves évalués de son école en ${DATASETS[st.ds].name}.`;
+  intro.textContent = `${sex[0].toUpperCase() + sex.slice(1)}, ${DIMS.school.name[stu.school]}, milieu ${DIMS.address.name[stu.address].toLowerCase()}. Comparaison avec les ${peers.length} élèves évalués de son école ${DATASETS[st.ds].in}.`;
 }
