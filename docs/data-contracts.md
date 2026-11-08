@@ -69,7 +69,7 @@ Calculés une fois par rendu par `data.derive(rows, state)` :
 |---|---|---|
 | `base` | élèves de la matière, non-évalués exclus sauf `inclNE` | tuiles (comparaison), fiche (médianes de l'école), D (disposition) |
 | `selection` | `base` filtré par `drill` et `slide` | B, tuiles, panneau 1, panneau 3, opacité dans D |
-| `exceptSrc(src)` | `selection` sans les contraintes de `drill` dont `src` vaut `src` | A (`"pset"`), C (`"sun"`) |
+| `exceptSrc(src)` | `selection` sans les contraintes de `drill` dont `src` vaut `src` | C (`"sun"`) ; disponible pour toute vue qui doit rester entière malgré son propre zoom |
 | `selected` | l'élève de `state.selectedId`, ou `null` | fiche, panneau 2, chemin dans A |
 
 ## 4. Contrats par visualisation
@@ -78,7 +78,7 @@ Chaque contrat donne l'entrée, la structure à calculer et la sortie visuelle a
 
 ### A. Ensembles parallèles · `#viz-parallel-sets`
 
-- **Entrée** : `derived.exceptSrc("pset")`, `state.psetAxes`.
+- **Entrée** : `derived.selection` (les zooms posés par A y sont inclus : le diagramme est réétalonné sur les élèves gardés), `state.psetAxes`, `derived.selected`.
 - **Structure** :
   ```js
   {

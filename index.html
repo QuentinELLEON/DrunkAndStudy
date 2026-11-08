@@ -61,7 +61,7 @@
           VIZ A — Ensembles parallèles (Parallel Sets)         [Quentin ELLEON]
           Chart  : parallel sets, un segment par catégorie (largeur = n), des bandes entre axes voisins (largeur = n),
                    teinte de la bande = réussite (bleu) / échec (orange).
-          Data   : élèves de la sélection partagée. Axes catégoriels : school, sex, address, alc, absCat, risque,
+          Data   : derived.selection (zooms de A inclus : le diagramme se réétalonne). Axes catégoriels : school, sex, address, alc, absCat, risque,
                    tendance, reussite (dernier axe fixe). Quantitatifs déjà découpés en classes (cf. docs/data-contracts.md).
           Interact: clic sur un segment = zoom (state.drill) + fil d'Ariane ; survol = n et % de réussite ;
                    axes déplaçables / ajout via #addAxis ; chemin de l'élève sélectionné surligné ; curseurs studytime/goout (panneau).
@@ -108,7 +108,7 @@
                    Angle = nombre d'élèves, couleur = taux de réussite (divergent, centré sur la moyenne de la matière).
           Data   : hiérarchie dérivée de la sélection (hors ses propres zooms) ; chaque nœud porte n et nombre de réussites.
           Interact: clic sur un secteur = zoom (state.drill), clic au centre = remonter, survol = n et % de réussite,
-                   secteurs de moins de 10 élèves hachurés (définir un <pattern id="hatch"> dans le SVG du module).
+                   secteurs de moins de 10 élèves hachurés (définir un <pattern id="sun-hatch"> dans le SVG du module).
           Docs   : docs/visualisations.md#c-sunburst
           Remplir aussi #cLegend (échelle de couleur + légende des hachures).
         -->
